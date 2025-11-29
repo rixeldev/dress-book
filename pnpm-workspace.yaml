@@ -1,4 +1,6 @@
 ignoredBuiltDependencies:
+  - '@firebase/util'
+  - protobufjs
   - unrs-resolver
 
 nodeLinker: hoisted

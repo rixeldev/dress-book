@@ -8,12 +8,13 @@ export default {
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     scheme: "dressbook",
+    owner: "rikirilis",
     splash: {
       image: "./assets/icons/mipmap-xxxhdpi/ic_launcher.png",
       resizeMode: "contain",
-      backgroundColor: "#000B0A",
+      backgroundColor: "#F1F1F1",
     },
-    platforms: ["android", "ios", "web"],
+    platforms: ["android", "ios"],
     ios: {
       supportsTablet: true,
       bundleIdentifier: "com.rilisentertainment.dressbook",
@@ -22,7 +23,7 @@ export default {
     android: {
       adaptiveIcon: {
         foregroundImage: "./assets/icons/mipmap-xxxhdpi/ic_launcher.png",
-        backgroundColor: "#000B0A",
+        backgroundColor: "#F1F1F1",
       },
       icon: "./assets/icons/mipmap-xxxhdpi/ic_launcher.png",
       edgeToEdgeEnabled: true,
@@ -34,9 +35,6 @@ export default {
       minSdkVersion: 24,
       ndkVersion: "29.0.14206865",
       softwareKeyboardLayoutMode: "pan",
-    },
-    web: {
-      favicon: "./assets/icons/ic_brand.png",
     },
     plugins: [
       "@react-native-firebase/app",
@@ -54,10 +52,10 @@ export default {
         "expo-splash-screen",
         {
           image: "./assets/icons/mipmap-xxxhdpi/ic_launcher.png",
-          backgroundColor: "#000B0A",
+          backgroundColor: "#F1F1F1",
           dark: {
             image: "./assets/icons/mipmap-xxxhdpi/ic_launcher.png",
-            backgroundColor: "#000B0A",
+            backgroundColor: "#F1F1F1",
           },
         },
       ],
@@ -78,17 +76,17 @@ export default {
       [
         "react-native-google-mobile-ads",
         {
-          android_app_id: "ca-app-pub-5333671658707378~9974389837",
-          androidAppId: "ca-app-pub-5333671658707378~9974389837",
-          ios_app_id: "ca-app-pub-5333671658707378~7006565543",
-          iosAppId: "ca-app-pub-5333671658707378~7006565543",
+          android_app_id: "ca-app-pub-5333671658707378~2671065839",
+          androidAppId: "ca-app-pub-5333671658707378~2671065839",
+          ios_app_id: "ca-app-pub-5333671658707378~4817334130",
+          iosAppId: "ca-app-pub-5333671658707378~4817334130",
         },
       ],
     ],
     extra: {
       router: {},
       eas: {
-        projectId: "efcde181-f82b-437a-910b-94b2e117ac25",
+        projectId: "24f07065-562e-4552-be5a-2a6efe1c1226",
       },
     },
   },
