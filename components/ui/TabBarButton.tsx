@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import { StyleSheet } from "react-native"
-import { OnlineIcon, OfflineIcon } from "@/icons/Icons"
+import { HomeIcon, UserIcon } from "@/icons/Icons"
 import { PlatformPressable } from "@react-navigation/elements"
 import Animated, {
   interpolate,
@@ -8,7 +8,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated"
-import { Theme } from "@/consts/Theme"
+import { useAppTheme } from "@/hooks/useAppTheme"
 
 interface Props {
   onPress: () => void
@@ -27,9 +27,10 @@ export const TabBarButton = ({
   label,
   color,
 }: Props) => {
+  const { Theme } = useAppTheme()
   const icon = {
-    index: (props: any) => <OnlineIcon {...props} />,
-    offline: (props: any) => <OfflineIcon {...props} />,
+    index: (props: any) => <HomeIcon {...props} />,
+    user: (props: any) => <UserIcon {...props} />,
   }
 
   const scale = useSharedValue(0)

@@ -1,7 +1,7 @@
-import { View, StyleSheet, LayoutChangeEvent, Vibration, Platform } from "react-native"
+import React, { useCallback, useRef, useState } from "react"
+import { View, LayoutChangeEvent, Vibration, Platform, DeviceEventEmitter } from "react-native"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
-import { Theme } from "@/consts/Theme"
-import { useCallback, useRef, useState } from "react"
+import { useAppTheme } from "@/hooks/useAppTheme"
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated"
 import { useFocusEffect } from "expo-router"
 import { useStorage } from "@/hooks/useStorage"
@@ -10,18 +10,24 @@ import { BannerAd, BannerAdSize, TestIds, useForeground } from "react-native-goo
 import { adBannerId } from "@/db/firebaseConfig"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { TabBarButton } from "./TabBarButton"
+import { AddButton } from "./AddButton"
+
+export const REG_ADDED_EVENT = "reg_added"
+export const REG_DELETED_EVENT = "reg_deleted"
 
 const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : adBannerId
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+  const { Theme } = useAppTheme()
   const [vibrationEnabled, setVibrationEnabled] = useState(true)
   const [dimensions, setDimensions] = useState({ height: 20, width: 100 })
   const [isAdLoaded, setIsAdLoaded] = useState(false)
+  const [currentIndex, setCurrentIndex] = useState<number>(0)
 
   const { getItem } = useStorage()
   const insets = useSafeAreaInsets()
 
-  const buttonWidth = dimensions.width / state.routes.length
+  const buttonWidth = dimensions.width / (state.routes.length + 1) // +1 for AddButton
   const bannerRef = useRef<BannerAd>(null)
 
   useForeground(() => {
@@ -56,12 +62,24 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     <View style={{ position: "relative", gap: 12 }}>
       <View
         onLayout={onTabbarLayout}
-        style={[
-          {
-            bottom: isAdLoaded ? 76 : insets.bottom + 10,
-          },
-          styles.tabbar,
-        ]}
+        style={{
+          bottom: isAdLoaded ? 76 : insets.bottom + 10,
+          zIndex: 50,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignSelf: "center",
+          alignItems: "center",
+          backgroundColor: Theme.colors.background2,
+          maxWidth: 300,
+          maxHeight: 75,
+          paddingVertical: 8,
+          borderRadius: 30,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 10 },
+          shadowRadius: 10,
+          shadowOpacity: 0.7,
+          position: "absolute",
+        }}
       >
         <Animated.View
           style={[
@@ -70,7 +88,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
               position: "absolute",
               backgroundColor: Theme.colors.primary2,
               borderRadius: 30,
-              marginHorizontal: 12,
+              marginHorizontal: currentIndex === 1 ? 8 : 16,
               height: dimensions.height - 15,
               width: buttonWidth - 25,
             },
@@ -92,9 +110,13 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             if (vibrationEnabled) {
               Vibration.vibrate(10)
             }
-            tabPositionX.value = withSpring(buttonWidth * index, {
+            // Adjust position: index 0 stays at 0, index 1 moves to position after AddButton
+            const adjustedIndex = index === 0 ? 0 : index + 1
+            tabPositionX.value = withSpring(buttonWidth * adjustedIndex, {
               duration: 500,
             })
+
+            setCurrentIndex(index)
 
             const event = navigation.emit({
               type: "tabPress",
@@ -115,15 +137,17 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
           }
 
           return (
-            <TabBarButton
-              key={route.name}
-              onPress={onPress}
-              onLongPress={onLongPress}
-              isFocused={isFocused}
-              routeName={route.name}
-              label={label.toString()}
-              color={isFocused ? Theme.colors.primary : Theme.colors.darkGray}
-            />
+            <React.Fragment key={route.name}>
+              <TabBarButton
+                onPress={onPress}
+                onLongPress={onLongPress}
+                isFocused={isFocused}
+                routeName={route.name}
+                label={label.toString()}
+                color={isFocused ? Theme.colors.primary : Theme.colors.darkGray}
+              />
+              {index === 0 && <AddButton onRegAdded={() => DeviceEventEmitter.emit(REG_ADDED_EVENT)} />}
+            </React.Fragment>
           )
         })}
       </View>
@@ -157,22 +181,3 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  tabbar: {
-    zIndex: 50,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignSelf: "center",
-    alignItems: "center",
-    backgroundColor: Theme.colors.background2,
-    maxWidth: 200,
-    paddingVertical: 8,
-    borderRadius: 30,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowRadius: 10,
-    shadowOpacity: 0.2,
-    position: "absolute",
-  },
-})

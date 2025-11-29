@@ -1,4 +1,4 @@
-import { Theme } from "@/consts/Theme"
+import "@/services/i18next"
 import { StatusBar } from "expo-status-bar"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
@@ -19,9 +19,10 @@ import { useFonts } from "expo-font"
 import SplashScreen from "@/components/ui/SplashScreen"
 import { LoginForm } from "@/components/auth/LoginForm"
 import { useStorage } from "@/hooks/useStorage"
+import { ThemeProvider, useTheme } from "@/contexts/ThemeContext"
 
-export default function Layout() {
-  const [isAppReady, setIsAppReady] = useState(false)
+function AppContent() {
+  const [isAppReady, setIsAppReady] = useState(true)
   const [isAppUpdated, setIsAppUpdated] = useState<boolean | null>(null)
   const [initializing, setInitializing] = useState(true)
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null)
@@ -29,6 +30,7 @@ export default function Layout() {
 
   const { i18n } = useTranslation()
   const { getItem, setItem } = useStorage()
+  const { theme, isDark } = useTheme()
 
   const handleAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
     setUser(user)
@@ -86,7 +88,7 @@ export default function Layout() {
   })
 
   if (!loaded || !isAppReady) {
-    return <SplashScreen onFinish={(isCancelled) => !isCancelled && setIsAppReady(true)} />
+    return <SplashScreen onFinish={() => setIsAppReady(true)} />
   }
 
   if (user && !isAppUpdated && loaded && isAppReady && !loading) {
@@ -94,12 +96,12 @@ export default function Layout() {
   }
 
   return (
-    <SafeAreaProvider style={{ height: "100%", backgroundColor: Theme.colors.background }}>
-      <StatusBar style="light" />
+    <SafeAreaProvider style={{ height: "100%", backgroundColor: theme.colors.background }}>
+      <StatusBar style={isDark ? "light" : "dark"} />
 
       <GestureHandlerRootView style={{ flex: 1 }}>
         {user ? (
-          !user?.emailVerified && user?.uid !== "bd2qRZxUQSa0Rnxe9YhW4rB41bl1" ? (
+          !user?.emailVerified && user?.uid !== "893MNyYP3JT206lDtBWhKvTMWIf2" ? (
             <View
               style={{
                 flex: 1,
@@ -115,29 +117,33 @@ export default function Layout() {
                 animationMatchesGesture: true,
                 animation: "default",
                 animationDuration: 100,
-                contentStyle: { backgroundColor: Theme.colors.background },
-                headerStyle: { backgroundColor: Theme.colors.background },
-                headerTintColor: Theme.colors.text,
+                contentStyle: { backgroundColor: theme.colors.background },
+                headerStyle: { backgroundColor: theme.colors.background },
+                headerTintColor: theme.colors.accent,
                 headerTitle: "Dress Book",
                 headerTitleStyle: {
-                  fontSize: Theme.sizes.h0,
-                  fontFamily: Theme.fonts.onestBold,
+                  fontSize: theme.sizes.h0,
+                  fontFamily: theme.fonts.onestBold,
                 },
                 headerLeft: () => (
                   <Image
                     source={require("@/assets/icons/ic_brand.png")}
-                    style={{ width: 40, height: 40 }}
+                    style={{ width: 30, height: 30, resizeMode: "contain", marginEnd: 6 }}
                   />
                 ),
                 headerRight: () => (
                   <Link asChild href="/settings">
                     <Pressable>
-                      <CogIcon color={Theme.colors.text} />
+                      <CogIcon color={theme.colors.text} />
                     </Pressable>
                   </Link>
                 ),
               }}
-            />
+            >
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="settings" />
+              <Stack.Screen name="details" options={{ headerShown: false }} />
+            </Stack>
           )
         ) : (
           <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -146,5 +152,13 @@ export default function Layout() {
         )}
       </GestureHandlerRootView>
     </SafeAreaProvider>
+  )
+}
+
+export default function Layout() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   )
 }

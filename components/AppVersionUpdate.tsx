@@ -1,11 +1,13 @@
-import { Theme } from "@/consts/Theme"
+import { useAppTheme } from "@/hooks/useAppTheme"
 import { Animated, Linking, Pressable, StyleSheet, Text, View } from "react-native"
 import { UpdateIcon } from "@/icons/Icons"
 import { useTranslation } from "react-i18next"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 
 export const AppVersionUpdate = () => {
   const [btnScale] = useState(new Animated.Value(1))
+  const { Theme } = useAppTheme()
+  const styles = useMemo(() => createStyles(Theme), [Theme])
 
   const { t } = useTranslation()
 
@@ -43,48 +45,49 @@ export const AppVersionUpdate = () => {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Theme.colors.background,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 24,
-    gap: 12,
-  },
-  title: {
-    fontSize: Theme.sizes.h1,
-    fontFamily: Theme.fonts.onestBold,
-    color: Theme.colors.text,
-    marginBottom: 12,
-  },
-  subtitle: {
-    fontSize: Theme.sizes.h4,
-    fontFamily: Theme.fonts.onest,
-    color: Theme.colors.gray,
-    textAlign: "center",
-    lineHeight: 22,
-    marginBottom: 32,
-  },
-  hint: {
-    fontSize: Theme.sizes.h5,
-    color: Theme.colors.gray,
-    fontFamily: Theme.fonts.onest,
-  },
-  submit: {
-    backgroundColor: Theme.colors.primary,
-    padding: 14,
-    borderRadius: 14,
-    alignItems: "center",
-    marginTop: 6,
-    marginBottom: 12,
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
-  },
-  submitText: {
-    color: Theme.colors.text,
-    fontSize: Theme.sizes.h4,
-    fontFamily: Theme.fonts.onestBold,
-  },
-})
+const createStyles = (Theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: Theme.colors.background,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 24,
+      gap: 12,
+    },
+    title: {
+      fontSize: Theme.sizes.h1,
+      fontFamily: Theme.fonts.onestBold,
+      color: Theme.colors.text,
+      marginBottom: 12,
+    },
+    subtitle: {
+      fontSize: Theme.sizes.h4,
+      fontFamily: Theme.fonts.onest,
+      color: Theme.colors.gray,
+      textAlign: "center",
+      lineHeight: 22,
+      marginBottom: 32,
+    },
+    hint: {
+      fontSize: Theme.sizes.h5,
+      color: Theme.colors.gray,
+      fontFamily: Theme.fonts.onest,
+    },
+    submit: {
+      backgroundColor: Theme.colors.primary,
+      padding: 14,
+      borderRadius: 14,
+      alignItems: "center",
+      marginTop: 6,
+      marginBottom: 12,
+      flexDirection: "row",
+      justifyContent: "center",
+      gap: 8,
+    },
+    submitText: {
+      color: "#FFFFFF",
+      fontSize: Theme.sizes.h4,
+      fontFamily: Theme.fonts.onestBold,
+    },
+  })

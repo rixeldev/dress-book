@@ -1,11 +1,12 @@
 import { Tabs } from "expo-router"
-import { OfflineIcon, OnlineIcon } from "@/icons/Icons"
-import { Theme } from "@/consts/Theme"
+import { HomeIcon, UserIcon } from "@/icons/Icons"
+import { useAppTheme } from "@/hooks/useAppTheme"
 import { TabBar } from "@/components/ui/TabBar"
 import { useTranslation } from "react-i18next"
 
 export default function TabsLayout() {
   const { t } = useTranslation()
+  const { Theme } = useAppTheme()
 
   return (
     <Tabs
@@ -22,17 +23,17 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ color }) => <OnlineIcon color={color} />,
-          title: t("online"),
+          tabBarIcon: ({ color }) => <HomeIcon color={color} />,
+          title: t("home"),
           tabBarActiveTintColor: Theme.colors.primary,
         }}
       />
 
       <Tabs.Screen
-        name="offline"
+        name="user"
         options={{
-          tabBarIcon: ({ color }) => <OfflineIcon color={color} />,
-          title: t("offline"),
+          tabBarIcon: ({ color }) => <UserIcon color={color} />,
+          title: t("user"),
           tabBarActiveTintColor: Theme.colors.primary,
         }}
       />

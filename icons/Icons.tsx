@@ -46,6 +46,10 @@ export const PlayIcon = (props: any) => (
   <Ionicons name="play-outline" color={Theme.colors.text} size={24} {...props} />
 )
 
+export const ReloadIcon = (props: any) => (
+  <Ionicons name="reload-outline" color={Theme.colors.text} size={24} {...props} />
+)
+
 export const GithubIcon = (props: any) => (
   <Feather name="github" color={Theme.colors.text} size={24} {...props} />
 )
@@ -60,6 +64,14 @@ export const UsersIcon = (props: any) => (
 
 export const HashIcon = (props: any) => (
   <FontAwesome5 name="slack-hash" color={Theme.colors.text} size={24} {...props} />
+)
+
+export const FilterIcon = (props: any) => (
+  <Octicons name="filter" color={Theme.colors.text} size={24} {...props} />
+)
+
+export const PlusIcon = (props: any) => (
+  <Octicons name="plus" color={Theme.colors.text} size={24} {...props} />
 )
 
 export const StarIcon = (props: any) => (
@@ -174,4 +186,28 @@ export const ListIcon = (props: any) => (
 
 export const SoundIcon = (props: any) => (
   <AntDesign name="sound" size={24} color={Theme.colors.text} {...props} />
+)
+
+export const ClothIcon = (props: any) => (
+  <Ionicons name="shirt-outline" size={24} color={Theme.colors.text} {...props} />
+)
+
+export const CurtainIcon = (props: any) => (
+  <MaterialCommunityIcons name="curtains" size={24} color={Theme.colors.text} {...props} />
+)
+
+export const PackageIcon = (props: any) => (
+  <Octicons name="package" size={24} color={Theme.colors.text} {...props} />
+)
+
+export const SunIcon = (props: any) => (
+  <Ionicons name="sunny-outline" size={24} color={Theme.colors.text} {...props} />
+)
+
+export const MoonIcon = (props: any) => (
+  <Ionicons name="moon-outline" size={24} color={Theme.colors.text} {...props} />
+)
+
+export const AutoThemeIcon = (props: any) => (
+  <Ionicons name="phone-portrait-outline" size={24} color={Theme.colors.text} {...props} />
 )

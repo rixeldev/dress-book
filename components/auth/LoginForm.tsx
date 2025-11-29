@@ -1,5 +1,5 @@
 // components/LoginForm.tsx
-import React, { useState } from "react"
+import React, { useState, useMemo } from "react"
 import {
   View,
   Text,
@@ -16,12 +16,11 @@ import {
   Linking,
   Platform,
   ScrollView,
+  Image,
 } from "react-native"
 import { GOOGLE_AUTH_WEB_CLIENT_ID } from "@/consts/GoogleAuth"
-import { Theme } from "@/consts/Theme"
+import { useAppTheme } from "@/hooks/useAppTheme"
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon } from "@/icons/Icons"
-import ic from "@/assets/lotties/ic_brand.json"
-import LottieView from "lottie-react-native"
 import {
   createUserWithEmailAndPassword,
   getAuth,
@@ -49,6 +48,8 @@ export const LoginForm = () => {
   const [googleLoading, setGoogleLoading] = useState(false)
 
   const { t } = useTranslation()
+  const { Theme } = useAppTheme()
+  const styles = useMemo(() => createStyles(Theme), [Theme])
 
   const googleSignin = async () => {
     setGoogleLoading(true)
@@ -220,29 +221,18 @@ export const LoginForm = () => {
       style={styles.wrapper}
       keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
     >
-      {googleLoading ||
-        (loading && (
-          <View
-            style={{
-              flex: 1,
+      {(googleLoading || loading) && (
+        <View
+          style={[
+            styles.loadingOverlay,
+            {
               backgroundColor: Theme.colors.backdrop,
-              justifyContent: "center",
-              alignItems: "center",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              zIndex: 50,
-            }}
-          >
-            <ActivityIndicator
-              size="large"
-              color={Theme.colors.accent}
-              style={{ width: 38, height: 38, alignSelf: "center" }}
-            />
-          </View>
-        ))}
+            },
+          ]}
+        >
+          <ActivityIndicator size="large" color={Theme.colors.accent} style={styles.loader} />
+        </View>
+      )}
 
       <Pressable
         style={{ flex: 1, width: "100%", alignItems: "center" }}
@@ -254,26 +244,9 @@ export const LoginForm = () => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.container}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 28,
-              }}
-            >
-              <LottieView
-                source={ic}
-                autoPlay
-                loop={false}
-                duration={3000}
-                style={{
-                  width: 42,
-                  height: 42,
-                }}
-              />
-
-              <Text style={styles.title}>top Trivia</Text>
+            <View style={styles.header}>
+              <Image source={require("@/assets/icons/ic_brand.png")} style={styles.logo} />
+              <Text style={styles.title}>Dress Book</Text>
             </View>
 
             {!signInForm && (
@@ -285,7 +258,7 @@ export const LoginForm = () => {
                 <TextInput
                   style={styles.input}
                   placeholder={t("username")}
-                  placeholderTextColor={Theme.colors.darkGray}
+                  placeholderTextColor={Theme.colors.gray}
                   keyboardType="default"
                   autoCapitalize="none"
                   autoComplete="name-given"
@@ -306,7 +279,7 @@ export const LoginForm = () => {
               <TextInput
                 style={styles.input}
                 placeholder={t("email")}
-                placeholderTextColor={Theme.colors.darkGray}
+                placeholderTextColor={Theme.colors.gray}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoComplete="email"
@@ -327,7 +300,7 @@ export const LoginForm = () => {
               <TextInput
                 style={styles.input}
                 placeholder={t("password")}
-                placeholderTextColor={Theme.colors.darkGray}
+                placeholderTextColor={Theme.colors.gray}
                 secureTextEntry={!showPassword}
                 value={password}
                 onChangeText={setPassword}
@@ -361,7 +334,7 @@ export const LoginForm = () => {
                 <TextInput
                   style={styles.input}
                   placeholder={t("repeat_password")}
-                  placeholderTextColor={Theme.colors.darkGray}
+                  placeholderTextColor={Theme.colors.gray}
                   secureTextEntry={!showPassword}
                   value={repeatPassword}
                   onChangeText={setRepeatPassword}
@@ -411,7 +384,7 @@ export const LoginForm = () => {
                 accessibilityLabel="Sign in"
               >
                 {loading ? (
-                  <ActivityIndicator color={Theme.colors.text} />
+                  <ActivityIndicator color={Theme.colors.modal} />
                 ) : (
                   <Text style={styles.submitText}>{signInForm ? t("sign_in") : t("sign_up")}</Text>
                 )}
@@ -432,15 +405,13 @@ export const LoginForm = () => {
             </View>
 
             <View>
-              <Text
-                style={{
-                  textAlign: "center",
-                  color: Theme.colors.gray,
-                  marginVertical: 24,
-                }}
-              >
-                {t("or_sign_in_with")}
-              </Text>
+              <View style={styles.dividerContainer}>
+                <View style={[styles.dividerLine, { backgroundColor: Theme.colors.background2 }]} />
+                <Text style={[styles.dividerText, { color: Theme.colors.gray }]}>
+                  {t("or_sign_in_with")}
+                </Text>
+                <View style={[styles.dividerLine, { backgroundColor: Theme.colors.background2 }]} />
+              </View>
 
               <Pressable
                 onPress={handleGoogleSignIn}
@@ -481,147 +452,224 @@ export const LoginForm = () => {
   )
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: Theme.colors.background,
-  },
-  container: {
-    padding: 12,
-    flex: 1,
-    width: "auto",
-    minWidth: 300,
-    maxWidth: 400,
-    justifyContent: "center",
-  },
-  title: {
-    fontFamily: Theme.fonts.onestBold,
-    fontSize: 42,
-    color: Theme.colors.text,
-    marginStart: -5,
-  },
-  field: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Theme.colors.background2,
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 12,
-  },
-  iconLeft: {
-    marginRight: 8,
-  },
-  iconRight: {
-    marginLeft: 8,
-    padding: 6,
-  },
-  input: {
-    flex: 1,
-    color: Theme.colors.text,
-    fontSize: Theme.sizes.h4,
-    fontFamily: Theme.fonts.onest,
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  forgotText: {
-    color: Theme.colors.primary,
-    fontFamily: Theme.fonts.onest,
-  },
-  error: {
-    color: Theme.colors.red,
-    marginBottom: 8,
-    fontFamily: Theme.fonts.onest,
-  },
-  submit: {
-    backgroundColor: Theme.colors.primary,
-    paddingVertical: 14,
-    borderRadius: 14,
-    alignItems: "center",
-    marginTop: 6,
-    marginBottom: 12,
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
-  },
-  submitText: {
-    color: Theme.colors.text,
-    fontSize: Theme.sizes.h4,
-    fontFamily: Theme.fonts.onestBold,
-  },
-  orRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginVertical: 10,
-  },
-  line: {
-    flex: 1,
-    height: 1,
-    backgroundColor: Theme.colors.background ?? Theme.colors.darkGray,
-  },
-  orText: {
-    marginHorizontal: 8,
-    color: Theme.colors.darkGray,
-    fontFamily: Theme.fonts.onest,
-  },
-  socialRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 8,
-    marginBottom: 20,
-  },
-  socialBtn: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 12,
-    backgroundColor: Theme.colors.background2,
-    alignItems: "center",
-    marginHorizontal: 4,
-  },
-  socialText: {
-    color: Theme.colors.text,
-    fontFamily: Theme.fonts.onest,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 8,
-    gap: 4,
-  },
-  footerText: {
-    color: Theme.colors.gray,
-    fontFamily: Theme.fonts.onest,
-  },
-  footerPolicy: {
-    color: Theme.colors.darkGray,
-    fontFamily: Theme.fonts.onest,
-    marginVertical: 8,
-  },
-  signupText: {
-    color: Theme.colors.primary,
-    fontFamily: Theme.fonts.onestBold,
-  },
-  googleBtn: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: Theme.colors.primary2,
-    backgroundColor: Theme.colors.modal,
-    paddingVertical: 12,
-    borderRadius: 14,
-    marginBottom: 12,
-  },
-  googleText: {
-    fontSize: Theme.sizes.h2,
-    fontFamily: Theme.fonts.onestBold,
-  },
-})
+const createStyles = (Theme: any) =>
+  StyleSheet.create({
+    wrapper: {
+      flex: 1,
+      width: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: Theme.colors.background,
+    },
+    container: {
+      padding: 20,
+      flex: 1,
+      width: "auto",
+      minWidth: 300,
+      maxWidth: 400,
+      justifyContent: "center",
+    },
+    loadingOverlay: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 50,
+    },
+    loader: {
+      width: 38,
+      height: 38,
+      alignSelf: "center",
+    },
+    header: {
+      flexDirection: "column",
+      gap: 10,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 32,
+    },
+    logo: {
+      width: 70,
+      height: 70,
+      resizeMode: "contain",
+      alignSelf: "center",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    title: {
+      fontFamily: Theme.fonts.onestBold,
+      fontSize: 36,
+      color: Theme.colors.text,
+      textAlign: "center",
+    },
+    field: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: Theme.colors.background2,
+      borderRadius: 16,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      marginBottom: 16,
+      borderWidth: 1,
+      borderColor: Theme.colors.ultraLightGray,
+      shadowColor: Theme.colors.text,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    iconLeft: {
+      marginRight: 12,
+    },
+    iconRight: {
+      marginLeft: 8,
+      padding: 8,
+      borderRadius: 8,
+    },
+    input: {
+      flex: 1,
+      color: Theme.colors.text,
+      fontSize: Theme.sizes.h4,
+      fontFamily: Theme.fonts.onest,
+      paddingVertical: 2,
+    },
+    row: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 16,
+      minHeight: 24,
+    },
+    forgotText: {
+      color: Theme.colors.primary,
+      fontFamily: Theme.fonts.onest,
+      fontSize: Theme.sizes.h5,
+    },
+    error: {
+      color: Theme.colors.red,
+      marginBottom: 8,
+      fontFamily: Theme.fonts.onest,
+      fontSize: Theme.sizes.h5,
+      flex: 1,
+    },
+    submit: {
+      backgroundColor: Theme.colors.primary,
+      paddingVertical: 16,
+      borderRadius: 16,
+      alignItems: "center",
+      marginTop: 8,
+      marginBottom: 16,
+      flexDirection: "row",
+      justifyContent: "center",
+      gap: 8,
+      shadowColor: Theme.colors.primary,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 4,
+    },
+    submitText: {
+      color: Theme.colors.modal,
+      fontSize: Theme.sizes.h4,
+      fontFamily: Theme.fonts.onestBold,
+      letterSpacing: 0.5,
+    },
+    orRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      marginVertical: 10,
+    },
+    line: {
+      flex: 1,
+      height: 1,
+      backgroundColor: Theme.colors.background ?? Theme.colors.darkGray,
+    },
+    orText: {
+      marginHorizontal: 8,
+      color: Theme.colors.darkGray,
+      fontFamily: Theme.fonts.onest,
+    },
+    dividerContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginVertical: 24,
+      gap: 12,
+    },
+    dividerLine: {
+      flex: 1,
+      height: 1,
+    },
+    dividerText: {
+      fontFamily: Theme.fonts.onest,
+      fontSize: Theme.sizes.h5,
+    },
+    socialRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      gap: 8,
+      marginBottom: 20,
+    },
+    socialBtn: {
+      flex: 1,
+      paddingVertical: 10,
+      borderRadius: 12,
+      backgroundColor: Theme.colors.background2,
+      alignItems: "center",
+      marginHorizontal: 4,
+    },
+    socialText: {
+      color: Theme.colors.text,
+      fontFamily: Theme.fonts.onest,
+    },
+    footer: {
+      flexDirection: "row",
+      justifyContent: "center",
+      marginTop: 12,
+      gap: 6,
+      flexWrap: "wrap",
+    },
+    footerText: {
+      color: Theme.colors.gray,
+      fontFamily: Theme.fonts.onest,
+      fontSize: Theme.sizes.h5,
+    },
+    footerPolicy: {
+      color: Theme.colors.darkGray,
+      fontFamily: Theme.fonts.onest,
+      marginVertical: 12,
+      fontSize: Theme.sizes.h5,
+      textDecorationLine: "underline",
+    },
+    signupText: {
+      color: Theme.colors.primary,
+      fontFamily: Theme.fonts.onestBold,
+      fontSize: Theme.sizes.h5,
+    },
+    googleBtn: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      borderWidth: 1.5,
+      borderColor: Theme.colors.primary2,
+      backgroundColor: Theme.colors.modal,
+      paddingVertical: 14,
+      borderRadius: 16,
+      marginBottom: 16,
+      shadowColor: Theme.colors.text,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+      gap: 2,
+    },
+    googleText: {
+      fontSize: Theme.sizes.h2,
+      fontFamily: Theme.fonts.onestBold,
+      letterSpacing: -0.5,
+    },
+  })

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   Animated,
   Pressable,
 } from "react-native"
-import { Theme } from "@/consts/Theme"
+import { useAppTheme } from "@/hooks/useAppTheme"
 import { VerifiedIcon } from "@/icons/Icons"
 import { useTranslation } from "react-i18next"
 import { auth } from "@/db/firebaseConfig"
@@ -21,6 +21,8 @@ export const WaitingVerification = () => {
   const [btnScale] = useState(new Animated.Value(1))
 
   const { t } = useTranslation()
+  const { Theme } = useAppTheme()
+  const styles = useMemo(() => createStyles(Theme), [Theme])
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -100,7 +102,7 @@ export const WaitingVerification = () => {
           accessibilityLabel="Sign in"
         >
           {loading ? (
-            <ActivityIndicator color={Theme.colors.text} style={{ width: 32, height: 32 }} />
+            <ActivityIndicator color="#FFFFFF" style={{ width: 32, height: 32 }} />
           ) : (
             <Text style={styles.submitText}>{t("resend_email_verification")}</Text>
           )}
@@ -119,7 +121,7 @@ export const WaitingVerification = () => {
         accessibilityLabel="Sign in"
       >
         {loading ? (
-          <ActivityIndicator color={Theme.colors.text} />
+          <ActivityIndicator color="#FFFFFF" />
         ) : (
           <Text style={styles.submitText}>{t("sign_out")}</Text>
         )}
@@ -128,62 +130,63 @@ export const WaitingVerification = () => {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Theme.colors.background,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 24,
-    gap: 12,
-  },
-  title: {
-    fontSize: Theme.sizes.h1,
-    fontFamily: Theme.fonts.onestBold,
-    color: Theme.colors.text,
-    marginBottom: 12,
-  },
-  subtitle: {
-    fontSize: Theme.sizes.h4,
-    fontFamily: Theme.fonts.onest,
-    color: Theme.colors.gray,
-    textAlign: "center",
-    lineHeight: 22,
-    marginBottom: 32,
-  },
-  loader: {
-    marginBottom: 16,
-  },
-  hint: {
-    fontSize: Theme.sizes.h5,
-    color: Theme.colors.gray,
-    fontFamily: Theme.fonts.onest,
-  },
-  submit: {
-    backgroundColor: Theme.colors.primary,
-    padding: 14,
-    borderRadius: 14,
-    alignItems: "center",
-    marginTop: 6,
-    marginBottom: 12,
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
-  },
-  submitText: {
-    color: Theme.colors.text,
-    fontSize: Theme.sizes.h4,
-    fontFamily: Theme.fonts.onestBold,
-  },
-  signout: {
-    backgroundColor: Theme.colors.red,
-    padding: 14,
-    borderRadius: 14,
-    alignItems: "center",
-    marginTop: 6,
-    marginBottom: 12,
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
-  },
-})
+const createStyles = (Theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: Theme.colors.background,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 24,
+      gap: 12,
+    },
+    title: {
+      fontSize: Theme.sizes.h1,
+      fontFamily: Theme.fonts.onestBold,
+      color: Theme.colors.text,
+      marginBottom: 12,
+    },
+    subtitle: {
+      fontSize: Theme.sizes.h4,
+      fontFamily: Theme.fonts.onest,
+      color: Theme.colors.gray,
+      textAlign: "center",
+      lineHeight: 22,
+      marginBottom: 32,
+    },
+    loader: {
+      marginBottom: 16,
+    },
+    hint: {
+      fontSize: Theme.sizes.h5,
+      color: Theme.colors.gray,
+      fontFamily: Theme.fonts.onest,
+    },
+    submit: {
+      backgroundColor: Theme.colors.primary,
+      padding: 14,
+      borderRadius: 14,
+      alignItems: "center",
+      marginTop: 6,
+      marginBottom: 12,
+      flexDirection: "row",
+      justifyContent: "center",
+      gap: 8,
+    },
+    submitText: {
+      color: "#FFFFFF",
+      fontSize: Theme.sizes.h4,
+      fontFamily: Theme.fonts.onestBold,
+    },
+    signout: {
+      backgroundColor: Theme.colors.red,
+      padding: 14,
+      borderRadius: 14,
+      alignItems: "center",
+      marginTop: 6,
+      marginBottom: 12,
+      flexDirection: "row",
+      justifyContent: "center",
+      gap: 8,
+    },
+  })
