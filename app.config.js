@@ -14,11 +14,14 @@ export default {
       resizeMode: "contain",
       backgroundColor: "#F1F1F1",
     },
-    platforms: ["android", "ios"],
+    platforms: ["android", "ios", "web"],
     ios: {
       supportsTablet: true,
       bundleIdentifier: "com.rilisentertainment.dressbook",
       googleServicesFile: "./GoogleService-Info.plist",
+    },
+    web: {
+      favicon: "./assets/icons/ic_brand.png",
     },
     android: {
       adaptiveIcon: {

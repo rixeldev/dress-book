@@ -441,7 +441,7 @@ export default function Settings() {
         />
 
         <SettingsButton
-          onPress={() => Linking.openURL("https://capelix.dev")}
+          onPress={() => Linking.openURL("https://rixel.dev")}
           title={t("site")}
           description={t("site_desc")}
           icon={<WebIcon color={Theme.colors.gray} />}
@@ -450,25 +450,25 @@ export default function Settings() {
         <Divider />
 
         <SettingsButton
-          onPress={() => Linking.openURL("https://capelix.dev/privacy")}
+          onPress={() => Linking.openURL("https://rixel.dev/privacy")}
           title={t("privacy_policy")}
           icon={<PrivacyIcon color={Theme.colors.gray} />}
         />
 
         <SettingsButton
-          onPress={() => Linking.openURL("https://capelix.dev/terms")}
+          onPress={() => Linking.openURL("https://rixel.dev/terms")}
           title={t("terms_conditions")}
           icon={<ListIcon color={Theme.colors.gray} />}
         />
 
         <SettingsButton
-          onPress={() => Linking.openURL("https://github.com/Capelix/dress-book")}
+          onPress={() => Linking.openURL("https://github.com/rixeldev/dress-book")}
           title="GitHub"
           icon={<GithubIcon color={Theme.colors.gray} />}
         />
 
         <SettingsButton
-          onPress={() => Linking.openURL("https://www.capelix.dev/#contact")}
+          onPress={() => Linking.openURL("https://www.rixel.dev/#contact")}
           title={t("feedback")}
           icon={<QuestionIcon color={Theme.colors.gray} />}
         />
