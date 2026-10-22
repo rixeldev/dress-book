@@ -53,6 +53,7 @@ export const LoginForm = () => {
 
   const googleSignin = async () => {
     setGoogleLoading(true)
+    setError(null)
 
     try {
       GoogleSignin.configure({
@@ -62,21 +63,39 @@ export const LoginForm = () => {
         forceCodeForRefreshToken: true,
       })
 
-      try {
-        await GoogleSignin.signOut()
-        await GoogleSignin.revokeAccess()
-      } catch (e) {
-        console.log(e)
-      }
-
       await GoogleSignin.hasPlayServices()
 
       const signInResult = await GoogleSignin.signIn()
-      const idToken = signInResult.data?.idToken
+
+      if (!signInResult.data?.idToken) {
+        throw new Error("Failed to get ID token from Google sign-in")
+      }
+
+      const idToken = signInResult.data.idToken
       const googleCredentials = GoogleAuthProvider.credential(idToken)
       await signInWithCredential(getAuth(), googleCredentials)
+
+      // Session is now established - onAuthStateChanged will handle navigation
     } catch (error: any) {
-      console.log(error)
+      console.error("Google sign-in error:", error)
+
+      // Handle user cancellation gracefully
+      if (error.code === "SIGN_IN_CANCELLED" || error.message?.includes("cancel")) {
+        // User cancelled, don't show error
+        setError(null)
+      } else if (error.code === "SIGN_IN_REQUIRED") {
+        setError(t("error_login_google_signin_required"))
+        AccessibilityInfo.announceForAccessibility(t("error_login_google_signin_required"))
+      } else if (error.code === "IN_PROGRESS") {
+        // Sign-in already in progress, ignore
+        setError(null)
+      } else {
+        // Other errors
+        const errorMessage = error.message || t("error_login_google_failed")
+        setError(errorMessage)
+        AccessibilityInfo.announceForAccessibility(errorMessage)
+        Vibration.vibrate(100)
+      }
     } finally {
       setGoogleLoading(false)
     }

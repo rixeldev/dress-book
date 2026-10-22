@@ -4,7 +4,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { Link, Stack } from "expo-router"
 import { Image, Pressable, View } from "react-native"
-import { CogIcon } from "@/icons/Icons"
+import { CogIcon, SearchIcon } from "@/icons/Icons"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { FirebaseAuthTypes, onAuthStateChanged } from "@react-native-firebase/auth"
@@ -132,11 +132,16 @@ function AppContent() {
                   />
                 ),
                 headerRight: () => (
-                  <Link asChild href="/settings">
-                    <Pressable>
-                      <CogIcon color={theme.colors.text} />
+                  <View style={{ flexDirection: "row", gap: 16, alignItems: "center" }}>
+                    <Pressable onPress={() => {}}>
+                      <SearchIcon color={theme.colors.text} />
                     </Pressable>
-                  </Link>
+                    <Link asChild href="/settings">
+                      <Pressable>
+                        <CogIcon color={theme.colors.text} />
+                      </Pressable>
+                    </Link>
+                  </View>
                 ),
               }}
             >

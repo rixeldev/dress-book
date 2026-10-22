@@ -57,6 +57,8 @@
   "error_login_email_invalid": "Formato de correo inválido",
   "error_login_password_min": "La contraseña debe tener al menos 6 caracteres",
   "error_login_email_password_invalid": "Correo o contraseña inválidos",
+  "error_login_google_signin_required": "Se requiere inicio de sesión con Google",
+  "error_login_google_failed": "Error al iniciar sesión con Google. Por favor, intenta de nuevo.",
   "account": "Cuenta",
   "user": "Usuario",
   "not_signed_in": "Sin iniciar sesión",

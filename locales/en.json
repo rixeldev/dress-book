@@ -57,6 +57,8 @@
   "error_login_email_invalid": "Invalid email format",
   "error_login_password_min": "Password must be at least 6 characters",
   "error_login_email_password_invalid": "Invalid email or password",
+  "error_login_google_signin_required": "Google sign-in is required",
+  "error_login_google_failed": "Google sign-in failed. Please try again.",
   "account": "Account",
   "user": "User",
   "not_signed_in": "Not signed in",

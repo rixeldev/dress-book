@@ -211,3 +211,7 @@ export const MoonIcon = (props: any) => (
 export const AutoThemeIcon = (props: any) => (
   <Ionicons name="phone-portrait-outline" size={24} color={Theme.colors.text} {...props} />
 )
+
+export const SearchIcon = (props: any) => (
+  <Ionicons name="search-outline" size={24} color={Theme.colors.text} {...props} />
+)
