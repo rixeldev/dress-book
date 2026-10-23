@@ -328,5 +328,6 @@
   "client_measurements_desc": "Versiones de medidas de este cliente.",
   "no_measurements_yet": "Aún no hay medidas guardadas.",
   "taken_on": "Tomada el",
-  "measurement_outdated": "Podría estar desactualizada"
+  "measurement_outdated": "Podría estar desactualizada",
+  "export_measurement_sheet": "Exportar hoja de medidas"
 }

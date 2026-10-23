@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { getClient, archiveClient } from "@/features/clients/repository"
 import { getMeasurements } from "@/features/measurements/repository"
 import type { Measurement } from "@/interfaces/Measurement"
+import { exportMeasurementSheet } from "@/services/pdf"
 import type { Client } from "@/interfaces/Client"
 import { Button, Card, EmptyState, Screen, SectionHeader } from "@/components/ui"
 
@@ -164,6 +165,18 @@ export default function ClientDetailScreen() {
         <Button
           label={t("take_measurements")}
           onPress={() => router.push(`/measurement/new?clientId=${client.id}`)}
+          fullWidth
+        />
+        <Button
+          label={t("export_measurement_sheet")}
+          onPress={async () => {
+            const latest = measurements[0]
+            await exportMeasurementSheet({
+              clientName: client.name,
+              measurements: (latest?.values ?? {}) as unknown as Record<string, Record<string, number | undefined>>,
+            })
+          }}
+          variant="secondary"
           fullWidth
         />
         <Button
