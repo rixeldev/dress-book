@@ -10,7 +10,7 @@ import { getEmptyMeasurements } from "@/libs/measurementTemplates"
 import { toCanonicalCm, fromCanonicalCm } from "@/libs/units"
 import type { FullBodyMeasurements } from "@/interfaces/FullBodyMeasurements"
 import type { RegType } from "@/interfaces/Regs"
-import { Button, Card, Chip, MeasurementRow, Screen, SegmentedControl, TextField } from "@/components/ui"
+import { Button, Card, Chip, MeasurementDiagram, MeasurementRow, Screen, SegmentedControl, TextField } from "@/components/ui"
 
 const types: RegType[] = ["Clothes", "Curtains", "Others"]
 
@@ -182,6 +182,8 @@ export default function MeasurementStudioScreen() {
             fullWidth
           />
         )}
+
+        <MeasurementDiagram type={type} activeCategory={expanded.size === 1 ? [...expanded][0] : undefined} />
 
         {categories.map((category) => {
           const fields = (values as unknown as Record<string, Record<string, number | undefined>>)[category] ?? {}
