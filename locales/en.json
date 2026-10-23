@@ -369,5 +369,6 @@
   "starts_at_hint": "Use ISO format: 2026-05-01T10:00:00",
   "save_appointment": "Save appointment",
   "appointment_save_error": "We could not save this appointment. Please try again.",
-  "appointment_reminder_body": "Scheduled appointment"
+  "appointment_reminder_body": "Scheduled appointment",
+  "edit_fabric": "Edit fabric"
 }

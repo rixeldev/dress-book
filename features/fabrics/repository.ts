@@ -35,6 +35,14 @@ export async function getFabrics(userId: string): Promise<Fabric[]> {
     .sort((left: Fabric, right: Fabric) => left.name.localeCompare(right.name))
 }
 
+export async function updateFabric(
+  userId: string,
+  fabricId: string,
+  input: Partial<Omit<Fabric, "id" | "userId" | "updatedAt">>,
+): Promise<void> {
+  await setDoc(doc(db, "users", userId, "fabrics", fabricId), { ...input, updatedAt: new Date().toISOString() }, { merge: true })
+}
+
 export async function deleteFabric(userId: string, fabricId: string): Promise<void> {
   await deleteDoc(doc(db, "users", userId, "fabrics", fabricId))
 }

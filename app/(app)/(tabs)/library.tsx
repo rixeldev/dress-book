@@ -4,7 +4,7 @@ import { router } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
-import { getFabrics } from "@/features/fabrics/repository"
+import { getFabrics, deleteFabric } from "@/features/fabrics/repository"
 import type { Fabric } from "@/interfaces/Fabric"
 import { Badge, Button, EmptyState, ListRow, Screen, SectionHeader, Skeleton } from "@/components/ui"
 import { PackageIcon } from "@/icons/Icons"
@@ -74,14 +74,25 @@ export default function LibraryScreen() {
             item.lowStockThreshold !== null &&
             item.quantity <= item.lowStockThreshold
           return (
-            <ListRow
-              title={item.name}
-              description={`${item.supplier ?? t("no_supplier")} · ${item.quantity ?? "—"} ${item.unit}`}
-              trailing={
-                lowStock ? <Badge label={t("low_stock")} tone="warning" dot /> : undefined
-              }
-              onPress={() => {}}
-            />
+            <>
+              <ListRow
+                title={item.name}
+                description={`${item.supplier ?? t("no_supplier")} · ${item.quantity ?? "—"} ${item.unit}`}
+                trailing={
+                  lowStock ? <Badge label={t("low_stock")} tone="warning" dot /> : undefined
+                }
+                onPress={() => router.push(`/fabric/edit?id=${item.id}`)}
+              />
+              <Button
+                label={t("delete")}
+                onPress={async () => {
+                  if (!user) return
+                  await deleteFabric(user.uid, item.id)
+                  await load()
+                }}
+                variant="ghost"
+              />
+            </>
           )
         }}
       />
