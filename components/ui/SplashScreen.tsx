@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react"
-import { Animated, Easing, StyleSheet } from "react-native"
+import { useEffect, useRef, useState } from "react"
+import { AccessibilityInfo, Animated, Easing, StyleSheet } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useAppTheme } from "@/hooks/useAppTheme"
 
@@ -7,8 +7,28 @@ export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
   const { Theme } = useAppTheme()
   const opacity = useRef(new Animated.Value(0)).current
   const scale = useRef(new Animated.Value(0.92)).current
+  const [reduceMotion, setReduceMotion] = useState(false)
 
   useEffect(() => {
+    let mounted = true
+    AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
+      if (mounted) setReduceMotion(enabled)
+    })
+    const subscription = AccessibilityInfo.addEventListener("reduceMotionChanged", setReduceMotion)
+    return () => {
+      mounted = false
+      subscription.remove()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (reduceMotion) {
+      opacity.setValue(1)
+      scale.setValue(1)
+      const timer = setTimeout(onFinish, 300)
+      return () => clearTimeout(timer)
+    }
+
     Animated.parallel([
       Animated.timing(opacity, {
         toValue: 1,
@@ -27,7 +47,7 @@ export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
 
     const timer = setTimeout(onFinish, 1800)
     return () => clearTimeout(timer)
-  }, [])
+  }, [reduceMotion])
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: Theme.colors.background }]}>
