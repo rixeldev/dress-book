@@ -1,4 +1,4 @@
-import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc } from "@react-native-firebase/firestore"
+import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, limit, orderBy, query, setDoc, startAfter } from "@react-native-firebase/firestore"
 import type { Order, OrderStatus } from "@/interfaces/Order"
 import { createId } from "@/libs/ids"
 import { orderSchema } from "@/libs/schemas"
@@ -38,18 +38,29 @@ export async function createOrder(
 }
 
 export async function getOrders(userId: string): Promise<Order[]> {
-  const snapshot = await getDocs(collection(db, "users", userId, "orders"))
-  return snapshot.docs
-    .map((snapshotDoc: { id: string; data: () => unknown }) => ({
-      ...(snapshotDoc.data() as Order),
-      id: snapshotDoc.id,
-    }))
-    .sort((left: Order, right: Order) => {
-      if (!left.dueDate && !right.dueDate) return right.updatedAt.localeCompare(left.updatedAt)
-      if (!left.dueDate) return 1
-      if (!right.dueDate) return -1
-      return left.dueDate.localeCompare(right.dueDate)
-    })
+  const page = await getOrdersPage(userId, 200)
+  return page.items
+}
+
+export async function getOrdersPage(
+  userId: string,
+  pageSize = 30,
+  cursor?: Order | null,
+): Promise<{ items: Order[]; nextCursor: Order | null; hasMore: boolean }> {
+  const constraints = [orderBy("dueDate", "asc"), limit(pageSize + 1)]
+  const pageQuery = cursor && cursor.dueDate
+    ? query(collection(db, "users", userId, "orders"), orderBy("dueDate", "asc"), limit(pageSize + 1), startAfter(cursor.dueDate))
+    : query(collection(db, "users", userId, "orders"), orderBy("dueDate", "asc"), limit(pageSize + 1))
+  const snapshot = await getDocs(pageQuery)
+  const docs = snapshot.docs.slice(0, pageSize)
+  const items = docs.map((snapshotDoc: { id: string; data: () => unknown }) => ({
+    ...(snapshotDoc.data() as Order),
+    id: snapshotDoc.id,
+  }))
+  const hasMore = snapshot.docs.length > pageSize
+  const lastDoc = docs[docs.length - 1]
+  const nextCursor = hasMore && lastDoc ? ({ ...(lastDoc.data() as Order), id: lastDoc.id } as Order) : null
+  return { items, nextCursor, hasMore }
 }
 
 export async function getOrder(userId: string, orderId: string): Promise<Order | null> {

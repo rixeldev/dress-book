@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, getFirestore, setDoc } from "@react-native-firebase/firestore"
+import { collection, doc, getDoc, getDocs, getFirestore, limit, orderBy, query, setDoc, startAfter } from "@react-native-firebase/firestore"
 import type { Client, NewClient } from "@/interfaces/Client"
 
 const db = getFirestore()
@@ -52,14 +52,25 @@ export async function archiveClient(userId: string, clientId: string): Promise<v
 }
 
 export async function getClients(userId: string): Promise<Client[]> {
-  const snapshot = await getDocs(collection(db, "users", userId, "clients"))
+  const page = await getClientsPage(userId, 200)
+  return page.items
+}
 
-  const clients = snapshot.docs.map(
-    (snapshotDoc: { id: string; data: () => unknown }) =>
-      ({ ...(snapshotDoc.data() as Client), id: snapshotDoc.id }) as Client,
-  )
-
-  return clients
+export async function getClientsPage(
+  userId: string,
+  pageSize = 30,
+  cursor?: Client | null,
+): Promise<{ items: Client[]; nextCursor: Client | null; hasMore: boolean }> {
+  const pageQuery = cursor
+    ? query(collection(db, "users", userId, "clients"), orderBy("name", "asc"), limit(pageSize + 1), startAfter(cursor.name))
+    : query(collection(db, "users", userId, "clients"), orderBy("name", "asc"), limit(pageSize + 1))
+  const snapshot = await getDocs(pageQuery)
+  const docs = snapshot.docs.slice(0, pageSize)
+  const items = docs
+    .map((snapshotDoc: { id: string; data: () => unknown }) => ({ ...(snapshotDoc.data() as Client), id: snapshotDoc.id }) as Client)
     .filter((client: Client) => !client.archived)
-    .sort((left: Client, right: Client) => left.name.localeCompare(right.name))
+  const hasMore = snapshot.docs.length > pageSize
+  const lastDoc = docs[docs.length - 1]
+  const nextCursor = hasMore && lastDoc ? ({ ...(lastDoc.data() as Client), id: lastDoc.id } as Client) : null
+  return { items, nextCursor, hasMore }
 }
