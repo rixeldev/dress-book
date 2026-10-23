@@ -530,8 +530,9 @@ export default function Settings() {
               textAlign: "center",
               width: "100%",
               color: Theme.colors.darkGray,
-              fontFamily: Theme.fonts.onest,
-              fontSize: Theme.sizes.h5,
+              fontFamily: Theme.fonts.display,
+              fontSize: Theme.fontSizes.h1,
+              lineHeight: Theme.lineHeights.h1,
             }}
           >
             Dress Book

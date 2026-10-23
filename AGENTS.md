@@ -68,7 +68,9 @@ Google Sign-In needs the SHA-1 and SHA-256 of every signing key registered in th
 ## UI and i18n conventions
 
 - Read the live theme with `useAppTheme()` → `{ Theme, isDark, themeMode, setThemeMode }`. Do not import the static `Theme` from `consts/Theme.ts` for screen UI. Build styles with `useMemo(() => createStyles(Theme), [Theme])`.
-- Fonts are `Theme.fonts.onest` and `Theme.fonts.onestBold`, loaded in `app/_layout.tsx`.
+- Use the semantic tokens for new UI: `Theme.semantic.bg|text|accent|state|border`, `Theme.spacing`, `Theme.radius`, `Theme.fontSizes`, `Theme.lineHeights`, `Theme.motion`, and `Theme.elevation`. Legacy `Theme.colors.*` aliases remain for existing screens; migrate them as screens are touched.
+- Fonts are `Theme.fonts.onest`, `Theme.fonts.onestBold`, and `Theme.fonts.display` (Fraunces SemiBold). Only the 600 weight of Fraunces is loaded; import it from `@expo-google-fonts/fraunces/600SemiBold` so the other weights stay out of the bundle.
 - Icons come from `icons/Icons.tsx`; their default color is the light theme's text color, so pass `color={Theme.colors...}` explicitly.
+- Brand assets are generated, not hand-edited: edit the SVGs in `assets/brand/`, then run `pnpm icons`. `app.config.js`, the adaptive icon, splash, favicon, and `assets/icons/ic_brand.png` all read from the generated files. `components/ui/SplashScreen.tsx` animates the mark; it no longer uses the Lottie file.
 - i18n resources are statically imported in `services/i18next.ts`. Add every new key to both `locales/en.json` and `locales/es.json`; keys are not typed.
 - `app/settings.tsx` imports `app.config.js` for the app version. Keep it as `export default` with `expo.android.version` when changing versions.

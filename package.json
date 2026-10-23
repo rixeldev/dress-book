@@ -14,9 +14,11 @@
     "test:watch": "jest --watch",
     "test:ci": "jest --ci --runInBand",
     "test:rules": "firebase emulators:exec --only firestore \"jest --config jest.rules.config.js --runInBand\"",
-    "emulators": "firebase emulators:start --only firestore"
+    "emulators": "firebase emulators:start --only firestore",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
+    "@expo-google-fonts/fraunces": "^0.4.1",
     "@expo/metro-runtime": "^6.1.2",
     "@expo/vector-icons": "^15.0.3",
     "@gorhom/bottom-sheet": "^5.2.6",
@@ -78,6 +80,7 @@
     "prettier-plugin-astro-organize-imports": "^0.4.11",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "react-test-renderer": "19.1.0",
+    "sharp": "^0.35.5",
     "typescript": "~5.9.2"
   },
   "private": true

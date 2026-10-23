@@ -519,8 +519,9 @@ const createStyles = (Theme: any) =>
       alignItems: "center",
     },
     title: {
-      fontFamily: Theme.fonts.onestBold,
-      fontSize: 36,
+      fontFamily: Theme.fonts.display,
+      fontSize: Theme.fontSizes.display,
+      lineHeight: Theme.lineHeights.display,
       color: Theme.colors.text,
       textAlign: "center",
     },

@@ -16,6 +16,7 @@ import { WaitingVerification } from "@/components/auth/WaitingVerification"
 import * as RNLocalize from "react-native-localize"
 import { auth } from "@/db/firebaseConfig"
 import { useFonts } from "expo-font"
+import { Fraunces_600SemiBold } from "@expo-google-fonts/fraunces/600SemiBold"
 import SplashScreen from "@/components/ui/SplashScreen"
 import { LoginForm } from "@/components/auth/LoginForm"
 import { useStorage } from "@/hooks/useStorage"
@@ -84,6 +85,7 @@ function AppContent() {
   const [loaded] = useFonts({
     Onest: require("../assets/fonts/onest-latin-400-normal.ttf"),
     OnestBold: require("../assets/fonts/onest-latin-800-normal.ttf"),
+    FrauncesSemiBold: Fraunces_600SemiBold,
   })
 
   if (!loaded || !isAppReady) {
@@ -121,8 +123,8 @@ function AppContent() {
                 headerTintColor: theme.colors.accent,
                 headerTitle: "Dress Book",
                 headerTitleStyle: {
-                  fontSize: theme.sizes.h0,
-                  fontFamily: theme.fonts.onestBold,
+                  fontSize: theme.fontSizes.h1,
+                  fontFamily: theme.fonts.display,
                 },
                 headerLeft: () => (
                   <Image
