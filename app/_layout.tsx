@@ -4,7 +4,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { Link, Stack } from "expo-router"
 import { Image, Pressable, View } from "react-native"
-import { CogIcon, SearchIcon } from "@/icons/Icons"
+import { CogIcon } from "@/icons/Icons"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { FirebaseAuthTypes, onAuthStateChanged } from "@react-native-firebase/auth"
@@ -20,6 +20,7 @@ import SplashScreen from "@/components/ui/SplashScreen"
 import { LoginForm } from "@/components/auth/LoginForm"
 import { useStorage } from "@/hooks/useStorage"
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 function AppContent() {
   const [isAppReady, setIsAppReady] = useState(true)
@@ -49,11 +50,9 @@ function AppContent() {
       if (!vibration) await setItem("vibration", String(true))
       i18n.changeLanguage(languageCode ?? localeCode)
 
-      // Initialize Mobile Ads for child-directed treatment and under age of consent
+      // Dress Book is a professional tool for adults, not a child-directed app.
       await mobileAds().setRequestConfiguration({
-        maxAdContentRating: MaxAdContentRating.G,
-        tagForChildDirectedTreatment: true,
-        tagForUnderAgeOfConsent: true,
+        maxAdContentRating: MaxAdContentRating.PG,
       })
 
       await mobileAds().initialize()
@@ -101,7 +100,7 @@ function AppContent() {
 
       <GestureHandlerRootView style={{ flex: 1 }}>
         {user ? (
-          !user?.emailVerified && user?.uid !== "893MNyYP3JT206lDtBWhKvTMWIf2" ? (
+          !user?.emailVerified ? (
             <View
               style={{
                 flex: 1,
@@ -132,16 +131,11 @@ function AppContent() {
                   />
                 ),
                 headerRight: () => (
-                  <View style={{ flexDirection: "row", gap: 16, alignItems: "center" }}>
-                    <Pressable onPress={() => {}}>
-                      <SearchIcon color={theme.colors.text} />
+                  <Link asChild href="/settings">
+                    <Pressable>
+                      <CogIcon color={theme.colors.text} />
                     </Pressable>
-                    <Link asChild href="/settings">
-                      <Pressable>
-                        <CogIcon color={theme.colors.text} />
-                      </Pressable>
-                    </Link>
-                  </View>
+                  </Link>
                 ),
               }}
             >
@@ -163,7 +157,9 @@ function AppContent() {
 export default function Layout() {
   return (
     <ThemeProvider>
-      <AppContent />
+      <ErrorBoundary>
+        <AppContent />
+      </ErrorBoundary>
     </ThemeProvider>
   )
 }

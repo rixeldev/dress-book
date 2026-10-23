@@ -1,0 +1,27 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // v1 profile photos: Profiles/{uid}
+    match /Profiles/{uid} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.size < 10 * 1024 * 1024
+        && (request.resource.contentType == null
+          || request.resource.contentType.matches('image/.*'));
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // v2 user-owned media: users/{uid}/...
+    match /users/{uid}/{allPaths=**} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.size < 10 * 1024 * 1024
+        && (request.resource.contentType == null
+          || request.resource.contentType.matches('image/.*'));
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}

@@ -1,0 +1,39 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // Legacy records created by the v1 app. Kept until the Client/Order
+    // migration is complete so existing users can still read their data.
+    match /regs/{regId} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if signedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid;
+      allow delete: if signedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // Public release metadata used by the in-app update check before sign-in.
+    match /version/{versionId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // All future user-owned data lives under users/{uid}.
+    match /users/{uid} {
+      allow read, write: if isOwner(uid);
+    }
+
+    match /users/{uid}/{document=**} {
+      allow read, write: if isOwner(uid);
+    }
+  }
+}

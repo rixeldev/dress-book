@@ -21,6 +21,7 @@ import {
 import { Stack, useNavigation } from "expo-router"
 import { useEffect, useRef, useState } from "react"
 import {
+  Alert,
   Image,
   Linking,
   Pressable,
@@ -49,6 +50,8 @@ import { ref, uploadBytesResumable, getDownloadURL } from "@react-native-firebas
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { Divider } from "@/components/Divider"
 import { SettingsButton } from "@/components/SettingsButton"
+import { CustomModal } from "@/components/ui/CustomModal"
+import { deleteAccount, RecentLoginRequiredError } from "@/services/account"
 
 const languageCodes = ["en", "es"]
 const appVersion = pkg.expo.android.version
@@ -59,6 +62,7 @@ export default function Settings() {
   const [image, setImage] = useState("")
   const [progress, setProgress] = useState(0)
   const [modalVisible, setModalVisible] = useState(false)
+  const [deleteAccountModalVisible, setDeleteAccountModalVisible] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [connection, setConnection] = useState(true)
   const [userName, setUserName] = useState<string | null | undefined>("Anon-12345678")
@@ -138,6 +142,28 @@ export default function Settings() {
   const handleSignOut = () => {
     if (auth) {
       signOut(auth)
+    }
+  }
+
+  const handleDeleteAccount = async () => {
+    setDeleteAccountModalVisible(false)
+
+    try {
+      await deleteAccount()
+    } catch (error: any) {
+      if (
+        error instanceof RecentLoginRequiredError ||
+        error?.code === "auth/requires-recent-login"
+      ) {
+        Alert.alert(
+          t("delete_account_recent_login_title"),
+          t("delete_account_recent_login_desc"),
+        )
+        return
+      }
+
+      console.log("Failed to delete account:", error)
+      Alert.alert(t("error"), t("delete_account_failed"))
     }
   }
 
@@ -475,6 +501,14 @@ export default function Settings() {
 
         <Divider />
 
+        <SettingsButton
+          onPress={() => setDeleteAccountModalVisible(true)}
+          title={t("delete_account")}
+          description={t("delete_account_hint")}
+          icon={<LogoutIcon color={Theme.colors.red} />}
+          color={Theme.colors.red}
+        />
+
         {auth && (
           <SettingsButton
             onPress={handleSignOut}
@@ -516,6 +550,16 @@ export default function Settings() {
           </Text>
         </View>
       </ScrollView>
+
+      <CustomModal
+        title={t("delete_account")}
+        description={t("delete_account_desc")}
+        modalVisible={deleteAccountModalVisible}
+        onRequestClose={() => setDeleteAccountModalVisible(false)}
+        onAccept={handleDeleteAccount}
+        acceptLabel={t("delete")}
+        destructive
+      />
 
       <BottomSheetModal title={t("language")} ref={sheetRef}>
         <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>

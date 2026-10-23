@@ -204,5 +204,15 @@
   "follow_system": "Seguir sistema",
   "light_mode": "Modo claro",
   "dark_mode": "Modo oscuro",
-  "feedback": "Comentarios"
+  "feedback": "Comentarios",
+  "error_boundary_title": "Algo salió mal",
+  "error_boundary_desc": "La aplicación encontró un error inesperado. Tus registros guardados están a salvo.",
+  "try_again": "Intentar de nuevo",
+  "delete_account": "Eliminar cuenta",
+  "delete_account_hint": "Eliminar tu cuenta y tus datos permanentemente",
+  "delete_account_desc": "Esto elimina permanentemente tu cuenta, registros y foto de perfil. Esta acción no se puede deshacer.",
+  "delete_account_recent_login_title": "Inicia sesión de nuevo",
+  "delete_account_recent_login_desc": "Por seguridad, cierra sesión y vuelve a iniciarla, luego intenta eliminar tu cuenta nuevamente.",
+  "delete_account_failed": "No se pudo eliminar tu cuenta. Inténtalo de nuevo.",
+  "delete": "Eliminar"
 }

@@ -23,7 +23,6 @@ import { useAppTheme } from "@/hooks/useAppTheme"
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon } from "@/icons/Icons"
 import {
   createUserWithEmailAndPassword,
-  getAuth,
   GoogleAuthProvider,
   sendEmailVerification,
   sendPasswordResetEmail,
@@ -73,7 +72,7 @@ export const LoginForm = () => {
 
       const idToken = signInResult.data.idToken
       const googleCredentials = GoogleAuthProvider.credential(idToken)
-      await signInWithCredential(getAuth(), googleCredentials)
+      await signInWithCredential(auth, googleCredentials)
 
       // Session is now established - onAuthStateChanged will handle navigation
     } catch (error: any) {

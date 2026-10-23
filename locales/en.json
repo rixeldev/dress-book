@@ -204,5 +204,15 @@
   "follow_system": "Follow system",
   "light_mode": "Light mode",
   "dark_mode": "Dark mode",
-  "feedback": "Feedback"
+  "feedback": "Feedback",
+  "error_boundary_title": "Something went wrong",
+  "error_boundary_desc": "The app hit an unexpected error. Your saved records are safe.",
+  "try_again": "Try again",
+  "delete_account": "Delete account",
+  "delete_account_hint": "Permanently remove your account and data",
+  "delete_account_desc": "This permanently deletes your account, records, and profile photo. This action cannot be undone.",
+  "delete_account_recent_login_title": "Please sign in again",
+  "delete_account_recent_login_desc": "For security, sign out and sign in again, then retry deleting your account.",
+  "delete_account_failed": "Could not delete your account. Please try again.",
+  "delete": "Delete"
 }

@@ -9,6 +9,8 @@ interface Props {
   modalVisible: boolean
   onRequestClose: () => void
   onAccept: () => void
+  acceptLabel?: string
+  destructive?: boolean
 }
 
 export const CustomModal = ({
@@ -17,6 +19,8 @@ export const CustomModal = ({
   modalVisible,
   onRequestClose,
   onAccept,
+  acceptLabel,
+  destructive = false,
 }: Props) => {
   const { t } = useTranslation()
   const { Theme } = useAppTheme()
@@ -87,10 +91,10 @@ export const CustomModal = ({
               <Text
                 style={{
                   fontFamily: Theme.fonts.onest,
-                  color: Theme.colors.accent,
+                  color: destructive ? Theme.colors.red : Theme.colors.accent,
                 }}
               >
-                {t("accept")}
+                {acceptLabel ?? t("accept")}
               </Text>
             </Pressable>
           </View>
