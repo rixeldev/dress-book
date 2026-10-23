@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next"
 import { auth } from "@/db/firebaseConfig"
 import { sendEmailVerification, signOut } from "@react-native-firebase/auth"
 import { router } from "expo-router"
+import { useAuth } from "@/contexts/AuthContext"
 
 export const WaitingVerification = () => {
   const [checking, setChecking] = useState(false)
@@ -22,6 +23,7 @@ export const WaitingVerification = () => {
 
   const { t } = useTranslation()
   const { Theme } = useAppTheme()
+  const { refreshUser } = useAuth()
   const styles = useMemo(() => createStyles(Theme), [Theme])
 
   useEffect(() => {
@@ -30,9 +32,9 @@ export const WaitingVerification = () => {
       if (user && !checking) {
         setChecking(true)
 
-        await user.reload()
+        await refreshUser()
 
-        if (user.emailVerified) {
+        if (auth.currentUser?.emailVerified) {
           clearInterval(interval)
           ToastAndroid.showWithGravity(t("email_verified"), ToastAndroid.SHORT, ToastAndroid.CENTER)
           router.replace("/")
@@ -99,7 +101,7 @@ export const WaitingVerification = () => {
             loading && { opacity: 0.8 },
           ]}
           accessibilityRole="button"
-          accessibilityLabel="Sign in"
+          accessibilityLabel={t("resend_email_verification")}
         >
           {loading ? (
             <ActivityIndicator color="#FFFFFF" style={{ width: 32, height: 32 }} />
@@ -118,7 +120,7 @@ export const WaitingVerification = () => {
           loading && { opacity: 0.8 },
         ]}
         accessibilityRole="button"
-        accessibilityLabel="Sign in"
+        accessibilityLabel={t("sign_out")}
       >
         {loading ? (
           <ActivityIndicator color="#FFFFFF" />

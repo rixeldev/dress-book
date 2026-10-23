@@ -2,42 +2,30 @@ import "@/services/i18next"
 import { StatusBar } from "expo-status-bar"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
-import { Link, Stack } from "expo-router"
-import { Image, Pressable, View } from "react-native"
-import { CogIcon } from "@/icons/Icons"
+import { Stack } from "expo-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { FirebaseAuthTypes, onAuthStateChanged } from "@react-native-firebase/auth"
 import mobileAds, { MaxAdContentRating } from "react-native-google-mobile-ads"
 import { AppVersionUpdate } from "@/components/AppVersionUpdate"
 import { FetchVersion } from "@/db/FetchVersion"
 import { getVersion } from "react-native-device-info"
-import { WaitingVerification } from "@/components/auth/WaitingVerification"
 import * as RNLocalize from "react-native-localize"
-import { auth } from "@/db/firebaseConfig"
 import { useFonts } from "expo-font"
 import { Fraunces_600SemiBold } from "@expo-google-fonts/fraunces/600SemiBold"
 import SplashScreen from "@/components/ui/SplashScreen"
-import { LoginForm } from "@/components/auth/LoginForm"
 import { useStorage } from "@/hooks/useStorage"
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext"
+import { AuthProvider, useAuth } from "@/contexts/AuthContext"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 
-function AppContent() {
-  const [isAppReady, setIsAppReady] = useState(true)
+function RootNavigator() {
   const [isAppUpdated, setIsAppUpdated] = useState<boolean | null>(null)
-  const [initializing, setInitializing] = useState(true)
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
+  const [loading, setLoading] = useState(true)
 
   const { i18n } = useTranslation()
   const { getItem, setItem } = useStorage()
   const { theme, isDark } = useTheme()
-
-  const handleAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
-    setUser(user)
-    if (initializing) setInitializing(false)
-  }
+  const { user, initializing } = useAuth()
 
   useEffect(() => {
     setLoading(true)
@@ -77,9 +65,6 @@ function AppContent() {
     }
 
     loadSettings()
-
-    const subscriber = onAuthStateChanged(auth, handleAuthStateChanged)
-    return subscriber
   }, [])
 
   const [loaded] = useFonts({
@@ -88,68 +73,25 @@ function AppContent() {
     FrauncesSemiBold: Fraunces_600SemiBold,
   })
 
-  if (!loaded || !isAppReady) {
-    return <SplashScreen onFinish={() => setIsAppReady(true)} />
-  }
-
-  if (user && !isAppUpdated && loaded && isAppReady && !loading) {
-    return <AppVersionUpdate />
-  }
+  const isBooting = !loaded || initializing || loading
+  const needsUpdate = Boolean(user) && isAppUpdated === false
 
   return (
     <SafeAreaProvider style={{ height: "100%", backgroundColor: theme.colors.background }}>
       <StatusBar style={isDark ? "light" : "dark"} />
-
       <GestureHandlerRootView style={{ flex: 1 }}>
-        {user ? (
-          !user?.emailVerified ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <WaitingVerification />
-            </View>
-          ) : (
-            <Stack
-              screenOptions={{
-                animationMatchesGesture: true,
-                animation: "default",
-                animationDuration: 100,
-                contentStyle: { backgroundColor: theme.colors.background },
-                headerStyle: { backgroundColor: theme.colors.background },
-                headerTintColor: theme.colors.accent,
-                headerTitle: "Dress Book",
-                headerTitleStyle: {
-                  fontSize: theme.fontSizes.h1,
-                  fontFamily: theme.fonts.display,
-                },
-                headerLeft: () => (
-                  <Image
-                    source={require("@/assets/icons/ic_brand.png")}
-                    style={{ width: 30, height: 30, resizeMode: "contain", marginEnd: 6 }}
-                  />
-                ),
-                headerRight: () => (
-                  <Link asChild href="/settings">
-                    <Pressable>
-                      <CogIcon color={theme.colors.text} />
-                    </Pressable>
-                  </Link>
-                ),
-              }}
-            >
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="settings" />
-              <Stack.Screen name="details" options={{ headerShown: false }} />
-            </Stack>
-          )
+        {isBooting ? (
+          <SplashScreen onFinish={() => {}} />
+        ) : needsUpdate ? (
+          <AppVersionUpdate />
         ) : (
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <LoginForm />
-          </View>
+          <Stack
+            initialRouteName={user?.emailVerified ? "(app)" : "(auth)"}
+            screenOptions={{ headerShown: false }}
+          >
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(app)" />
+          </Stack>
         )}
       </GestureHandlerRootView>
     </SafeAreaProvider>
@@ -159,9 +101,11 @@ function AppContent() {
 export default function Layout() {
   return (
     <ThemeProvider>
-      <ErrorBoundary>
-        <AppContent />
-      </ErrorBoundary>
+      <AuthProvider>
+        <ErrorBoundary>
+          <RootNavigator />
+        </ErrorBoundary>
+      </AuthProvider>
     </ThemeProvider>
   )
 }

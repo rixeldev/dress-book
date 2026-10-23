@@ -1,4 +1,4 @@
-import pkg from "../app.config.js"
+import pkg from "../../app.config.js"
 import {
   BackIcon,
   CopyIcon,

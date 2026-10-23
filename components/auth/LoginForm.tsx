@@ -34,7 +34,11 @@ import { auth } from "@/db/firebaseConfig"
 import { useTranslation } from "react-i18next"
 import { GoogleSignin } from "@react-native-google-signin/google-signin"
 
-export const LoginForm = () => {
+interface LoginFormProps {
+  initialSignIn?: boolean
+}
+
+export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [repeatPassword, setRepeatPassword] = useState("")
@@ -43,7 +47,7 @@ export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [btnScale] = useState(new Animated.Value(1))
-  const [signInForm, setSignInForm] = useState(true)
+  const [signInForm, setSignInForm] = useState(initialSignIn)
   const [googleLoading, setGoogleLoading] = useState(false)
 
   const { t } = useTranslation()
