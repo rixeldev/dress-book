@@ -61,7 +61,7 @@ Google Sign-In needs the SHA-1 and SHA-256 of every signing key registered in th
 - The first Phase 2 data path is `features/clients/repository.ts`: clients live at `users/{uid}/clients/{clientId}` and use ISO timestamps. The onboarding flow writes its profile defaults to `users/{uid}` and creates the first client. Every new owner-scoped subcollection needs an emulator rules case.
 - `app/details.tsx` reads only from AsyncStorage, so a record must be in the local cache before navigating to `/details?id=...`.
 - After creating or deleting a record, emit `REG_ADDED_EVENT` / `REG_DELETED_EVENT` from `components/ui/TabBar.tsx` via `DeviceEventEmitter`; list and profile screens refetch on those events.
-- `Regs.timestamp` is a locale-formatted string (`M/D/YYYY h:mm AM/PM`), parsed by hand in several screens. Keep that format or date sorting/statistics break.
+- `Regs.timestamp` is a legacy locale-formatted string (`M/D/YYYY h:mm AM/PM`), parsed by `libs/dates.ts`. New domain data must use ISO strings and the `libs/units.ts`, `libs/money.ts`, and `libs/schemas.ts` helpers.
 - Firestore rejects `undefined`; strip empty measurement fields before writes (see `cleanMeasurementsForFirebase` in `app/details.tsx`).
 - Account deletion lives in `services/account.ts` and is triggered from `app/settings.tsx`. It deletes `regs` docs, the `users/{uid}` root, and `Profiles/{uid}`, then the Auth user. Firebase requires a recent sign-in, so the service checks `lastSignInTime` before deleting data; on failure the UI asks the user to sign out/in and retry.
 - Measurement units are per record type: Clothes = cm, Curtains = yd, Others = in. Categories/fields are defined in `interfaces/FullBodyMeasurements.ts`; type-specific measurement screens must stay in sync with it.
