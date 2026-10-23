@@ -5,7 +5,7 @@ import { useMemo } from "react"
 import { Button } from "./Button"
 import { Card } from "./Card"
 
-interface Props {
+export interface Props {
   title: string
   description: string
   modalVisible: boolean
