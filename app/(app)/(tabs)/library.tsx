@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
-import { FlatList, View } from "react-native"
+import { Alert, View } from "react-native"
+import { FlashList } from "@shopify/flash-list"
 import { router } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { useAppTheme } from "@/hooks/useAppTheme"
@@ -58,7 +59,7 @@ export default function LibraryScreen() {
 
   return (
     <Screen padding={0}>
-      <FlatList
+      <FlashList
         contentContainerStyle={{ padding: Theme.spacing.md }}
         data={fabrics}
         keyExtractor={(fabric) => fabric.id}
@@ -85,10 +86,19 @@ export default function LibraryScreen() {
               />
               <Button
                 label={t("delete")}
-                onPress={async () => {
-                  if (!user) return
-                  await deleteFabric(user.uid, item.id)
-                  await load()
+                onPress={() => {
+                  Alert.alert(t("delete_fabric"), t("delete_fabric_desc"), [
+                    { text: t("cancel"), style: "cancel" },
+                    {
+                      text: t("delete"),
+                      style: "destructive",
+                      onPress: async () => {
+                        if (!user) return
+                        await deleteFabric(user.uid, item.id)
+                        await load()
+                      },
+                    },
+                  ])
                 }}
                 variant="ghost"
               />
