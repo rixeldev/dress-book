@@ -329,5 +329,20 @@
   "no_measurements_yet": "No measurements saved yet.",
   "taken_on": "Taken on",
   "measurement_outdated": "May be outdated",
-  "export_measurement_sheet": "Export measurement sheet"
+  "export_measurement_sheet": "Export measurement sheet",
+  "new_fabric": "New fabric",
+  "fabric_name": "Fabric name",
+  "supplier": "Supplier",
+  "sku": "SKU",
+  "color": "Color",
+  "composition": "Composition",
+  "quantity": "Quantity",
+  "low_stock_threshold": "Low-stock threshold",
+  "cost": "Cost",
+  "location": "Location",
+  "save_fabric": "Save fabric",
+  "fabric_save_error": "We could not save this fabric. Please try again.",
+  "fabrics_count": "{{count}} fabrics",
+  "no_supplier": "No supplier",
+  "low_stock": "Low stock"
 }

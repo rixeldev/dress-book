@@ -329,5 +329,20 @@
   "no_measurements_yet": "Aún no hay medidas guardadas.",
   "taken_on": "Tomada el",
   "measurement_outdated": "Podría estar desactualizada",
-  "export_measurement_sheet": "Exportar hoja de medidas"
+  "export_measurement_sheet": "Exportar hoja de medidas",
+  "new_fabric": "Nueva tela",
+  "fabric_name": "Nombre de la tela",
+  "supplier": "Proveedor",
+  "sku": "SKU",
+  "color": "Color",
+  "composition": "Composición",
+  "quantity": "Cantidad",
+  "low_stock_threshold": "Umbral de stock bajo",
+  "cost": "Costo",
+  "location": "Ubicación",
+  "save_fabric": "Guardar tela",
+  "fabric_save_error": "No pudimos guardar esta tela. Inténtalo de nuevo.",
+  "fabrics_count": "{{count}} telas",
+  "no_supplier": "Sin proveedor",
+  "low_stock": "Stock bajo"
 }

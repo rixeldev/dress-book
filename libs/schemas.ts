@@ -45,3 +45,42 @@ export const measurementSchema = z.object({
 })
 
 export type MeasurementInput = z.infer<typeof measurementSchema>
+
+export const fabricSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(120),
+  supplier: z.string().trim().max(120).optional().nullable(),
+  sku: z.string().trim().max(80).optional().nullable(),
+  color: z.string().trim().max(60).optional().nullable(),
+  composition: z.string().trim().max(120).optional().nullable(),
+  width: z.number().nonnegative().optional().nullable(),
+  unit: z.enum(["m", "yd"]).default("m"),
+  quantity: z.number().nonnegative().optional().nullable(),
+  lowStockThreshold: z.number().nonnegative().optional().nullable(),
+  cost: z.number().nonnegative().optional().nullable(),
+  location: z.string().trim().max(120).optional().nullable(),
+  photoUrl: z.string().url().optional().nullable(),
+})
+
+export type FabricInput = z.infer<typeof fabricSchema>
+
+export const designSchema = z.object({
+  title: z.string().trim().min(1, "Title is required").max(160),
+  tags: z.array(z.string().trim().min(1)).default([]),
+  imageUrls: z.array(z.string().url()).default([]),
+  notes: z.string().trim().max(2000).optional().nullable(),
+  orderId: z.string().optional().nullable(),
+})
+
+export type DesignInput = z.infer<typeof designSchema>
+
+export const appointmentSchema = z.object({
+  clientId: z.string().optional().nullable(),
+  orderId: z.string().optional().nullable(),
+  title: z.string().trim().min(1, "Title is required").max(160),
+  startsAt: z.string().datetime(),
+  endsAt: z.string().datetime().optional().nullable(),
+  location: z.string().trim().max(160).optional().nullable(),
+  notes: z.string().trim().max(2000).optional().nullable(),
+})
+
+export type AppointmentInput = z.infer<typeof appointmentSchema>
