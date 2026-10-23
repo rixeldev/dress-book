@@ -321,5 +321,8 @@
   "edit_client": "Edit client",
   "activity": "Activity",
   "activity_desc": "Status changes and notes for this order.",
-  "no_activity": "No activity yet."
+  "no_activity": "No activity yet.",
+  "call": "Call",
+  "message": "Message",
+  "email_action": "Email"
 }

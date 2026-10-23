@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import { Text, View } from "react-native"
+import { Linking, Text, View } from "react-native"
 import { router, Stack, useLocalSearchParams } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { BackIcon, UsersIcon } from "@/icons/Icons"
@@ -87,6 +87,32 @@ export default function ClientDetailScreen() {
           </View>
         </Card>
         <SectionHeader title={t("orders")} description={t("client_orders_desc")} />
+        <View style={{ flexDirection: "row", gap: Theme.spacing.sm }}>
+          {client.phone && (
+            <Button
+              label={t("call")}
+              onPress={() => Linking.openURL(`tel:${client.phone}`)}
+              variant="secondary"
+              style={{ flex: 1 }}
+            />
+          )}
+          {client.phone && (
+            <Button
+              label={t("message")}
+              onPress={() => Linking.openURL(`sms:${client.phone}`)}
+              variant="secondary"
+              style={{ flex: 1 }}
+            />
+          )}
+          {client.email && (
+            <Button
+              label={t("email_action")}
+              onPress={() => Linking.openURL(`mailto:${client.email}`)}
+              variant="secondary"
+              style={{ flex: 1 }}
+            />
+          )}
+        </View>
         <Button
           label={t("edit_client")}
           onPress={() => router.push(`/client/edit?id=${client.id}`)}

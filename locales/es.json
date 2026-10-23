@@ -321,5 +321,8 @@
   "edit_client": "Editar cliente",
   "activity": "Actividad",
   "activity_desc": "Cambios de estado y notas de este pedido.",
-  "no_activity": "Aún no hay actividad."
+  "no_activity": "Aún no hay actividad.",
+  "call": "Llamar",
+  "message": "Mensaje",
+  "email_action": "Correo"
 }
