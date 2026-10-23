@@ -298,5 +298,20 @@
   "search_no_results_desc": "Prueba con otro nombre o título de pedido.",
   "search_results": "Resultados",
   "search_results_count": "{{count}} coincidencias",
-  "open": "Abrir"
+  "open": "Abrir",
+  "today_empty_title": "Tu taller empieza aquí.",
+  "today_empty_desc": "Agrega un cliente o crea un pedido para construir tu panel diario.",
+  "active_orders": "Pedidos activos",
+  "orders_in_progress": "En progreso",
+  "total_clients": "Clientes totales",
+  "booked_value": "Valor reservado",
+  "all_orders": "Todos los pedidos",
+  "overdue": "Vencidos",
+  "overdue_desc": "Necesitan atención ahora.",
+  "due_today": "Vencen hoy",
+  "due_today_desc": "Pruebas y entregas programadas para hoy.",
+  "due_this_week": "Vencen esta semana",
+  "due_this_week_desc": "Trabajo próximo para los siguientes siete días.",
+  "today_clear_title": "Nada urgente.",
+  "today_clear_desc": "Tus pedidos activos van al día."
 }

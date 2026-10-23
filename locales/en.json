@@ -298,5 +298,20 @@
   "search_no_results_desc": "Try a different name or order title.",
   "search_results": "Results",
   "search_results_count": "{{count}} matches",
-  "open": "Open"
+  "open": "Open",
+  "today_empty_title": "Your studio starts here.",
+  "today_empty_desc": "Add a client or create an order to build your daily dashboard.",
+  "active_orders": "Active orders",
+  "orders_in_progress": "In progress",
+  "total_clients": "Total clients",
+  "booked_value": "Booked value",
+  "all_orders": "All orders",
+  "overdue": "Overdue",
+  "overdue_desc": "Needs attention now.",
+  "due_today": "Due today",
+  "due_today_desc": "Fittings and deliveries scheduled today.",
+  "due_this_week": "Due this week",
+  "due_this_week_desc": "Upcoming work for the next seven days.",
+  "today_clear_title": "Nothing urgent.",
+  "today_clear_desc": "Your active orders are on track."
 }
