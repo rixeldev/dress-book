@@ -370,5 +370,6 @@
   "save_appointment": "Guardar cita",
   "appointment_save_error": "No pudimos guardar esta cita. Inténtalo de nuevo.",
   "appointment_reminder_body": "Cita programada",
-  "edit_fabric": "Editar tela"
+  "edit_fabric": "Editar tela",
+  "duplicate_order": "Duplicar pedido"
 }

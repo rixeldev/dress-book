@@ -370,5 +370,6 @@
   "save_appointment": "Save appointment",
   "appointment_save_error": "We could not save this appointment. Please try again.",
   "appointment_reminder_body": "Scheduled appointment",
-  "edit_fabric": "Edit fabric"
+  "edit_fabric": "Edit fabric",
+  "duplicate_order": "Duplicate order"
 }

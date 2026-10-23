@@ -77,6 +77,23 @@ export async function deleteOrder(userId: string, orderId: string): Promise<void
   await deleteDoc(doc(db, "users", userId, "orders", orderId))
 }
 
+export async function duplicateOrder(userId: string, order: Order): Promise<Order> {
+  const now = new Date().toISOString()
+  const newOrder: Order = {
+    ...order,
+    id: `order_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    status: "consultation",
+    dueDate: null,
+    startDate: now,
+    deliveredAt: null,
+    createdAt: now,
+    updatedAt: now,
+    title: `${order.title} (copy)`,
+  }
+  await setDoc(doc(db, "users", userId, "orders", newOrder.id), newOrder)
+  return newOrder
+}
+
 export async function updateOrderStatus(
   userId: string,
   orderId: string,

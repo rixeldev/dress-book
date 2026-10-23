@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next"
 import { BackIcon } from "@/icons/Icons"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
-import { getOrder, updateOrderStatus, deleteOrder } from "@/features/orders/repository"
+import { getOrder, updateOrderStatus, deleteOrder, duplicateOrder } from "@/features/orders/repository"
 import { getActivity, addActivity } from "@/features/orders/activity"
 import type { ActivityEntry } from "@/features/orders/activity"
 import type { Order, OrderStatus } from "@/interfaces/Order"
@@ -159,6 +159,16 @@ export default function OrderDetailScreen() {
           </View>
         </Card>
 
+        <Button
+          label={t("duplicate_order")}
+          onPress={async () => {
+            if (!user) return
+            const duplicated = await duplicateOrder(user.uid, order)
+            router.replace(`/order/${duplicated.id}`)
+          }}
+          variant="secondary"
+          fullWidth
+        />
         <Button
           label={t("delete_order")}
           onPress={async () => {
