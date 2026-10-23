@@ -37,3 +37,11 @@ jobs:
 
       - name: Test
         run: pnpm test:ci
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Firestore rules tests
+        run: pnpm test:rules

@@ -17,11 +17,15 @@ pnpm typecheck        # tsc --noEmit
 pnpm test             # jest (jest-expo preset)
 pnpm test:watch
 pnpm test:ci          # jest --ci --runInBand
+pnpm test:rules       # Firestore emulator + rules tests (needs JDK 21+)
+pnpm emulators        # start the Firestore emulator only
 npx prettier --write <files>   # no format script
 ```
 
 - Tests use `jest-expo` + `@testing-library/react-native`; add pure/unit tests under `libs/__tests__/` and component tests next to the component. React Native Firebase mocks are not set up yet, so keep tests free of native module imports until they are.
-- CI lives in `.github/workflows/ci.yml` and runs install, lint, typecheck, and `test:ci`.
+- Firestore rules tests live in `db/rules/__tests__/` and use the Firebase emulator. `firebase-tools` requires JDK 21+; if your default `JAVA_HOME` is older, point it at a 21 JDK for that command.
+- The dev-only `firebase` package is pinned to `12.4.0` to match `@react-native-firebase/app` and keep the compat modules deduped for rules tests. Do not bump it independently.
+- CI lives in `.github/workflows/ci.yml` and runs install, lint, typecheck, Jest, and the Firestore rules tests.
 - `android/` and `ios/` are gitignored prebuild output (`/android`, `/ios` in `.gitignore`). Make committed config changes in `app.config.js` (there is no `app.json`) or plugin config, then rerun `expo run:*`/EAS. Do not hand-edit generated native files and expect them in git.
 - Expo Go cannot run this app: `@react-native-firebase/*`, `react-native-google-mobile-ads`, and Google Sign-In are native modules. Use `expo run:*` or an EAS dev build. The `web` script is configured, but verify features on Android, not web.
 - Formatting: no semicolons, double quotes, 100 columns (`.prettierrc`, and `semi` is enforced by ESLint). `react-hooks/exhaustive-deps` is deliberately off.
@@ -34,8 +38,9 @@ npx prettier --write <files>   # no format script
 
 ## Firebase security
 
-- Rules live in `db/rules/firestore.rules` and `db/rules/storage.rules`; indexes live in `firestore.indexes.json`. `firebase.json` and `.firebaserc` point the Firebase CLI at them.
-- Deploy with `firebase deploy --only firestore:rules,firestore:indexes,storage` after `firebase login`/`firebase use`. Rules tests are not in CI yet.
+- Rules live in `db/rules/firestore.rules` and `db/rules/storage.rules`; indexes live in `firestore.indexes.json`. `firebase.json` and `.firebaserc` point the Firebase CLI at them. They are deployed to `dress-book-24977`.
+- Deploy with `pnpm exec firebase deploy --only firestore:rules,firestore:indexes,storage` after `firebase login`/`firebase use`.
+- Emulator tests in `db/rules/__tests__/` run in CI and cover owner-only reads/writes, cross-user denial, unconstrained-query denial, and public version reads. Add a case for every new collection.
 - Firestore access is owner-scoped: legacy `regs` docs require `userId == request.auth.uid`; future data lives under `users/{uid}`. Keep new collections owner-scoped when adding them.
 
 ## Google Sign-In fingerprints

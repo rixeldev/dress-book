@@ -47,5 +47,9 @@ GoogleService-Info.plist
 # DB config file
 /db/firebaseConfig.ts
 
+# Firebase emulator logs
+firestore-debug.log
+ui-debug.log
+
 .agents
 docs
