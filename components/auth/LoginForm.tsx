@@ -257,6 +257,7 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
       )}
 
       <Pressable
+        accessible={false}
         style={{ flex: 1, width: "100%", alignItems: "center" }}
         onPress={() => Keyboard.dismiss()}
       >
@@ -287,7 +288,7 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
                   value={displayName}
                   onChangeText={setDisplayName}
                   returnKeyType="next"
-                  accessibilityLabel="Username"
+                  accessibilityLabel={t("username")}
                   importantForAutofill="yes"
                   cursorColor={Theme.colors.accent}
                 />
@@ -308,7 +309,7 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
                 value={email}
                 onChangeText={setEmail}
                 returnKeyType="next"
-                accessibilityLabel="Email"
+                accessibilityLabel={t("email")}
                 importantForAutofill="yes"
                 cursorColor={Theme.colors.accent}
               />
@@ -329,7 +330,8 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
                 autoCapitalize="none"
                 returnKeyType="done"
                 onSubmitEditing={handleSignin}
-                accessibilityLabel="Password"
+                accessibilityLabel={t("password")}
+                autoComplete="current-password"
                 cursorColor={Theme.colors.accent}
               />
 
@@ -337,7 +339,8 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
                 onPress={() => setShowPassword((s) => !s)}
                 style={styles.iconRight}
                 accessibilityRole="button"
-                accessibilityLabel={showPassword ? "Hide password" : "Show password"}
+                accessibilityLabel={showPassword ? t("hide_password") : t("show_password")}
+                hitSlop={10}
               >
                 {showPassword ? (
                   <EyeOffIcon color={Theme.colors.gray} />
@@ -363,7 +366,8 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
                   autoCapitalize="none"
                   returnKeyType="done"
                   onSubmitEditing={handleSignin}
-                  accessibilityLabel="Password"
+                  accessibilityLabel={t("repeat_password")}
+                  autoComplete="new-password"
                   cursorColor={Theme.colors.accent}
                 />
 
@@ -371,7 +375,8 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
                   onPress={() => setShowPassword((s) => !s)}
                   style={styles.iconRight}
                   accessibilityRole="button"
-                  accessibilityLabel={showPassword ? "Hide password" : "Show password"}
+                  accessibilityLabel={showPassword ? t("hide_password") : t("show_password")}
+                  hitSlop={10}
                 >
                   {showPassword ? (
                     <EyeOffIcon color={Theme.colors.gray} />
@@ -383,10 +388,17 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
             )}
 
             <View style={styles.row}>
-              <Text style={styles.error}>{error}</Text>
+              <Text accessibilityLiveRegion="polite" style={styles.error}>
+                {error}
+              </Text>
 
               {signInForm && (
-                <Pressable onPress={handleForgot}>
+                <Pressable
+                  onPress={handleForgot}
+                  accessibilityRole="button"
+                  accessibilityLabel={t("forgot")}
+                  hitSlop={10}
+                >
                   <Text style={styles.forgotText}>{t("forgot")}</Text>
                 </Pressable>
               )}
@@ -403,7 +415,8 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
                   loading && { opacity: 0.8 },
                 ]}
                 accessibilityRole="button"
-                accessibilityLabel="Sign in"
+                accessibilityLabel={signInForm ? t("sign_in") : t("sign_up")}
+                accessibilityState={{ busy: loading }}
               >
                 {loading ? (
                   <ActivityIndicator color={Theme.colors.modal} />
@@ -421,6 +434,9 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
                 onPress={handleChangeForm}
+                accessibilityRole="button"
+                accessibilityLabel={signInForm ? t("sign_up") : t("sign_in")}
+                hitSlop={10}
               >
                 <Text style={styles.signupText}>{signInForm ? t("sign_up") : t("sign_in")}</Text>
               </Pressable>

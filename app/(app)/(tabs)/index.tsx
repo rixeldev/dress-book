@@ -201,10 +201,14 @@ export default function Index() {
     // Sort
     switch (filters.sortBy) {
       case "newest":
-        result.sort((a, b) => parseTimestamp(b.timestamp).getTime() - parseTimestamp(a.timestamp).getTime())
+        result.sort(
+          (a, b) => parseTimestamp(b.timestamp).getTime() - parseTimestamp(a.timestamp).getTime(),
+        )
         break
       case "oldest":
-        result.sort((a, b) => parseTimestamp(a.timestamp).getTime() - parseTimestamp(b.timestamp).getTime())
+        result.sort(
+          (a, b) => parseTimestamp(a.timestamp).getTime() - parseTimestamp(b.timestamp).getTime(),
+        )
         break
       case "title_asc":
         result.sort((a, b) => a.title.localeCompare(b.title))
@@ -269,6 +273,10 @@ export default function Index() {
 
         <Pressable
           onPress={() => setFilterModalVisible(true)}
+          accessibilityRole="button"
+          accessibilityLabel={t("filter")}
+          accessibilityState={{ selected: hasActiveFilters }}
+          hitSlop={10}
           style={({ pressed }) => ({
             opacity: pressed ? 0.5 : 1,
             flexDirection: "row",

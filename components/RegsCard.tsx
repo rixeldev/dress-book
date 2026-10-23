@@ -126,6 +126,9 @@ export const RegsCard = ({ reg, index, onEdit, onDelete, onToggleDelivered }: Pr
           onPress={() => router.push({ pathname: "/details", params: { id: reg.id } })}
           onLongPress={handleLongPress}
           delayLongPress={400}
+          accessibilityRole="button"
+          accessibilityLabel={reg.title}
+          accessibilityHint={t("open_record_hint")}
         >
           <View key={reg.id} style={styles.card}>
             {reg.thumbnail && <Image style={styles.image} source={{ uri: reg.thumbnail }} />}
