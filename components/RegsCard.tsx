@@ -17,6 +17,7 @@ import { useAppTheme } from "@/hooks/useAppTheme"
 import { useRouter } from "expo-router"
 import Ionicons from "@expo/vector-icons/Ionicons"
 import { useTranslation } from "react-i18next"
+import { Badge } from "@/components/ui/Badge"
 
 const MENU_WIDTH = 160
 const MENU_HEIGHT = 150
@@ -152,21 +153,11 @@ export const RegsCard = ({ reg, index, onEdit, onDelete, onToggleDelivered }: Pr
                     {reg.deliveryDeadline || t("deadline_not_set")}
                   </Text>
                 </View>
-                <View
-                  style={[
-                    styles.statusBadge,
-                    reg.delivered ? styles.statusDelivered : styles.statusPending,
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.statusText,
-                      reg.delivered ? styles.statusTextDelivered : styles.statusTextPending,
-                    ]}
-                  >
-                    {reg.delivered ? t("delivered") : t("undelivered")}
-                  </Text>
-                </View>
+                <Badge
+                  label={reg.delivered ? t("delivered") : t("undelivered")}
+                  tone={reg.delivered ? "success" : "neutral"}
+                  dot
+                />
               </View>
               <Text style={styles.timestamp}>{reg.timestamp}</Text>
             </View>
@@ -296,30 +287,6 @@ const createStyles = (Theme: any) =>
     deadlineValue: {
       fontFamily: Theme.fonts.onest,
       fontSize: 14,
-      color: Theme.colors.text,
-    },
-    statusBadge: {
-      borderRadius: 50,
-      paddingVertical: 6,
-      paddingHorizontal: 12,
-      minWidth: 90,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    statusDelivered: {
-      backgroundColor: Theme.colors.primary2,
-    },
-    statusPending: {
-      backgroundColor: Theme.colors.background2,
-    },
-    statusText: {
-      fontFamily: Theme.fonts.onestBold,
-      fontSize: 12,
-    },
-    statusTextDelivered: {
-      color: Theme.colors.accent,
-    },
-    statusTextPending: {
       color: Theme.colors.text,
     },
     pressables: {

@@ -1,7 +1,9 @@
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useTranslation } from "react-i18next"
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native"
+import { Modal, StyleSheet, Text, View } from "react-native"
 import { useMemo } from "react"
+import { Button } from "./Button"
+import { Card } from "./Card"
 
 interface Props {
   title: string
@@ -35,7 +37,7 @@ export const CustomModal = ({
       backdropColor={Theme.colors.backdrop}
     >
       <View style={styles.centeredView}>
-        <View style={styles.modalView}>
+        <Card style={styles.modalView} padded={false}>
           <View>
             <Text
               style={{
@@ -59,46 +61,20 @@ export const CustomModal = ({
             </Text>
           </View>
 
-          <View style={{ flexDirection: "row", gap: 12, alignSelf: "flex-end" }}>
-            <Pressable
+          <View style={styles.actions}>
+            <Button
+              label={t("cancel")}
               onPress={onRequestClose}
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed ? Theme.colors.background2 : Theme.colors.transparent,
-                },
-                styles.modalBottomButtons,
-              ]}
-            >
-              <Text
-                style={{
-                  fontFamily: Theme.fonts.onest,
-                  color: Theme.colors.red,
-                }}
-              >
-                {t("cancel")}
-              </Text>
-            </Pressable>
-
-            <Pressable
+              variant="ghost"
+              labelStyle={{ color: Theme.semantic.state.danger }}
+            />
+            <Button
+              label={acceptLabel ?? t("accept")}
               onPress={onAccept}
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed ? Theme.colors.background2 : Theme.colors.transparent,
-                },
-                styles.modalBottomButtons,
-              ]}
-            >
-              <Text
-                style={{
-                  fontFamily: Theme.fonts.onest,
-                  color: destructive ? Theme.colors.red : Theme.colors.accent,
-                }}
-              >
-                {acceptLabel ?? t("accept")}
-              </Text>
-            </Pressable>
+              variant={destructive ? "danger" : "primary"}
+            />
           </View>
-        </View>
+        </Card>
       </View>
     </Modal>
   )
@@ -127,22 +103,15 @@ const createStyles = (Theme: any) =>
       backgroundColor: Theme.colors.modal,
       borderRadius: 20,
       padding: 20,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5,
     },
     centeredView: {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
     },
-    modalBottomButtons: {
-      padding: 12,
-      borderRadius: 16,
+    actions: {
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      gap: 12,
     },
   })

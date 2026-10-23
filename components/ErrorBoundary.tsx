@@ -1,7 +1,8 @@
 import React, { Component, ReactNode } from "react"
-import { Pressable, StyleSheet, Text, View } from "react-native"
+import { StyleSheet, Text, View } from "react-native"
 import { useTranslation } from "react-i18next"
 import { useAppTheme } from "@/hooks/useAppTheme"
+import { Button } from "@/components/ui/Button"
 
 interface Props {
   children: ReactNode
@@ -25,24 +26,7 @@ const ErrorFallback = ({ onRetry }: { onRetry: () => void }) => {
       >
         {t("error_boundary_desc")}
       </Text>
-      <Pressable
-        onPress={onRetry}
-        accessibilityRole="button"
-        accessibilityLabel={t("try_again")}
-        style={({ pressed }) => [
-          styles.button,
-          { backgroundColor: Theme.colors.accent, opacity: pressed ? 0.8 : 1 },
-        ]}
-      >
-        <Text
-          style={[
-            styles.buttonText,
-            { color: Theme.colors.background, fontFamily: Theme.fonts.onestBold },
-          ]}
-        >
-          {t("try_again")}
-        </Text>
-      </Pressable>
+      <Button label={t("try_again")} onPress={onRetry} style={styles.button} />
     </View>
   )
 }
@@ -86,11 +70,5 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 28,
-    borderRadius: 12,
-  },
-  buttonText: {
-    fontSize: 15,
   },
 })

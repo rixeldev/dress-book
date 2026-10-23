@@ -83,6 +83,8 @@
   "all_records_deleted": "All records have been deleted.",
   "failed_delete_all": "Failed to delete all records.",
   "no_registries_found": "No registries found",
+  "empty_registries_desc": "Add your first client record, or refresh if you already have data saved.",
+  "refresh": "Refresh",
   "registries_count": "{{filtered}} of {{total}} Registries",
   "filter": "Filter",
   "delete_record": "Delete Record",

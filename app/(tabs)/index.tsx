@@ -1,6 +1,7 @@
 import { RegsCard } from "@/components/RegsCard"
 import { WhiteSpace } from "@/components/ui/WhiteSpace"
 import { CustomModal } from "@/components/ui/CustomModal"
+import { EmptyState } from "@/components/ui/EmptyState"
 import { AddRegModal } from "@/components/ui/AddRegModal"
 import { FilterModal, FilterOptions, defaultFilters } from "@/components/ui/FilterModal"
 import { REG_ADDED_EVENT, REG_DELETED_EVENT } from "@/components/ui/TabBar"
@@ -239,23 +240,15 @@ export default function Index() {
 
   if (!regs || regs.length === 0) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 12,
-          backgroundColor: Theme.colors.background,
-        }}
-      >
-        <Text style={{ fontFamily: Theme.fonts.onest, fontSize: 12, color: Theme.colors.text }}>
-          {t("no_registries_found")}
-        </Text>
-
-        <Pressable onPress={fetchRegs} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
-          <ReloadIcon size={24} color={Theme.colors.accent} />
-        </Pressable>
-      </View>
+      <Screen padding={0}>
+        <EmptyState
+          icon={<ReloadIcon size={30} color={Theme.colors.accent} />}
+          title={t("no_registries_found")}
+          description={t("empty_registries_desc")}
+          actionLabel={t("refresh")}
+          onAction={fetchRegs}
+        />
+      </Screen>
     )
   }
 

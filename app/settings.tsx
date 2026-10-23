@@ -268,8 +268,8 @@ export default function Settings() {
           headerTintColor: Theme.colors.text,
           headerTitle: t("settings"),
           headerTitleStyle: {
-            fontSize: Theme.sizes.h0,
-            fontFamily: Theme.fonts.onest,
+            fontSize: Theme.fontSizes.h1,
+            fontFamily: Theme.fonts.display,
           },
           headerLeft: () => (
             <BackIcon color={Theme.colors.text} size={34} onPress={() => navigation.goBack()} />

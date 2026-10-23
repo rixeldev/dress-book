@@ -83,6 +83,8 @@
   "all_records_deleted": "Todos los registros han sido eliminados.",
   "failed_delete_all": "Error al eliminar todos los registros.",
   "no_registries_found": "No se encontraron registros",
+  "empty_registries_desc": "Agrega tu primer registro de cliente o actualiza si ya tienes datos guardados.",
+  "refresh": "Actualizar",
   "registries_count": "{{filtered}} de {{total}} Registros",
   "filter": "Filtrar",
   "delete_record": "Eliminar Registro",

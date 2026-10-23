@@ -1,6 +1,6 @@
 import { ReactElement } from "react"
-import { StyleSheet, Text, View, Pressable } from "react-native"
-import { useAppTheme } from "@/hooks/useAppTheme"
+import { StyleSheet } from "react-native"
+import { ListRow } from "@/components/ui/ListRow"
 
 interface SettingsButtonProps {
   onPress: () => void
@@ -17,34 +17,22 @@ export const SettingsButton = ({
   icon,
   color,
 }: SettingsButtonProps) => {
-  const { Theme } = useAppTheme()
   return (
-    <Pressable
-      style={({ pressed }) => [
-        {
-          backgroundColor: pressed ? Theme.colors.background2 : Theme.colors.transparent,
-          opacity: pressed ? 0.6 : 1,
-        },
-        styles.pressable,
-      ]}
+    <ListRow
+      title={title}
+      description={description}
+      leading={icon}
       onPress={onPress}
-    >
-      <View>{icon}</View>
-
-      <View style={{ flex: 1 }}>
-        <Text style={{ color: color ? color : Theme.colors.text }}>{title}</Text>
-        {description && <Text style={{ color: Theme.colors.gray }}>{description}</Text>}
-      </View>
-    </Pressable>
+      titleColor={color}
+      style={styles.row}
+    />
   )
 }
 
 const styles = StyleSheet.create({
-  pressable: {
-    flexDirection: "row",
-    gap: 12,
-    padding: 16,
-    alignItems: "center",
+  row: {
+    paddingHorizontal: 16,
     paddingVertical: 16,
+    borderBottomWidth: 0,
   },
 })
