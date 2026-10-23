@@ -355,5 +355,7 @@
   "calendar": "Calendario",
   "calendar_empty_title": "Tu calendario está libre.",
   "calendar_empty_desc": "Programa pruebas y entregas para mantenerte al día.",
-  "appointments_count": "{{count}} citas"
+  "appointments_count": "{{count}} citas",
+  "notifications": "Notificaciones",
+  "notifications_desc": "Recibe recordatorios de pruebas y fechas de entrega"
 }

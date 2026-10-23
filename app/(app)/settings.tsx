@@ -8,6 +8,7 @@ import {
   PrivacyIcon,
   UserIcon,
   VibrationIcon,
+  SoundIcon,
   WebIcon,
   EditIcon,
   GithubIcon,
@@ -48,6 +49,7 @@ import NetInfo from "@react-native-community/netinfo"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { ref, uploadBytesResumable, getDownloadURL } from "@react-native-firebase/storage"
 import { useAppTheme } from "@/hooks/useAppTheme"
+import { requestNotificationPermission } from "@/services/notifications"
 import { Divider } from "@/components/Divider"
 import { SettingsButton } from "@/components/SettingsButton"
 import { CustomModal } from "@/components/ui/CustomModal"
@@ -58,6 +60,7 @@ const appVersion = pkg.expo.android.version
 
 export default function Settings() {
   const [isVibrationEnabled, setIsVibrationEnabled] = useState(false)
+  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true)
   const [languageSelected, setLanguageSelected] = useState<string>("en")
   const [image, setImage] = useState("")
   const [progress, setProgress] = useState(0)
@@ -98,6 +101,17 @@ export default function Settings() {
 
     return unsubscription()
   }, [])
+
+  const toggleNotifications = async () => {
+    if (!isNotificationsEnabled) {
+      const granted = await requestNotificationPermission()
+      setIsNotificationsEnabled(granted)
+      await setItem("notifications", String(granted))
+    } else {
+      setIsNotificationsEnabled(false)
+      await setItem("notifications", String(false))
+    }
+  }
 
   const toggleVibrationSwitch = () => {
     setIsVibrationEnabled((prev) => {
@@ -430,6 +444,43 @@ export default function Settings() {
               ios_backgroundColor="#3e3e3e"
               onValueChange={toggleVibrationSwitch}
               value={isVibrationEnabled}
+            />
+          </View>
+        </Pressable>
+
+        <Pressable
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? Theme.colors.background2 : Theme.colors.transparent,
+              opacity: pressed ? 0.6 : 1,
+              flexDirection: "row",
+              gap: 12,
+              alignItems: "center",
+              paddingVertical: 16,
+              padding: 16,
+            },
+          ]}
+          onPress={toggleNotifications}
+        >
+          <View>
+            <SoundIcon color={Theme.colors.gray} />
+          </View>
+
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: Theme.colors.text }}>{t("notifications")}</Text>
+            <Text style={{ color: Theme.colors.gray }}>{t("notifications_desc")}</Text>
+          </View>
+
+          <View>
+            <Switch
+              trackColor={{
+                false: Theme.colors.darkGray,
+                true: Theme.colors.primary2,
+              }}
+              thumbColor={isNotificationsEnabled ? Theme.colors.primary : Theme.colors.text}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleNotifications}
+              value={isNotificationsEnabled}
             />
           </View>
         </Pressable>

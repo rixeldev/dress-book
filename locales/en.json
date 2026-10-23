@@ -355,5 +355,7 @@
   "calendar": "Calendar",
   "calendar_empty_title": "Your calendar is clear.",
   "calendar_empty_desc": "Schedule fittings and deliveries to stay on track.",
-  "appointments_count": "{{count}} appointments"
+  "appointments_count": "{{count}} appointments",
+  "notifications": "Notifications",
+  "notifications_desc": "Receive reminders for fittings and due dates"
 }
