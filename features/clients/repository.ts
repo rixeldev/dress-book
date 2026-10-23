@@ -31,6 +31,18 @@ export async function getClient(userId: string, clientId: string): Promise<Clien
   return { ...(snapshot.data() as Client), id: snapshot.id }
 }
 
+export async function updateClient(
+  userId: string,
+  clientId: string,
+  input: Partial<Omit<Client, "id" | "userId" | "createdAt">>,
+): Promise<void> {
+  await setDoc(
+    doc(db, "users", userId, "clients", clientId),
+    { ...input, updatedAt: new Date().toISOString() },
+    { merge: true },
+  )
+}
+
 export async function archiveClient(userId: string, clientId: string): Promise<void> {
   await setDoc(
     doc(db, "users", userId, "clients", clientId),

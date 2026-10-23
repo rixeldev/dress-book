@@ -317,5 +317,6 @@
   "measurement_studio": "Estudio de medidas",
   "save_measurement": "Guardar medidas",
   "version": "Versión",
-  "take_measurements": "Tomar medidas"
+  "take_measurements": "Tomar medidas",
+  "edit_client": "Editar cliente"
 }

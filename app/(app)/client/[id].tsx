@@ -88,6 +88,12 @@ export default function ClientDetailScreen() {
         </Card>
         <SectionHeader title={t("orders")} description={t("client_orders_desc")} />
         <Button
+          label={t("edit_client")}
+          onPress={() => router.push(`/client/edit?id=${client.id}`)}
+          variant="secondary"
+          fullWidth
+        />
+        <Button
           label={t("take_measurements")}
           onPress={() => router.push(`/measurement/new?clientId=${client.id}`)}
           fullWidth

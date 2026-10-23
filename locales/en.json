@@ -317,5 +317,6 @@
   "measurement_studio": "Measurement studio",
   "save_measurement": "Save measurement",
   "version": "Version",
-  "take_measurements": "Take measurements"
+  "take_measurements": "Take measurements",
+  "edit_client": "Edit client"
 }
