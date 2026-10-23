@@ -6,6 +6,7 @@ export const clientSchema = z.object({
   email: z.string().email("Invalid email").optional().nullable(),
   notes: z.string().trim().max(2000).optional().nullable(),
   tags: z.array(z.string().trim().min(1)).default([]),
+  customFields: z.record(z.string(), z.string()).default({}),
 })
 
 export type ClientInput = z.infer<typeof clientSchema>

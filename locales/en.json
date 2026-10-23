@@ -358,5 +358,10 @@
   "appointments_count": "{{count}} appointments",
   "notifications": "Notifications",
   "notifications_desc": "Receive reminders for fittings and due dates",
-  "copy_from_previous": "Copy from previous measurement"
+  "copy_from_previous": "Copy from previous measurement",
+  "custom_fields": "Custom fields",
+  "field_name": "Field name",
+  "field_value": "Value",
+  "add_field": "Add field",
+  "remove": "Remove"
 }

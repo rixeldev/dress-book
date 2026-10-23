@@ -6,6 +6,7 @@ export interface Client {
   email: string | null
   notes: string | null
   tags: string[]
+  customFields: Record<string, string>
   avatarUrl: string | null
   archived: boolean
   createdAt: string
@@ -13,4 +14,4 @@ export interface Client {
 }
 
 export type NewClient = Pick<Client, "name"> &
-  Partial<Pick<Client, "phone" | "email" | "notes" | "tags" | "avatarUrl">>
+  Partial<Pick<Client, "phone" | "email" | "notes" | "tags" | "customFields" | "avatarUrl">>

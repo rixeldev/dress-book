@@ -24,7 +24,7 @@ export function migrateRegsToDomain(
     const clientName = reg.title?.trim() || "Walk-in client"
     let client = clientsByName.get(clientName)
     if (!client) {
-      client = {
+      const newClient = {
         id: `client_${reg.id}`,
         userId,
         name: clientName,
@@ -32,11 +32,13 @@ export function migrateRegsToDomain(
         email: null,
         notes: reg.description?.trim() || null,
         tags: [],
+        customFields: {},
         avatarUrl: reg.thumbnail ?? null,
         archived: false,
         createdAt: now,
         updatedAt: now,
       }
+      client = newClient
       clientsByName.set(clientName, client)
     }
 

@@ -93,6 +93,11 @@ export default function ClientDetailScreen() {
                 {client.notes}
               </Text>
             )}
+            {Object.entries(client.customFields ?? {}).map(([key, value]) => (
+              <Text key={key} style={{ color: Theme.semantic.text.secondary, fontFamily: Theme.fonts.onest }}>
+                {key}: {value}
+              </Text>
+            ))}
           </View>
         </Card>
         <SectionHeader title={t("measurements")} description={t("client_measurements_desc")} />

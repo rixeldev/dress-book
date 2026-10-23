@@ -19,6 +19,9 @@ export default function EditClientScreen() {
   const [email, setEmail] = useState("")
   const [notes, setNotes] = useState("")
   const [tags, setTags] = useState("")
+  const [customFields, setCustomFields] = useState<Record<string, string>>({})
+  const [newFieldKey, setNewFieldKey] = useState("")
+  const [newFieldValue, setNewFieldValue] = useState("")
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -33,6 +36,7 @@ export default function EditClientScreen() {
         setEmail(client.email ?? "")
         setNotes(client.notes ?? "")
         setTags(client.tags.join(", "))
+        setCustomFields(client.customFields ?? {})
       })
       .finally(() => setLoading(false))
   }, [user, params.id])
@@ -49,6 +53,7 @@ export default function EditClientScreen() {
         .split(",")
         .map((tag) => tag.trim())
         .filter(Boolean),
+      customFields,
     })
 
     if (!result.success) {
@@ -104,6 +109,46 @@ export default function EditClientScreen() {
               <TextField label={t("phone")} value={phone} onChangeText={setPhone} keyboardType="phone-pad" error={errors.phone} />
               <TextField label={t("email")} value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" error={errors.email} />
               <TextField label={t("tags")} value={tags} onChangeText={setTags} placeholder={t("tags_placeholder")} hint={t("tags_hint")} />
+              <View style={{ gap: Theme.spacing.xs }}>
+                <Text style={{ color: Theme.semantic.text.primary, fontFamily: Theme.fonts.onestBold, fontSize: Theme.fontSizes.label }}>
+                  {t("custom_fields")}
+                </Text>
+                {Object.entries(customFields).map(([key, value]) => (
+                  <View key={key} style={{ flexDirection: "row", gap: Theme.spacing.sm, alignItems: "center" }}>
+                    <Text style={{ flex: 1, color: Theme.semantic.text.primary, fontFamily: Theme.fonts.onest }}>{key}: {value}</Text>
+                    <Button
+                      label={t("remove")}
+                      onPress={() => {
+                        setCustomFields((prev) => {
+                          const next = { ...prev }
+                          delete next[key]
+                          return next
+                        })
+                      }}
+                      variant="ghost"
+                      size="sm"
+                    />
+                  </View>
+                ))}
+                <View style={{ flexDirection: "row", gap: Theme.spacing.sm }}>
+                  <View style={{ flex: 1 }}>
+                    <TextField label={t("field_name")} value={newFieldKey} onChangeText={setNewFieldKey} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <TextField label={t("field_value")} value={newFieldValue} onChangeText={setNewFieldValue} />
+                  </View>
+                </View>
+                <Button
+                  label={t("add_field")}
+                  onPress={() => {
+                    if (!newFieldKey.trim()) return
+                    setCustomFields((prev) => ({ ...prev, [newFieldKey.trim()]: newFieldValue }))
+                    setNewFieldKey("")
+                    setNewFieldValue("")
+                  }}
+                  variant="secondary"
+                />
+              </View>
               <TextField label={t("notes")} value={notes} onChangeText={setNotes} multiline numberOfLines={4} error={errors.notes} />
               {errors.form && <Text style={{ color: Theme.semantic.state.danger, fontFamily: Theme.fonts.onest }}>{errors.form}</Text>}
             </View>

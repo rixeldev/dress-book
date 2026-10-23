@@ -15,6 +15,7 @@ export async function createClient(userId: string, input: NewClient): Promise<Cl
     email: input.email?.trim() || null,
     notes: input.notes?.trim() || null,
     tags: input.tags ?? [],
+    customFields: input.customFields ?? {},
     avatarUrl: input.avatarUrl ?? null,
     archived: false,
     createdAt: now,

@@ -358,5 +358,10 @@
   "appointments_count": "{{count}} citas",
   "notifications": "Notificaciones",
   "notifications_desc": "Recibe recordatorios de pruebas y fechas de entrega",
-  "copy_from_previous": "Copiar de la medida anterior"
+  "copy_from_previous": "Copiar de la medida anterior",
+  "custom_fields": "Campos personalizados",
+  "field_name": "Nombre del campo",
+  "field_value": "Valor",
+  "add_field": "Agregar campo",
+  "remove": "Eliminar"
 }
