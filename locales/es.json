@@ -313,5 +313,9 @@
   "due_this_week": "Vencen esta semana",
   "due_this_week_desc": "Trabajo próximo para los siguientes siete días.",
   "today_clear_title": "Nada urgente.",
-  "today_clear_desc": "Tus pedidos activos van al día."
+  "today_clear_desc": "Tus pedidos activos van al día.",
+  "measurement_studio": "Estudio de medidas",
+  "save_measurement": "Guardar medidas",
+  "version": "Versión",
+  "take_measurements": "Tomar medidas"
 }

@@ -313,5 +313,9 @@
   "due_this_week": "Due this week",
   "due_this_week_desc": "Upcoming work for the next seven days.",
   "today_clear_title": "Nothing urgent.",
-  "today_clear_desc": "Your active orders are on track."
+  "today_clear_desc": "Your active orders are on track.",
+  "measurement_studio": "Measurement studio",
+  "save_measurement": "Save measurement",
+  "version": "Version",
+  "take_measurements": "Take measurements"
 }
