@@ -1,4 +1,5 @@
 import React, { Component, ReactNode } from "react"
+import crashlytics from "@react-native-firebase/crashlytics"
 import { StyleSheet, Text, View } from "react-native"
 import { useTranslation } from "react-i18next"
 import { useAppTheme } from "@/hooks/useAppTheme"
@@ -40,6 +41,12 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     console.error("Unhandled app error:", error, info.componentStack)
+    try {
+      crashlytics().recordError(error)
+      crashlytics().log(info.componentStack ?? "")
+    } catch {
+      // Crashlytics is unavailable in some environments.
+    }
   }
 
   render() {

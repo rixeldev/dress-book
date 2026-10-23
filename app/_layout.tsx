@@ -15,6 +15,7 @@ import { Fraunces_600SemiBold } from "@expo-google-fonts/fraunces/600SemiBold"
 import SplashScreen from "@/components/ui/SplashScreen"
 import { OfflinePill } from "@/components/ui"
 import { useStorage } from "@/hooks/useStorage"
+import { initializeAppCheck } from "@/services/appCheck"
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext"
 import { AuthProvider, useAuth } from "@/contexts/AuthContext"
 import { OnboardingProvider } from "@/contexts/OnboardingContext"
@@ -48,6 +49,7 @@ function RootNavigator() {
       })
 
       await mobileAds().initialize()
+      await initializeAppCheck()
 
       try {
         const currentVersion = getVersion()
