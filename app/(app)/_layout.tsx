@@ -1,7 +1,7 @@
 import { Link, Redirect, Stack, useSegments } from "expo-router"
-import { Image, Pressable } from "react-native"
+import { Image, Pressable, View } from "react-native"
 import { useTranslation } from "react-i18next"
-import { CogIcon } from "@/icons/Icons"
+import { CogIcon, SearchIcon } from "@/icons/Icons"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { useOnboarding } from "@/contexts/OnboardingContext"
@@ -44,11 +44,18 @@ export default function AppLayout() {
           />
         ),
         headerRight: () => (
-          <Link asChild href="/settings">
-            <Pressable accessibilityRole="button" accessibilityLabel={t("settings")} hitSlop={10}>
-              <CogIcon color={Theme.colors.text} />
-            </Pressable>
-          </Link>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+            <Link asChild href="/search">
+              <Pressable accessibilityRole="button" accessibilityLabel={t("search")} hitSlop={10}>
+                <SearchIcon color={Theme.colors.text} />
+              </Pressable>
+            </Link>
+            <Link asChild href="/settings">
+              <Pressable accessibilityRole="button" accessibilityLabel={t("settings")} hitSlop={10}>
+                <CogIcon color={Theme.colors.text} />
+              </Pressable>
+            </Link>
+          </View>
         ),
       }}
     >

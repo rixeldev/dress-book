@@ -289,5 +289,14 @@
   "save_order": "Save order",
   "order_save_error": "We could not save this order. Please try again.",
   "order_empty_title": "Your order book is ready.",
-  "order_empty_desc": "Create an order from a client to start tracking production."
+  "order_empty_desc": "Create an order from a client to start tracking production.",
+  "search": "Search",
+  "search_placeholder": "Search clients and orders",
+  "search_start": "Search your studio",
+  "search_start_desc": "Find a client, order, or deadline in seconds.",
+  "search_no_results": "No results",
+  "search_no_results_desc": "Try a different name or order title.",
+  "search_results": "Results",
+  "search_results_count": "{{count}} matches",
+  "open": "Open"
 }

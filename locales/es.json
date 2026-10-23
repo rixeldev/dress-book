@@ -289,5 +289,14 @@
   "save_order": "Guardar pedido",
   "order_save_error": "No pudimos guardar este pedido. Inténtalo de nuevo.",
   "order_empty_title": "Tu libreta de pedidos está lista.",
-  "order_empty_desc": "Crea un pedido desde un cliente para empezar a seguir la producción."
+  "order_empty_desc": "Crea un pedido desde un cliente para empezar a seguir la producción.",
+  "search": "Buscar",
+  "search_placeholder": "Buscar clientes y pedidos",
+  "search_start": "Busca en tu taller",
+  "search_start_desc": "Encuentra un cliente, pedido o fecha de entrega en segundos.",
+  "search_no_results": "Sin resultados",
+  "search_no_results_desc": "Prueba con otro nombre o título de pedido.",
+  "search_results": "Resultados",
+  "search_results_count": "{{count}} coincidencias",
+  "open": "Abrir"
 }
