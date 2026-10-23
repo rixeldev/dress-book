@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { getAppointments, deleteAppointment } from "@/features/appointments/repository"
 import type { Appointment } from "@/interfaces/Appointment"
 import { Button, EmptyState, Screen, SectionHeader } from "@/components/ui"
+import { router } from "expo-router"
 import { StatsIcon as CalendarIcon } from "@/icons/Icons"
 import { formatIsoDate } from "@/libs/dates"
 
@@ -60,7 +61,12 @@ export default function CalendarScreen() {
         contentContainerStyle={{ padding: Theme.spacing.md }}
         data={appointments}
         keyExtractor={(appointment) => appointment.id}
-        ListHeaderComponent={<SectionHeader title={t("calendar")} description={t("appointments_count", { count: appointments.length })} />}
+        ListHeaderComponent={
+          <View style={{ gap: Theme.spacing.sm, marginBottom: Theme.spacing.sm }}>
+            <SectionHeader title={t("calendar")} description={t("appointments_count", { count: appointments.length })} />
+            <Button label={t("new_appointment")} onPress={() => router.push("/appointment/new")} variant="secondary" />
+          </View>
+        }
         renderItem={({ item }) => (
           <View
             style={{

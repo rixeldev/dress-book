@@ -363,5 +363,11 @@
   "field_name": "Nombre del campo",
   "field_value": "Valor",
   "add_field": "Agregar campo",
-  "remove": "Eliminar"
+  "remove": "Eliminar",
+  "new_appointment": "Nueva cita",
+  "starts_at": "Comienza",
+  "starts_at_hint": "Usa formato ISO: 2026-05-01T10:00:00",
+  "save_appointment": "Guardar cita",
+  "appointment_save_error": "No pudimos guardar esta cita. Inténtalo de nuevo.",
+  "appointment_reminder_body": "Cita programada"
 }

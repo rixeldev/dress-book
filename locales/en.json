@@ -363,5 +363,11 @@
   "field_name": "Field name",
   "field_value": "Value",
   "add_field": "Add field",
-  "remove": "Remove"
+  "remove": "Remove",
+  "new_appointment": "New appointment",
+  "starts_at": "Starts at",
+  "starts_at_hint": "Use ISO format: 2026-05-01T10:00:00",
+  "save_appointment": "Save appointment",
+  "appointment_save_error": "We could not save this appointment. Please try again.",
+  "appointment_reminder_body": "Scheduled appointment"
 }

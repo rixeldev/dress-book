@@ -7,6 +7,8 @@ import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { getClients } from "@/features/clients/repository"
 import { createOrder } from "@/features/orders/repository"
+import { scheduleOrderDueReminder } from "@/services/notifications"
+import { useStorage } from "@/hooks/useStorage"
 import type { Client } from "@/interfaces/Client"
 import { orderSchema } from "@/libs/schemas"
 import { Button, Card, Chip, Screen, TextField } from "@/components/ui"
@@ -15,6 +17,7 @@ export default function NewOrderScreen() {
   const { t } = useTranslation()
   const { Theme } = useAppTheme()
   const { user } = useAuth()
+  const { getItem } = useStorage()
   const [clients, setClients] = useState<Client[]>([])
   const [clientId, setClientId] = useState("")
   const [title, setTitle] = useState("")
@@ -65,7 +68,7 @@ export default function NewOrderScreen() {
     setSaving(true)
     setErrors({})
     try {
-      await createOrder(user.uid, {
+      const order = await createOrder(user.uid, {
         clientId: result.data.clientId,
         clientName: result.data.clientName,
         title: result.data.title,
@@ -82,6 +85,12 @@ export default function NewOrderScreen() {
         referenceImageUrls: [],
         notes: result.data.notes ?? null,
       })
+
+      const notificationsEnabled = await getItem("notifications")
+      if (notificationsEnabled !== "false" && order.dueDate) {
+        await scheduleOrderDueReminder({ orderId: order.id, title: order.title, dueDate: order.dueDate })
+      }
+
       router.replace("/orders")
     } catch (error) {
       console.log("Failed to create order", error)
