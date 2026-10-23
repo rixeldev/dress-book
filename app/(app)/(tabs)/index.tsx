@@ -8,7 +8,8 @@ import { getOrders } from "@/features/orders/repository"
 import { getClients } from "@/features/clients/repository"
 import type { Order } from "@/interfaces/Order"
 import type { Client } from "@/interfaces/Client"
-import { EmptyState, Screen, SectionHeader, StatCard } from "@/components/ui"
+import { EmptyState, Screen, SectionHeader, StatCard, SyncPill } from "@/components/ui"
+import { useSync } from "@/contexts/SyncContext"
 import { ListIcon } from "@/icons/Icons"
 import { daysUntil, formatIsoDate } from "@/libs/dates"
 import { formatMoney } from "@/libs/money"
@@ -17,6 +18,7 @@ export default function TodayScreen() {
   const { t } = useTranslation()
   const { Theme } = useAppTheme()
   const { user } = useAuth()
+  const { syncStatus } = useSync()
   const [orders, setOrders] = useState<Order[]>([])
   const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
@@ -113,6 +115,7 @@ export default function TodayScreen() {
         renderItem={() => null}
         ListHeaderComponent={
           <View style={{ gap: Theme.spacing.lg }}>
+            <SyncPill status={syncStatus} />
             <View style={{ flexDirection: "row", gap: Theme.spacing.sm }}>
               <StatCard label={t("active_orders")} value={activeOrders.length} hint={t("orders_in_progress")} style={{ flex: 1 }} />
               <StatCard label={t("clients")} value={clients.length} hint={t("total_clients")} style={{ flex: 1 }} />

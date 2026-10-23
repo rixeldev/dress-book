@@ -18,6 +18,7 @@ import { useStorage } from "@/hooks/useStorage"
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext"
 import { AuthProvider, useAuth } from "@/contexts/AuthContext"
 import { OnboardingProvider } from "@/contexts/OnboardingContext"
+import { SyncProvider } from "@/contexts/SyncContext"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 function RootNavigator() {
@@ -106,9 +107,11 @@ export default function Layout() {
     <ThemeProvider>
       <AuthProvider>
         <OnboardingProvider>
-          <ErrorBoundary>
-            <RootNavigator />
-          </ErrorBoundary>
+          <SyncProvider>
+            <ErrorBoundary>
+              <RootNavigator />
+            </ErrorBoundary>
+          </SyncProvider>
         </OnboardingProvider>
       </AuthProvider>
     </ThemeProvider>

@@ -6,13 +6,15 @@ import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { getClients } from "@/features/clients/repository"
 import type { Client } from "@/interfaces/Client"
-import { Button, EmptyState, ListRow, Screen, SectionHeader, Skeleton } from "@/components/ui"
+import { Button, EmptyState, ListRow, Screen, SectionHeader, Skeleton, SyncPill } from "@/components/ui"
+import { useSync } from "@/contexts/SyncContext"
 import { UsersIcon } from "@/icons/Icons"
 
 export default function ClientsScreen() {
   const { t } = useTranslation()
   const { Theme } = useAppTheme()
   const { user } = useAuth()
+  const { syncStatus } = useSync()
   const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
   const [failed, setFailed] = useState(false)
@@ -81,6 +83,7 @@ export default function ClientsScreen() {
         keyExtractor={(client) => client.id}
         ListHeaderComponent={
           <View style={{ gap: Theme.spacing.sm, marginBottom: Theme.spacing.sm }}>
+            <SyncPill status={syncStatus} />
             <SectionHeader
               title={t("clients")}
               description={t("clients_count", { count: clients.length })}

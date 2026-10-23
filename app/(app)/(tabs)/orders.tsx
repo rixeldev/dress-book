@@ -5,7 +5,8 @@ import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { getOrders } from "@/features/orders/repository"
 import type { Order } from "@/interfaces/Order"
-import { Button, EmptyState, ListRow, Screen, SectionHeader, Skeleton } from "@/components/ui"
+import { Button, EmptyState, ListRow, Screen, SectionHeader, Skeleton, SyncPill } from "@/components/ui"
+import { useSync } from "@/contexts/SyncContext"
 import { ListIcon } from "@/icons/Icons"
 import { router } from "expo-router"
 import { formatMoney } from "@/libs/money"
@@ -15,6 +16,7 @@ export default function OrdersScreen() {
   const { t } = useTranslation()
   const { Theme } = useAppTheme()
   const { user } = useAuth()
+  const { syncStatus } = useSync()
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [failed, setFailed] = useState(false)
@@ -83,6 +85,7 @@ export default function OrdersScreen() {
         keyExtractor={(order) => order.id}
         ListHeaderComponent={
           <View style={{ gap: Theme.spacing.sm, marginBottom: Theme.spacing.sm }}>
+            <SyncPill status={syncStatus} />
             <SectionHeader
               title={t("orders")}
               description={t("orders_count", { count: orders.length })}
