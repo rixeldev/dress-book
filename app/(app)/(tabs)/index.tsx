@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
-import { FlatList, Text, View } from "react-native"
+import { Text, View } from "react-native"
+import { FlashList } from "@shopify/flash-list"
 import { router } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { useAppTheme } from "@/hooks/useAppTheme"
@@ -109,7 +110,7 @@ export default function TodayScreen() {
 
   return (
     <Screen padding={0}>
-      <FlatList
+      <FlashList
         contentContainerStyle={{ padding: Theme.spacing.lg, gap: Theme.spacing.lg }}
         data={[]}
         renderItem={() => null}

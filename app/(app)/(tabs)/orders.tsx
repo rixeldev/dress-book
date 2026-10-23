@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
-import { FlatList, Text, View } from "react-native"
+import { Text, View } from "react-native"
+import { FlashList } from "@shopify/flash-list"
 import { useTranslation } from "react-i18next"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
@@ -79,7 +80,7 @@ export default function OrdersScreen() {
 
   return (
     <Screen padding={0}>
-      <FlatList
+      <FlashList
         contentContainerStyle={{ padding: Theme.spacing.md }}
         data={orders}
         keyExtractor={(order) => order.id}

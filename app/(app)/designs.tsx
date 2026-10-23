@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
-import { FlatList, Image, Text, View } from "react-native"
+import { Image, Text, View } from "react-native"
+import { FlashList } from "@shopify/flash-list"
 
 import * as ImagePicker from "expo-image-picker"
 import { useTranslation } from "react-i18next"
@@ -86,7 +87,7 @@ export default function DesignsScreen() {
 
   return (
     <Screen padding={0}>
-      <FlatList
+      <FlashList
         contentContainerStyle={{ padding: Theme.spacing.md }}
         data={designs}
         keyExtractor={(design) => design.id}
