@@ -1,18 +1,26 @@
-import { Link, Redirect, Stack } from "expo-router"
+import { Link, Redirect, Stack, useSegments } from "expo-router"
 import { Image, Pressable } from "react-native"
 import { useTranslation } from "react-i18next"
 import { CogIcon } from "@/icons/Icons"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
+import { useOnboarding } from "@/contexts/OnboardingContext"
 
 export default function AppLayout() {
   const { user, initializing } = useAuth()
   const { Theme } = useAppTheme()
   const { t } = useTranslation()
+  const { complete: onboardingComplete } = useOnboarding()
+  const segments = useSegments()
 
   if (initializing) return null
   if (!user) return <Redirect href="/sign-in" />
   if (!user.emailVerified) return <Redirect href="/verify-email" />
+  if (onboardingComplete === null) return null
+
+  const currentRoute = segments[segments.length - 1]
+  if (!onboardingComplete && currentRoute !== "onboarding") return <Redirect href="/onboarding" />
+  if (onboardingComplete && currentRoute === "onboarding") return <Redirect href="/" />
 
   return (
     <Stack
@@ -37,11 +45,7 @@ export default function AppLayout() {
         ),
         headerRight: () => (
           <Link asChild href="/settings">
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={t("settings")}
-              hitSlop={10}
-            >
+            <Pressable accessibilityRole="button" accessibilityLabel={t("settings")} hitSlop={10}>
               <CogIcon color={Theme.colors.text} />
             </Pressable>
           </Link>
@@ -49,6 +53,7 @@ export default function AppLayout() {
       }}
     >
       <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="settings" />
       <Stack.Screen name="details" options={{ headerShown: false }} />
     </Stack>

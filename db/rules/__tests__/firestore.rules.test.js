@@ -74,9 +74,7 @@ describe("regs", () => {
     await seedReg("alice-reg", "alice")
     const aliceDb = testEnv.authenticatedContext("alice").firestore()
 
-    await assertFails(
-      setDoc(doc(aliceDb, "regs", "alice-reg"), { userId: "bob", title: "Stolen" }),
-    )
+    await assertFails(setDoc(doc(aliceDb, "regs", "alice-reg"), { userId: "bob", title: "Stolen" }))
   })
 
   test("a user cannot delete another user's record", async () => {
@@ -140,5 +138,18 @@ describe("users", () => {
     await assertSucceeds(getDoc(doc(aliceDb, "users", "alice")))
     await assertFails(getDoc(doc(bobDb, "users", "alice")))
     await assertFails(setDoc(doc(bobDb, "users", "alice"), { name: "Mallory" }))
+  })
+
+  test("a user can access their client subcollection but not another user's clients", async () => {
+    const aliceDb = testEnv.authenticatedContext("alice").firestore()
+    const bobDb = testEnv.authenticatedContext("bob").firestore()
+    const aliceClient = doc(aliceDb, "users", "alice", "clients", "client-1")
+
+    await assertSucceeds(setDoc(aliceClient, { name: "Alice's client" }))
+    await assertSucceeds(getDoc(aliceClient))
+    await assertFails(getDoc(doc(bobDb, "users", "alice", "clients", "client-1")))
+    await assertFails(
+      setDoc(doc(bobDb, "users", "alice", "clients", "client-2"), { name: "Spoofed" }),
+    )
   })
 })

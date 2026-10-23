@@ -16,6 +16,7 @@ import SplashScreen from "@/components/ui/SplashScreen"
 import { useStorage } from "@/hooks/useStorage"
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext"
 import { AuthProvider, useAuth } from "@/contexts/AuthContext"
+import { OnboardingProvider } from "@/contexts/OnboardingContext"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 function RootNavigator() {
@@ -102,9 +103,11 @@ export default function Layout() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <ErrorBoundary>
-          <RootNavigator />
-        </ErrorBoundary>
+        <OnboardingProvider>
+          <ErrorBoundary>
+            <RootNavigator />
+          </ErrorBoundary>
+        </OnboardingProvider>
       </AuthProvider>
     </ThemeProvider>
   )

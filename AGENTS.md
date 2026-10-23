@@ -58,6 +58,7 @@ Google Sign-In needs the SHA-1 and SHA-256 of every signing key registered in th
 - `components/ErrorBoundary.tsx` catches render errors and offers a retry. Crashlytics is not wired up yet.
 - `@/*` resolves from the repo root (see `tsconfig.json`). `tsconfig.json` also remaps `@firebase/auth` to its React Native build; keep that alias.
 - Data is local-first. Records are cached in AsyncStorage under key `"regs"` as a JSON array and mirrored to the Firestore `"regs"` collection. `synced: false` means pending upload; `app/(tabs)/index.tsx` push/merges local and remote data.
+- The first Phase 2 data path is `features/clients/repository.ts`: clients live at `users/{uid}/clients/{clientId}` and use ISO timestamps. The onboarding flow writes its profile defaults to `users/{uid}` and creates the first client. Every new owner-scoped subcollection needs an emulator rules case.
 - `app/details.tsx` reads only from AsyncStorage, so a record must be in the local cache before navigating to `/details?id=...`.
 - After creating or deleting a record, emit `REG_ADDED_EVENT` / `REG_DELETED_EVENT` from `components/ui/TabBar.tsx` via `DeviceEventEmitter`; list and profile screens refetch on those events.
 - `Regs.timestamp` is a locale-formatted string (`M/D/YYYY h:mm AM/PM`), parsed by hand in several screens. Keep that format or date sorting/statistics break.
