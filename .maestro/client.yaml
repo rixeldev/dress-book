@@ -1,0 +1,10 @@
+appId: com.rilisentertainment.dressbook
+---
+- launchApp
+- tapOn: "Clients"
+- tapOn: "New client"
+- inputText: "María López"
+- tapOn: "Save client"
+- assertVisible: "María López"
+- tapOn: "María López"
+- assertVisible: "Take measurements"

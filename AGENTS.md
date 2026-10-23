@@ -24,7 +24,7 @@ npx prettier --write <files>   # no format script
 
 - Tests use `jest-expo` + `@testing-library/react-native`; add pure/unit tests under `libs/__tests__/` and component tests next to the component. React Native Firebase mocks are not set up yet, so keep tests free of native module imports until they are.
 - Firestore rules tests live in `db/rules/__tests__/` and use the Firebase emulator. `firebase-tools` requires JDK 21+; if your default `JAVA_HOME` is older, point it at a 21 JDK for that command.
-- The dev-only `firebase` package is pinned to `12.4.0` to match `@react-native-firebase/app` and keep the compat modules deduped for rules tests. Do not bump it independently.
+- The dev-only `firebase` package is pinned to `12.8.0` to match `@react-native-firebase/app` 23.8.x and keep the compat modules deduped for rules tests. Do not bump it independently.
 - CI lives in `.github/workflows/ci.yml` and runs install, lint, typecheck, Jest, and the Firestore rules tests.
 - `android/` and `ios/` are gitignored prebuild output (`/android`, `/ios` in `.gitignore`). Make committed config changes in `app.config.js` (there is no `app.json`) or plugin config, then rerun `expo run:*`/EAS. Do not hand-edit generated native files and expect them in git.
 - Expo Go cannot run this app: `@react-native-firebase/*`, `react-native-google-mobile-ads`, and Google Sign-In are native modules. Use `expo run:*` or an EAS dev build. The `web` script is configured, but verify features on Android, not web.

@@ -1,0 +1,7 @@
+appId: com.rilisentertainment.dressbook
+---
+- launchApp
+- tapOn: "Clients"
+- tapOn: "Ana García"
+- tapOn: "Take measurements"
+- assertVisible: "Measurement studio"

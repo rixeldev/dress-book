@@ -1,0 +1,8 @@
+appId: com.rilisentertainment.dressbook
+---
+- launchApp
+- assertVisible: "Your studio starts here."
+- tapOn: "Add your first client"
+- inputText: "Ana García"
+- tapOn: "Save client"
+- assertVisible: "Ana García"

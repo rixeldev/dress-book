@@ -1,0 +1,9 @@
+appId: com.rilisentertainment.dressbook
+---
+- launchApp
+- tapOn: "Orders"
+- tapOn: "New order"
+- tapOn: "Ana García"
+- inputText: "Wedding gown"
+- tapOn: "Save order"
+- assertVisible: "Wedding gown"
