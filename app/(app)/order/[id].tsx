@@ -6,6 +6,8 @@ import { BackIcon } from "@/icons/Icons"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { getOrder, updateOrderStatus, deleteOrder } from "@/features/orders/repository"
+import { getActivity, addActivity } from "@/features/orders/activity"
+import type { ActivityEntry } from "@/features/orders/activity"
 import type { Order, OrderStatus } from "@/interfaces/Order"
 import { Button, Card, Chip, MoneyText, Screen, SectionHeader } from "@/components/ui"
 import { formatIsoDate } from "@/libs/dates"
@@ -19,6 +21,7 @@ export default function OrderDetailScreen() {
   const { user } = useAuth()
   const params = useLocalSearchParams<{ id: string }>()
   const [order, setOrder] = useState<Order | null>(null)
+  const [activity, setActivity] = useState<ActivityEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [, setSaving] = useState(false)
 
@@ -26,7 +29,12 @@ export default function OrderDetailScreen() {
     if (!user || !params.id) return
     setLoading(true)
     try {
-      setOrder(await getOrder(user.uid, params.id))
+      const [loadedOrder, loadedActivity] = await Promise.all([
+        getOrder(user.uid, params.id),
+        getActivity(user.uid, params.id),
+      ])
+      setOrder(loadedOrder)
+      setActivity(loadedActivity)
     } finally {
       setLoading(false)
     }
@@ -41,7 +49,15 @@ export default function OrderDetailScreen() {
     setSaving(true)
     try {
       await updateOrderStatus(user.uid, order.id, status)
+      await addActivity(user.uid, order.id, {
+        type: "status_changed",
+        message: `${order.status} → ${status}`,
+        from: order.status,
+        to: status,
+        actorUid: user.uid,
+      })
       setOrder({ ...order, status, deliveredAt: status === "delivered" ? new Date().toISOString() : null })
+      setActivity(await getActivity(user.uid, order.id))
     } finally {
       setSaving(false)
     }
@@ -118,6 +134,28 @@ export default function OrderDetailScreen() {
                 onPress={() => changeStatus(status)}
               />
             ))}
+          </View>
+        </Card>
+
+        <Card>
+          <SectionHeader title={t("activity")} description={t("activity_desc")} />
+          <View style={{ gap: Theme.spacing.sm, marginTop: Theme.spacing.sm }}>
+            {activity.length === 0 ? (
+              <Text style={{ color: Theme.semantic.text.secondary, fontFamily: Theme.fonts.onest }}>
+                {t("no_activity")}
+              </Text>
+            ) : (
+              activity.map((entry) => (
+                <View key={entry.id} style={{ gap: 2 }}>
+                  <Text style={{ color: Theme.semantic.text.primary, fontFamily: Theme.fonts.onestBold, fontSize: Theme.fontSizes.label }}>
+                    {entry.message}
+                  </Text>
+                  <Text style={{ color: Theme.semantic.text.secondary, fontFamily: Theme.fonts.onest, fontSize: Theme.fontSizes.caption }}>
+                    {entry.createdAt}
+                  </Text>
+                </View>
+              ))
+            )}
           </View>
         </Card>
 

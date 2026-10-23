@@ -318,5 +318,8 @@
   "save_measurement": "Save measurement",
   "version": "Version",
   "take_measurements": "Take measurements",
-  "edit_client": "Edit client"
+  "edit_client": "Edit client",
+  "activity": "Activity",
+  "activity_desc": "Status changes and notes for this order.",
+  "no_activity": "No activity yet."
 }
