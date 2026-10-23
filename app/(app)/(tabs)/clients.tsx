@@ -2,12 +2,12 @@ import { useCallback, useState } from "react"
 import { FlatList, Text, View } from "react-native"
 import { useFocusEffect } from "expo-router"
 import { useTranslation } from "react-i18next"
-import { UsersIcon } from "@/icons/Icons"
+import { InfoIcon, UsersIcon } from "@/icons/Icons"
 import { useAuth } from "@/contexts/AuthContext"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { getClients } from "@/features/clients/repository"
 import type { Client } from "@/interfaces/Client"
-import { EmptyState, ListRow, Screen, SectionHeader, Skeleton } from "@/components/ui"
+import { EmptyState, ErrorState, ListRow, Screen, SectionHeader, Skeleton } from "@/components/ui"
 
 export default function ClientsScreen() {
   const { t } = useTranslation()
@@ -50,15 +50,27 @@ export default function ClientsScreen() {
     )
   }
 
-  if (failedToLoad || clients.length === 0) {
+  if (failedToLoad) {
+    return (
+      <Screen padding={0}>
+        <ErrorState
+          icon={<InfoIcon color={Theme.semantic.state.danger} size={30} />}
+          title={t("clients_load_error_title")}
+          description={t("clients_load_error_desc")}
+          actionLabel={t("try_again")}
+          onAction={loadClients}
+        />
+      </Screen>
+    )
+  }
+
+  if (clients.length === 0) {
     return (
       <Screen padding={0}>
         <EmptyState
           icon={<UsersIcon color={Theme.semantic.accent.primary} size={30} />}
-          title={failedToLoad ? t("clients_load_error_title") : t("clients_empty_title")}
-          description={failedToLoad ? t("clients_load_error_desc") : t("clients_empty_desc")}
-          actionLabel={failedToLoad ? t("try_again") : undefined}
-          onAction={failedToLoad ? loadClients : undefined}
+          title={t("clients_empty_title")}
+          description={t("clients_empty_desc")}
         />
       </Screen>
     )

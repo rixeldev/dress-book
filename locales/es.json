@@ -222,6 +222,7 @@
   "library": "Biblioteca",
   "more": "Más",
   "quick_add": "Agregar rápidamente",
+  "offline_sync_message": "Sin conexión — los cambios se sincronizarán",
   "continue": "Continuar",
   "back": "Volver",
   "currency": "Moneda",

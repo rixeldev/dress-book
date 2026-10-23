@@ -13,6 +13,7 @@ import * as RNLocalize from "react-native-localize"
 import { useFonts } from "expo-font"
 import { Fraunces_600SemiBold } from "@expo-google-fonts/fraunces/600SemiBold"
 import SplashScreen from "@/components/ui/SplashScreen"
+import { OfflinePill } from "@/components/ui"
 import { useStorage } from "@/hooks/useStorage"
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext"
 import { AuthProvider, useAuth } from "@/contexts/AuthContext"
@@ -81,6 +82,7 @@ function RootNavigator() {
     <SafeAreaProvider style={{ height: "100%", backgroundColor: theme.colors.background }}>
       <StatusBar style={isDark ? "light" : "dark"} />
       <GestureHandlerRootView style={{ flex: 1 }}>
+        <OfflinePill />
         {isBooting ? (
           <SplashScreen onFinish={() => {}} />
         ) : needsUpdate ? (
