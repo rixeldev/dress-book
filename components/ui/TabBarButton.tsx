@@ -1,86 +1,49 @@
-import React, { useEffect } from "react"
-import { StyleSheet } from "react-native"
-import { HomeIcon, UserIcon } from "@/icons/Icons"
+import type { ReactNode } from "react"
+import { StyleSheet, Text } from "react-native"
 import { PlatformPressable } from "@react-navigation/elements"
-import Animated, {
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated"
 import { useAppTheme } from "@/hooks/useAppTheme"
 
 interface Props {
   onPress: () => void
   onLongPress: () => void
   isFocused: boolean
-  routeName: string
   label: string
-  color: string
+  icon: ReactNode
 }
 
-export const TabBarButton = ({
-  onPress,
-  onLongPress,
-  isFocused,
-  routeName,
-  label,
-  color,
-}: Props) => {
+export function TabBarButton({ onPress, onLongPress, isFocused, label, icon }: Props) {
   const { Theme } = useAppTheme()
-  const icon = {
-    index: (props: any) => <HomeIcon {...props} />,
-    user: (props: any) => <UserIcon {...props} />,
-  }
-
-  const scale = useSharedValue(0)
-
-  useEffect(() => {
-    scale.value = withSpring(typeof isFocused === "boolean" ? (isFocused ? 1 : 0) : isFocused, {
-      duration: 200,
-    })
-  }, [scale, isFocused])
-
-  const animatedTextStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(scale.value, [0, 1], [1, 0])
-    return { opacity }
-  })
-
-  const animatedIconStyle = useAnimatedStyle(() => {
-    const scaleValue = interpolate(scale.value, [0, 1], [1, 1.2])
-    const top = interpolate(scale.value, [0, 1], [0, 9])
-    return { transform: [{ scale: scaleValue }], top: top }
-  })
 
   return (
-    <PlatformPressable onPress={onPress} onLongPress={onLongPress} style={styles.tabbarItem}>
-      <Animated.View style={animatedIconStyle}>
-        {icon[routeName as keyof typeof icon]({
-          color: color,
-        })}
-      </Animated.View>
-      <Animated.Text
-        style={[
-          {
-            color: color,
-            textAlign: "center",
-            fontSize: Theme.sizes.h6,
-            fontFamily: Theme.fonts.onest,
-          },
-          animatedTextStyle,
-        ]}
+    <PlatformPressable
+      onPress={onPress}
+      onLongPress={onLongPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ selected: isFocused }}
+      style={styles.item}
+    >
+      {icon}
+      <Text
+        numberOfLines={1}
+        style={{
+          color: isFocused ? Theme.semantic.accent.primary : Theme.semantic.text.secondary,
+          fontSize: Theme.fontSizes.caption,
+          fontFamily: isFocused ? Theme.fonts.onestBold : Theme.fonts.onest,
+        }}
       >
         {label}
-      </Animated.Text>
+      </Text>
     </PlatformPressable>
   )
 }
 
 const styles = StyleSheet.create({
-  tabbarItem: {
+  item: {
     flex: 1,
-    justifyContent: "center",
+    minHeight: 48,
     alignItems: "center",
-    gap: 4,
+    justifyContent: "center",
+    gap: 3,
   },
 })

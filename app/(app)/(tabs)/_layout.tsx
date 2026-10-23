@@ -1,8 +1,8 @@
 import { Tabs } from "expo-router"
-import { HomeIcon, UserIcon } from "@/icons/Icons"
+import { useTranslation } from "react-i18next"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { TabBar } from "@/components/ui/TabBar"
-import { useTranslation } from "react-i18next"
+import { HomeIcon, ListIcon, PackageIcon, UsersIcon, UserIcon } from "@/icons/Icons"
 
 export default function TabsLayout() {
   const { t } = useTranslation()
@@ -13,11 +13,8 @@ export default function TabsLayout() {
       tabBar={(props) => <TabBar {...props} />}
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: Theme.colors.text,
-        tabBarStyle: {
-          backgroundColor: Theme.colors.transparent,
-        },
         tabBarHideOnKeyboard: true,
+        tabBarActiveTintColor: Theme.semantic.accent.primary,
       }}
     >
       <Tabs.Screen
@@ -25,16 +22,34 @@ export default function TabsLayout() {
         options={{
           tabBarIcon: ({ color }) => <HomeIcon color={color} />,
           title: t("home"),
-          tabBarActiveTintColor: Theme.colors.primary,
         }}
       />
-
       <Tabs.Screen
-        name="user"
+        name="clients"
+        options={{
+          tabBarIcon: ({ color }) => <UsersIcon color={color} />,
+          title: t("clients"),
+        }}
+      />
+      <Tabs.Screen
+        name="orders"
+        options={{
+          tabBarIcon: ({ color }) => <ListIcon color={color} />,
+          title: t("orders"),
+        }}
+      />
+      <Tabs.Screen
+        name="library"
+        options={{
+          tabBarIcon: ({ color }) => <PackageIcon color={color} />,
+          title: t("library"),
+        }}
+      />
+      <Tabs.Screen
+        name="more"
         options={{
           tabBarIcon: ({ color }) => <UserIcon color={color} />,
-          title: t("user"),
-          tabBarActiveTintColor: Theme.colors.primary,
+          title: t("more"),
         }}
       />
     </Tabs>

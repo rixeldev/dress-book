@@ -53,7 +53,7 @@ Google Sign-In needs the SHA-1 and SHA-256 of every signing key registered in th
 
 ## Architecture
 
-- Entry is `expo-router/entry`; routes live in `app/`. `app/_layout.tsx` wraps the app in `ThemeProvider`, initializes i18n/ads/fonts, and gates rendering on auth state, email verification, and forced app update.
+- Entry is `expo-router/entry`; routes live in `app/`. `app/_layout.tsx` wraps the app in `ThemeProvider` and `AuthProvider`, initializes i18n/ads/fonts, and gates rendering on auth state, email verification, and forced app update. `(auth)` owns sign-in/sign-up/verification; `(app)` guards verified users and owns tabs, settings, and details. Keep public paths `/`, `/settings`, and `/details` stable.
 - The old hard-coded admin UID bypass is gone. Every account must verify its email; do not reintroduce a bypass without a custom-claims design.
 - `components/ErrorBoundary.tsx` catches render errors and offers a retry. Crashlytics is not wired up yet.
 - `@/*` resolves from the repo root (see `tsconfig.json`). `tsconfig.json` also remaps `@firebase/auth` to its React Native build; keep that alias.

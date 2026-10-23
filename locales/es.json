@@ -216,5 +216,13 @@
   "delete_account_recent_login_title": "Inicia sesión de nuevo",
   "delete_account_recent_login_desc": "Por seguridad, cierra sesión y vuelve a iniciarla, luego intenta eliminar tu cuenta nuevamente.",
   "delete_account_failed": "No se pudo eliminar tu cuenta. Inténtalo de nuevo.",
-  "delete": "Eliminar"
+  "home": "Hoy",
+  "clients": "Clientes",
+  "orders": "Pedidos",
+  "library": "Biblioteca",
+  "more": "Más",
+  "quick_add": "Agregar rápidamente",
+  "clients_empty_desc": "Tu libreta de clientes reunirá contactos, notas y perfiles de medidas.",
+  "orders_empty_desc": "Tus pedidos aparecerán aquí con pruebas, fechas de entrega y estado de producción.",
+  "library_empty_desc": "Organiza telas, referencias de diseño y materiales en un solo lugar."
 }

@@ -195,6 +195,9 @@ export const AddButton = ({ onRegAdded }: AddButtonProps) => {
 
       <Pressable
         onPress={toggleMenu}
+        accessibilityRole="button"
+        accessibilityLabel={t("quick_add")}
+        accessibilityState={{ expanded: isOpen }}
         style={({ pressed }) => [styles.button, pressed && { opacity: 0.9 }]}
       >
         <Animated.View style={rotationStyle}>
