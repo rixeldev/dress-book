@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
-import { Image, Text, View } from "react-native"
+import { Text, View } from "react-native"
+import { Image } from "expo-image"
 import { FlashList } from "@shopify/flash-list"
 
 import * as ImagePicker from "expo-image-picker"
@@ -109,7 +110,7 @@ export default function DesignsScreen() {
             }}
           >
             {item.imageUrls[0] && (
-              <Image source={{ uri: item.imageUrls[0] }} style={{ width: "100%", height: 180 }} resizeMode="cover" />
+              <Image source={{ uri: item.imageUrls[0] }} style={{ width: "100%", height: 180 }} contentFit="cover" cachePolicy="memory-disk" />
             )}
             <View style={{ padding: Theme.spacing.md, gap: 4 }}>
               <Text style={{ color: Theme.semantic.text.primary, fontFamily: Theme.fonts.onestBold, fontSize: Theme.fontSizes.body }}>

@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from "react-native"
+import { Image } from "expo-image"
 import type { StyleProp, ViewStyle } from "react-native"
 import { useAppTheme } from "@/hooks/useAppTheme"
 
@@ -35,8 +36,7 @@ export function Avatar({ name, imageUrl, size = "md", style }: AvatarProps) {
       ]}
     >
       {imageUrl ? (
-        <View style={{ width: dimension, height: dimension, borderRadius: dimension / 2, overflow: "hidden" }}>
-        </View>
+        <Image source={{ uri: imageUrl }} style={{ width: dimension, height: dimension }} contentFit="cover" cachePolicy="memory-disk" />
       ) : (
         <Text
           style={{
