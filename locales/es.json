@@ -344,5 +344,12 @@
   "fabric_save_error": "No pudimos guardar esta tela. Inténtalo de nuevo.",
   "fabrics_count": "{{count}} telas",
   "no_supplier": "Sin proveedor",
-  "low_stock": "Stock bajo"
+  "low_stock": "Stock bajo",
+  "designs": "Diseños",
+  "designs_empty_title": "Tu biblioteca de diseños está lista.",
+  "designs_empty_desc": "Guarda fotos de referencia y vincúlalas a pedidos.",
+  "designs_count": "{{count}} diseños",
+  "add_design": "Agregar diseño",
+  "design_untitled": "Diseño sin título",
+  "no_tags": "Sin etiquetas"
 }

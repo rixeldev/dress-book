@@ -344,5 +344,12 @@
   "fabric_save_error": "We could not save this fabric. Please try again.",
   "fabrics_count": "{{count}} fabrics",
   "no_supplier": "No supplier",
-  "low_stock": "Low stock"
+  "low_stock": "Low stock",
+  "designs": "Designs",
+  "designs_empty_title": "Your design library is ready.",
+  "designs_empty_desc": "Save reference photos and link them to orders.",
+  "designs_count": "{{count}} designs",
+  "add_design": "Add design",
+  "design_untitled": "Untitled design",
+  "no_tags": "No tags"
 }
