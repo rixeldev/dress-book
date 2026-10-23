@@ -251,5 +251,18 @@
   "delete_account_recent_login_title": "Please sign in again",
   "delete_account_recent_login_desc": "For security, sign out and sign in again, then retry deleting your account.",
   "delete_account_failed": "Could not delete your account. Please try again.",
-  "delete": "Delete"
+  "orders_empty_title": "Your order book is ready.",
+  "orders_load_error_title": "Orders could not load.",
+  "orders_load_error_desc": "Check your connection, then try again.",
+  "orders_count": "{{count}} orders",
+  "due": "Due",
+  "no_deadline": "No deadline",
+  "consultation": "Consultation",
+  "cutting": "Cutting",
+  "sewing": "Sewing",
+  "fitting": "Fitting",
+  "cancelled": "Cancelled",
+  "library_empty_title": "Your library is ready.",
+  "library_load_error_title": "Library could not load.",
+  "library_load_error_desc": "Check your connection, then try again."
 }

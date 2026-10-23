@@ -1,13 +1,12 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { FlatList, Text, View } from "react-native"
-import { useFocusEffect } from "expo-router"
 import { useTranslation } from "react-i18next"
-import { InfoIcon, UsersIcon } from "@/icons/Icons"
-import { useAuth } from "@/contexts/AuthContext"
 import { useAppTheme } from "@/hooks/useAppTheme"
+import { useAuth } from "@/contexts/AuthContext"
 import { getClients } from "@/features/clients/repository"
 import type { Client } from "@/interfaces/Client"
-import { EmptyState, ErrorState, ListRow, Screen, SectionHeader, Skeleton } from "@/components/ui"
+import { EmptyState, ListRow, Screen, SectionHeader, Skeleton } from "@/components/ui"
+import { UsersIcon } from "@/icons/Icons"
 
 export default function ClientsScreen() {
   const { t } = useTranslation()
@@ -15,28 +14,25 @@ export default function ClientsScreen() {
   const { user } = useAuth()
   const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
-  const [failedToLoad, setFailedToLoad] = useState(false)
+  const [failed, setFailed] = useState(false)
 
-  const loadClients = useCallback(async () => {
+  const load = useCallback(async () => {
     if (!user) return
-
     setLoading(true)
-    setFailedToLoad(false)
+    setFailed(false)
     try {
       setClients(await getClients(user.uid))
     } catch (error) {
       console.log("Failed to load clients", error)
-      setFailedToLoad(true)
+      setFailed(true)
     } finally {
       setLoading(false)
     }
   }, [user])
 
-  useFocusEffect(
-    useCallback(() => {
-      loadClients()
-    }, [loadClients]),
-  )
+  useEffect(() => {
+    load()
+  }, [load])
 
   if (loading) {
     return (
@@ -50,15 +46,15 @@ export default function ClientsScreen() {
     )
   }
 
-  if (failedToLoad) {
+  if (failed) {
     return (
       <Screen padding={0}>
-        <ErrorState
-          icon={<InfoIcon color={Theme.semantic.state.danger} size={30} />}
+        <EmptyState
+          icon={<UsersIcon color={Theme.semantic.state.danger} size={30} />}
           title={t("clients_load_error_title")}
           description={t("clients_load_error_desc")}
           actionLabel={t("try_again")}
-          onAction={loadClients}
+          onAction={load}
         />
       </Screen>
     )

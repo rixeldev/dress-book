@@ -250,5 +250,19 @@
   "clients_count": "{{count}} clientes",
   "client_no_contact": "Aún no hay datos de contacto",
   "orders_empty_desc": "Tus pedidos aparecerán aquí con pruebas, fechas de entrega y estado de producción.",
-  "library_empty_desc": "Organiza telas, referencias de diseño y materiales en un solo lugar."
+  "library_empty_desc": "Organiza telas, referencias de diseño y materiales en un solo lugar.",
+  "orders_empty_title": "Tu libreta de pedidos está lista.",
+  "orders_load_error_title": "No se pudieron cargar los pedidos.",
+  "orders_load_error_desc": "Revisa tu conexión y vuelve a intentarlo.",
+  "orders_count": "{{count}} pedidos",
+  "due": "Entrega",
+  "no_deadline": "Sin fecha",
+  "consultation": "Consulta",
+  "cutting": "Corte",
+  "sewing": "Costura",
+  "fitting": "Prueba",
+  "cancelled": "Cancelado",
+  "library_empty_title": "Tu biblioteca está lista.",
+  "library_load_error_title": "No se pudo cargar la biblioteca.",
+  "library_load_error_desc": "Revisa tu conexión y vuelve a intentarlo."
 }
