@@ -324,5 +324,9 @@
   "no_activity": "No activity yet.",
   "call": "Call",
   "message": "Message",
-  "email_action": "Email"
+  "email_action": "Email",
+  "client_measurements_desc": "Measurement versions for this client.",
+  "no_measurements_yet": "No measurements saved yet.",
+  "taken_on": "Taken on",
+  "measurement_outdated": "May be outdated"
 }

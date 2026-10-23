@@ -6,6 +6,8 @@ import { BackIcon, UsersIcon } from "@/icons/Icons"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { getClient, archiveClient } from "@/features/clients/repository"
+import { getMeasurements } from "@/features/measurements/repository"
+import type { Measurement } from "@/interfaces/Measurement"
 import type { Client } from "@/interfaces/Client"
 import { Button, Card, EmptyState, Screen, SectionHeader } from "@/components/ui"
 
@@ -17,13 +19,19 @@ export default function ClientDetailScreen() {
   const { user } = useAuth()
   const params = useLocalSearchParams<{ id: string }>()
   const [client, setClient] = useState<Client | null>(null)
+  const [measurements, setMeasurements] = useState<Measurement[]>([])
   const [loading, setLoading] = useState(true)
 
   const load = useCallback(async () => {
     if (!user || !params.id) return
     setLoading(true)
     try {
-      setClient(await getClient(user.uid, params.id))
+      const [loadedClient, loadedMeasurements] = await Promise.all([
+        getClient(user.uid, params.id),
+        getMeasurements(user.uid, params.id),
+      ])
+      setClient(loadedClient)
+      setMeasurements(loadedMeasurements)
     } finally {
       setLoading(false)
     }
@@ -86,6 +94,40 @@ export default function ClientDetailScreen() {
             )}
           </View>
         </Card>
+        <SectionHeader title={t("measurements")} description={t("client_measurements_desc")} />
+        <View style={{ gap: Theme.spacing.sm }}>
+          {measurements.length === 0 ? (
+            <Text style={{ color: Theme.semantic.text.secondary, fontFamily: Theme.fonts.onest }}>
+              {t("no_measurements_yet")}
+            </Text>
+          ) : (
+            measurements.map((measurement) => {
+              const outdated = new Date(measurement.takenAt).getTime() < Date.now() - 180 * 86_400_000
+              return (
+                <View
+                  key={measurement.id}
+                  style={{
+                    borderRadius: Theme.radius.card,
+                    backgroundColor: Theme.semantic.bg.surface,
+                    borderWidth: 1,
+                    borderColor: outdated ? Theme.semantic.state.warning : Theme.semantic.border.subtle,
+                    padding: Theme.spacing.md,
+                    gap: 4,
+                  }}
+                >
+                  <Text style={{ color: Theme.semantic.text.primary, fontFamily: Theme.fonts.onestBold }}>
+                    {t("version")} {measurement.version} · {measurement.unit}
+                  </Text>
+                  <Text style={{ color: Theme.semantic.text.secondary, fontFamily: Theme.fonts.onest, fontSize: Theme.fontSizes.label }}>
+                    {t("taken_on")} {measurement.takenAt.slice(0, 10)}
+                    {outdated ? ` · ${t("measurement_outdated")}` : ""}
+                  </Text>
+                </View>
+              )
+            })
+          )}
+        </View>
+
         <SectionHeader title={t("orders")} description={t("client_orders_desc")} />
         <View style={{ flexDirection: "row", gap: Theme.spacing.sm }}>
           {client.phone && (

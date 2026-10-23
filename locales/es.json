@@ -324,5 +324,9 @@
   "no_activity": "Aún no hay actividad.",
   "call": "Llamar",
   "message": "Mensaje",
-  "email_action": "Correo"
+  "email_action": "Correo",
+  "client_measurements_desc": "Versiones de medidas de este cliente.",
+  "no_measurements_yet": "Aún no hay medidas guardadas.",
+  "taken_on": "Tomada el",
+  "measurement_outdated": "Podría estar desactualizada"
 }
