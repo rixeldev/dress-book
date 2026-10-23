@@ -5,8 +5,9 @@ import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { getOrders } from "@/features/orders/repository"
 import type { Order } from "@/interfaces/Order"
-import { EmptyState, ListRow, Screen, SectionHeader, Skeleton } from "@/components/ui"
+import { Button, EmptyState, ListRow, Screen, SectionHeader, Skeleton } from "@/components/ui"
 import { ListIcon } from "@/icons/Icons"
+import { router } from "expo-router"
 import { formatMoney } from "@/libs/money"
 import { formatIsoDate } from "@/libs/dates"
 
@@ -81,11 +82,13 @@ export default function OrdersScreen() {
         data={orders}
         keyExtractor={(order) => order.id}
         ListHeaderComponent={
-          <SectionHeader
-            title={t("orders")}
-            description={t("orders_count", { count: orders.length })}
-            style={{ marginBottom: Theme.spacing.sm }}
-          />
+          <View style={{ gap: Theme.spacing.sm, marginBottom: Theme.spacing.sm }}>
+            <SectionHeader
+              title={t("orders")}
+              description={t("orders_count", { count: orders.length })}
+            />
+            <Button label={t("new_order")} onPress={() => router.push("/order/new")} variant="secondary" />
+          </View>
         }
         renderItem={({ item }) => (
           <ListRow

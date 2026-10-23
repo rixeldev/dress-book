@@ -275,5 +275,19 @@
   "client_not_found_desc": "This client may have been removed.",
   "client_orders_desc": "Orders linked to this client will appear here.",
   "save_client": "Save client",
-  "archive_client": "Archive client"
+  "archive_client": "Archive client",
+  "new_order": "New order",
+  "client": "Client",
+  "low": "Low",
+  "normal": "Normal",
+  "high": "High",
+  "due_date": "Due date",
+  "due_date_hint": "Use YYYY-MM-DD for the delivery date.",
+  "price": "Price",
+  "deposit": "Deposit",
+  "notes": "Notes",
+  "save_order": "Save order",
+  "order_save_error": "We could not save this order. Please try again.",
+  "order_empty_title": "Your order book is ready.",
+  "order_empty_desc": "Create an order from a client to start tracking production."
 }

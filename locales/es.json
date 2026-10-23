@@ -275,5 +275,19 @@
   "client_not_found_desc": "Este cliente pudo haber sido eliminado.",
   "client_orders_desc": "Los pedidos vinculados a este cliente aparecerán aquí.",
   "save_client": "Guardar cliente",
-  "archive_client": "Archivar cliente"
+  "archive_client": "Archivar cliente",
+  "new_order": "Nuevo pedido",
+  "client": "Cliente",
+  "low": "Baja",
+  "normal": "Normal",
+  "high": "Alta",
+  "due_date": "Fecha de entrega",
+  "due_date_hint": "Usa AAAA-MM-DD para la fecha de entrega.",
+  "price": "Precio",
+  "deposit": "Anticipo",
+  "notes": "Notas",
+  "save_order": "Guardar pedido",
+  "order_save_error": "No pudimos guardar este pedido. Inténtalo de nuevo.",
+  "order_empty_title": "Tu libreta de pedidos está lista.",
+  "order_empty_desc": "Crea un pedido desde un cliente para empezar a seguir la producción."
 }
