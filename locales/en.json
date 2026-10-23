@@ -357,5 +357,6 @@
   "calendar_empty_desc": "Schedule fittings and deliveries to stay on track.",
   "appointments_count": "{{count}} appointments",
   "notifications": "Notifications",
-  "notifications_desc": "Receive reminders for fittings and due dates"
+  "notifications_desc": "Receive reminders for fittings and due dates",
+  "copy_from_previous": "Copy from previous measurement"
 }

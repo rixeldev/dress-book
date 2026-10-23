@@ -10,6 +10,7 @@ export interface MeasurementRowProps {
   unit: string
   onChangeText?: (value: string) => void
   editable?: boolean
+  highlight?: boolean
   hint?: string
   error?: string
   style?: StyleProp<ViewStyle>
@@ -21,6 +22,7 @@ export function MeasurementRow({
   unit,
   onChangeText,
   editable = true,
+  highlight = false,
   hint,
   error,
   style,
@@ -28,7 +30,7 @@ export function MeasurementRow({
   const { Theme } = useAppTheme()
 
   return (
-    <View style={[styles.row, style]}>
+    <View style={[styles.row, highlight && styles.highlighted, style]}>
       <Text style={[styles.label, { color: Theme.semantic.text.primary }]}>{label}</Text>
       <View style={styles.inputWrap}>
         <TextField
@@ -53,6 +55,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 12,
     minHeight: 48,
+    borderRadius: 8,
+    paddingHorizontal: 4,
+  },
+  highlighted: {
+    backgroundColor: "rgba(185, 138, 75, 0.12)",
   },
   label: {
     flex: 1,

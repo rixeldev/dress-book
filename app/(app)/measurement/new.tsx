@@ -1,11 +1,11 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ScrollView, Text, View } from "react-native"
 import { router, Stack, useLocalSearchParams } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { BackIcon } from "@/icons/Icons"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
-import { createMeasurement } from "@/features/measurements/repository"
+import { createMeasurement, getMeasurements } from "@/features/measurements/repository"
 import { getEmptyMeasurements } from "@/libs/measurementTemplates"
 import { toCanonicalCm, fromCanonicalCm } from "@/libs/units"
 import type { FullBodyMeasurements } from "@/interfaces/FullBodyMeasurements"
@@ -21,12 +21,23 @@ export default function MeasurementStudioScreen() {
   const params = useLocalSearchParams<{ clientId: string }>()
   const clientId = params.clientId
 
+  useEffect(() => {
+    if (!user || !clientId) return
+    getMeasurements(user.uid, clientId)
+      .then((measurements) => {
+        if (measurements.length > 0) setPrevious(measurements[0].values)
+      })
+      .catch(() => setPrevious(null))
+  }, [user, clientId])
+
   const [type, setType] = useState<RegType>("Clothes")
   const [unit, setUnit] = useState<"cm" | "in" | "yd">("cm")
   const [values, setValues] = useState<FullBodyMeasurements>(() => getEmptyMeasurements("Clothes"))
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [saving, setSaving] = useState(false)
   const [notes, setNotes] = useState("")
+  const [previous, setPrevious] = useState<FullBodyMeasurements | null>(null)
+  const [changedFields, setChangedFields] = useState<Set<string>>(new Set())
 
   const handleTypeChange = (nextType: RegType) => {
     setType(nextType)
@@ -57,6 +68,36 @@ export default function MeasurementStudioScreen() {
       next[category][field] = Number.isFinite(parsed) ? parsed : undefined
       return next as unknown as FullBodyMeasurements
     })
+
+    if (previous) {
+      const previousRecord = previous as unknown as Record<string, Record<string, number | undefined>>
+      const previousValue = previousRecord?.[category]?.[field]
+      const currentValue = parsed
+      if (previousValue !== currentValue) {
+        setChangedFields((prevSet) => new Set(prevSet).add(`${category}.${field}`))
+      } else {
+        setChangedFields((prevSet) => {
+          const nextSet = new Set(prevSet)
+          nextSet.delete(`${category}.${field}`)
+          return nextSet
+        })
+      }
+    }
+  }
+
+  const copyFromPrevious = () => {
+    if (!previous) return
+    const converted = structuredClone(previous) as unknown as Record<string, Record<string, number | undefined>>
+    for (const category of Object.keys(converted)) {
+      for (const field of Object.keys(converted[category])) {
+        const current = converted[category][field]
+        if (typeof current === "number") {
+          converted[category][field] = fromCanonicalCm(toCanonicalCm(current, "cm"), unit)
+        }
+      }
+    }
+    setValues(converted as unknown as FullBodyMeasurements)
+    setChangedFields(new Set())
   }
 
   const handleSave = async () => {
@@ -133,6 +174,15 @@ export default function MeasurementStudioScreen() {
           </View>
         </Card>
 
+        {previous && (
+          <Button
+            label={t("copy_from_previous")}
+            onPress={copyFromPrevious}
+            variant="secondary"
+            fullWidth
+          />
+        )}
+
         {categories.map((category) => {
           const fields = (values as unknown as Record<string, Record<string, number | undefined>>)[category] ?? {}
           const isOpen = expanded.has(category)
@@ -160,6 +210,7 @@ export default function MeasurementStudioScreen() {
                         label={t(field.replace(/([A-Z])/g, "_$1").toLowerCase())}
                         value={fields[field]}
                         unit={unit}
+                        highlight={changedFields.has(`${category}.${field}`)}
                         onChangeText={(value) => updateField(category, field, value)}
                       />
                     ))}
