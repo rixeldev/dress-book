@@ -1,4 +1,4 @@
-import { collection, doc, getDocs, getFirestore, setDoc } from "@react-native-firebase/firestore"
+import { collection, doc, getDoc, getDocs, getFirestore, setDoc } from "@react-native-firebase/firestore"
 import type { Client, NewClient } from "@/interfaces/Client"
 
 const db = getFirestore()
@@ -23,6 +23,20 @@ export async function createClient(userId: string, input: NewClient): Promise<Cl
 
   await setDoc(doc(db, "users", userId, "clients", client.id), client)
   return client
+}
+
+export async function getClient(userId: string, clientId: string): Promise<Client | null> {
+  const snapshot = await getDoc(doc(db, "users", userId, "clients", clientId))
+  if (!snapshot.exists()) return null
+  return { ...(snapshot.data() as Client), id: snapshot.id }
+}
+
+export async function archiveClient(userId: string, clientId: string): Promise<void> {
+  await setDoc(
+    doc(db, "users", userId, "clients", clientId),
+    { archived: true, updatedAt: new Date().toISOString() },
+    { merge: true },
+  )
 }
 
 export async function getClients(userId: string): Promise<Client[]> {

@@ -264,5 +264,16 @@
   "cancelled": "Cancelado",
   "library_empty_title": "Tu biblioteca está lista.",
   "library_load_error_title": "No se pudo cargar la biblioteca.",
-  "library_load_error_desc": "Revisa tu conexión y vuelve a intentarlo."
+  "library_load_error_desc": "Revisa tu conexión y vuelve a intentarlo.",
+  "new_client": "Nuevo cliente",
+  "phone": "Teléfono",
+  "tags": "Etiquetas",
+  "tags_placeholder": "vip, novia, ajuste",
+  "tags_hint": "Separa las etiquetas con comas.",
+  "client_save_error": "No pudimos guardar este cliente. Inténtalo de nuevo.",
+  "client_not_found": "Cliente no encontrado",
+  "client_not_found_desc": "Este cliente pudo haber sido eliminado.",
+  "client_orders_desc": "Los pedidos vinculados a este cliente aparecerán aquí.",
+  "save_client": "Guardar cliente",
+  "archive_client": "Archivar cliente"
 }

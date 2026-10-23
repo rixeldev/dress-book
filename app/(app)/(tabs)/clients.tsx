@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react"
 import { FlatList, Text, View } from "react-native"
+import { router } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { getClients } from "@/features/clients/repository"
 import type { Client } from "@/interfaces/Client"
-import { EmptyState, ListRow, Screen, SectionHeader, Skeleton } from "@/components/ui"
+import { Button, EmptyState, ListRow, Screen, SectionHeader, Skeleton } from "@/components/ui"
 import { UsersIcon } from "@/icons/Icons"
 
 export default function ClientsScreen() {
@@ -79,11 +80,13 @@ export default function ClientsScreen() {
         data={clients}
         keyExtractor={(client) => client.id}
         ListHeaderComponent={
-          <SectionHeader
-            title={t("clients")}
-            description={t("clients_count", { count: clients.length })}
-            style={{ marginBottom: Theme.spacing.sm }}
-          />
+          <View style={{ gap: Theme.spacing.sm, marginBottom: Theme.spacing.sm }}>
+            <SectionHeader
+              title={t("clients")}
+              description={t("clients_count", { count: clients.length })}
+            />
+            <Button label={t("new_client")} onPress={() => router.push("/client/new")} variant="secondary" />
+          </View>
         }
         renderItem={({ item }) => (
           <ListRow

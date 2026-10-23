@@ -264,5 +264,16 @@
   "cancelled": "Cancelled",
   "library_empty_title": "Your library is ready.",
   "library_load_error_title": "Library could not load.",
-  "library_load_error_desc": "Check your connection, then try again."
+  "library_load_error_desc": "Check your connection, then try again.",
+  "new_client": "New client",
+  "phone": "Phone",
+  "tags": "Tags",
+  "tags_placeholder": "vip, bridal, alteration",
+  "tags_hint": "Separate tags with commas.",
+  "client_save_error": "We could not save this client. Please try again.",
+  "client_not_found": "Client not found",
+  "client_not_found_desc": "This client may have been removed.",
+  "client_orders_desc": "Orders linked to this client will appear here.",
+  "save_client": "Save client",
+  "archive_client": "Archive client"
 }
