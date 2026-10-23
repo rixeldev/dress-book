@@ -351,5 +351,9 @@
   "designs_count": "{{count}} diseños",
   "add_design": "Agregar diseño",
   "design_untitled": "Diseño sin título",
-  "no_tags": "Sin etiquetas"
+  "no_tags": "Sin etiquetas",
+  "calendar": "Calendario",
+  "calendar_empty_title": "Tu calendario está libre.",
+  "calendar_empty_desc": "Programa pruebas y entregas para mantenerte al día.",
+  "appointments_count": "{{count}} citas"
 }

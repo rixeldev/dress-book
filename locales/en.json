@@ -351,5 +351,9 @@
   "designs_count": "{{count}} designs",
   "add_design": "Add design",
   "design_untitled": "Untitled design",
-  "no_tags": "No tags"
+  "no_tags": "No tags",
+  "calendar": "Calendar",
+  "calendar_empty_title": "Your calendar is clear.",
+  "calendar_empty_desc": "Schedule fittings and deliveries to stay on track.",
+  "appointments_count": "{{count}} appointments"
 }
