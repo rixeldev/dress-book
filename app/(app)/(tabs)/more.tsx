@@ -35,6 +35,7 @@ import {
   CogIcon,
   ImageIcon,
   TrashIcon,
+  UsersIcon,
 } from "@/icons/Icons"
 
 export default function StudioScreen() {
@@ -240,6 +241,12 @@ export default function StudioScreen() {
               onPress={() => router.push("/calendar")}
               chevron
               leading={<CalendarIcon size={20} color={Theme.semantic.accent.primary} />}
+            />
+            <ListRow
+              title={t("organization")}
+              onPress={() => router.push("/organization")}
+              chevron
+              leading={<UsersIcon size={20} color={Theme.semantic.accent.primary} />}
             />
           </Card>
         </View>

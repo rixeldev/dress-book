@@ -3,7 +3,7 @@ import { RefreshControl, StyleSheet, Text, View } from "react-native"
 import { FlashList } from "@shopify/flash-list"
 import { useTranslation } from "react-i18next"
 import { useAppTheme } from "@/hooks/useAppTheme"
-import { useAuth } from "@/contexts/AuthContext"
+import { useOrganization, useEffectiveOwnerId } from "@/contexts/OrganizationContext"
 import { getOrders } from "@/features/orders/repository"
 import type { Order } from "@/interfaces/Order"
 import {
@@ -30,7 +30,8 @@ const priorityRank: Record<Order["priority"], number> = { high: 0, normal: 1, lo
 export default function OrdersScreen() {
   const { t } = useTranslation()
   const { Theme } = useAppTheme()
-  const { user } = useAuth()
+  const org = useOrganization()
+  const ownerId = useEffectiveOwnerId()
   const { syncStatus } = useSync()
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
@@ -40,21 +41,21 @@ export default function OrdersScreen() {
   const [sortBy, setSortBy] = useState<SortKey>("due")
 
   const load = useCallback(async () => {
-    if (!user) return
+    if (!ownerId) return
     setFailed(false)
     try {
-      setOrders(await getOrders(user.uid))
+      setOrders(await getOrders(ownerId))
     } catch (error) {
       console.log("Failed to load orders", error)
       setFailed(true)
     }
-  }, [user])
+  }, [ownerId])
 
   useEffect(() => {
-    if (!user) return
+    if (!ownerId) return
     setLoading(true)
     load().finally(() => setLoading(false))
-  }, [user, load])
+  }, [ownerId, load])
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true)
@@ -167,12 +168,14 @@ export default function OrdersScreen() {
               title={t("orders")}
               description={t("orders_count", { count: orders.length })}
               right={
-                <IconButton
-                  icon={<PlusIcon size={20} color={Theme.semantic.text.inverse} />}
-                  accessibilityLabel={t("new_order")}
-                  onPress={() => router.push("/order/new")}
-                  variant="primary"
-                />
+                org.readOnly ? null : (
+                  <IconButton
+                    icon={<PlusIcon size={20} color={Theme.semantic.text.inverse} />}
+                    accessibilityLabel={t("new_order")}
+                    onPress={() => router.push("/order/new")}
+                    variant="primary"
+                  />
+                )
               }
             />
             <View style={styles.toolbar}>

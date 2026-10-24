@@ -10,8 +10,6 @@ service cloud.firestore {
       return signedIn() && request.auth.uid == uid;
     }
 
-    // Legacy records created by the v1 app. Kept until the Client/Order
-    // migration is complete so existing users can still read their data.
     match /regs/{regId} {
       allow read: if signedIn() && resource.data.userId == request.auth.uid;
       allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
@@ -21,19 +19,39 @@ service cloud.firestore {
       allow delete: if signedIn() && resource.data.userId == request.auth.uid;
     }
 
-    // Public release metadata used by the in-app update check before sign-in.
     match /version/{versionId} {
       allow read: if true;
       allow write: if false;
     }
 
-    // All future user-owned data lives under users/{uid}.
     match /users/{uid} {
       allow read, write: if isOwner(uid);
     }
 
+    // Organization members: a member can read their own membership doc and
+    // the owner can manage the list.
+    match /users/{uid}/orgMembers/{memberUid} {
+      allow read: if isOwner(uid) || request.auth.uid == memberUid;
+      allow create: if signedIn() && request.auth.uid == memberUid;
+      allow delete: if isOwner(uid) || request.auth.uid == memberUid;
+    }
+
+    // Suggestions submitted by members and reviewed by the owner.
+    match /users/{uid}/suggestions/{suggestionId} {
+      allow read: if isOwner(uid) || resource.data.memberUid == request.auth.uid;
+      allow create: if signedIn()
+        && request.resource.data.memberUid == request.auth.uid
+        && exists(/databases/$(database)/documents/users/$(uid)/orgMembers/$(request.auth.uid));
+      allow update: if isOwner(uid);
+      allow delete: if isOwner(uid);
+    }
+
+    // All future user-owned data. Owners have full access; active org members
+    // (recorded under users/{uid}/orgMembers/{memberUid}) get read-only access.
     match /users/{uid}/{document=**} {
-      allow read, write: if isOwner(uid);
+      allow read: if isOwner(uid)
+        || exists(/databases/$(database)/documents/users/$(uid)/orgMembers/$(request.auth.uid));
+      allow write: if isOwner(uid);
     }
   }
 }

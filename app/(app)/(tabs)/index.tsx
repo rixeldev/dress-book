@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next"
 import { LinearGradient } from "expo-linear-gradient"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useCurrency } from "@/contexts/CurrencyContext"
-import { useAuth } from "@/contexts/AuthContext"
+import { useEffectiveOwnerId } from "@/contexts/OrganizationContext"
 import { getOrders } from "@/features/orders/repository"
 import { getClients } from "@/features/clients/repository"
 import type { Order } from "@/interfaces/Order"
@@ -30,7 +30,7 @@ import { formatMoney } from "@/libs/money"
 export default function TodayScreen() {
   const { t, i18n } = useTranslation()
   const { Theme } = useAppTheme()
-  const { user } = useAuth()
+  const ownerId = useEffectiveOwnerId()
   const { currency } = useCurrency()
   const { syncStatus } = useSync()
   const [orders, setOrders] = useState<Order[]>([])
@@ -39,18 +39,18 @@ export default function TodayScreen() {
   const [refreshing, setRefreshing] = useState(false)
 
   const load = useCallback(async () => {
-    if (!user) return
+    if (!ownerId) return
     try {
       const [loadedOrders, loadedClients] = await Promise.all([
-        getOrders(user.uid),
-        getClients(user.uid),
+        getOrders(ownerId),
+        getClients(ownerId),
       ])
       setOrders(loadedOrders)
       setClients(loadedClients)
     } finally {
       setLoading(false)
     }
-  }, [user])
+  }, [ownerId])
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true)

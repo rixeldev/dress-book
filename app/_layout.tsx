@@ -25,6 +25,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext"
 import { OnboardingProvider } from "@/contexts/OnboardingContext"
 import { SyncProvider } from "@/contexts/SyncContext"
 import { CurrencyProvider } from "@/contexts/CurrencyContext"
+import { OrganizationProvider } from "@/contexts/OrganizationContext"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 function RootNavigator() {
@@ -129,7 +130,8 @@ export default function Layout() {
   return (
     <ThemeProvider>
       <CurrencyProvider>
-        <AuthProvider>
+        <OrganizationProvider>
+          <AuthProvider>
           <OnboardingProvider>
             <SyncProvider>
               <ErrorBoundary>
@@ -138,6 +140,7 @@ export default function Layout() {
             </SyncProvider>
           </OnboardingProvider>
         </AuthProvider>
+        </OrganizationProvider>
       </CurrencyProvider>
     </ThemeProvider>
   )

@@ -4,7 +4,7 @@ import { FlashList } from "@shopify/flash-list"
 import { router } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { useAppTheme } from "@/hooks/useAppTheme"
-import { useAuth } from "@/contexts/AuthContext"
+import { useOrganization, useEffectiveOwnerId } from "@/contexts/OrganizationContext"
 import { getClients } from "@/features/clients/repository"
 import type { Client } from "@/interfaces/Client"
 import {
@@ -23,7 +23,8 @@ import { PlusIcon, UsersIcon } from "@/icons/Icons"
 export default function ClientsScreen() {
   const { t } = useTranslation()
   const { Theme } = useAppTheme()
-  const { user } = useAuth()
+  const org = useOrganization()
+  const ownerId = useEffectiveOwnerId()
   const { syncStatus } = useSync()
   const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
@@ -31,18 +32,18 @@ export default function ClientsScreen() {
   const [refreshing, setRefreshing] = useState(false)
 
   const load = useCallback(async () => {
-    if (!user) return
+    if (!ownerId) return
     setLoading(true)
     setFailed(false)
     try {
-      setClients(await getClients(user.uid))
+      setClients(await getClients(ownerId))
     } catch (error) {
       console.log("Failed to load clients", error)
       setFailed(true)
     } finally {
       setLoading(false)
     }
-  }, [user])
+  }, [ownerId])
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true)
@@ -123,12 +124,14 @@ export default function ClientsScreen() {
               title={t("clients")}
               description={t("clients_count", { count: clients.length })}
               right={
-                <IconButton
-                  icon={<PlusIcon size={20} color={Theme.semantic.text.inverse} />}
-                  accessibilityLabel={t("new_client")}
-                  onPress={() => router.push("/client/new")}
-                  variant="primary"
-                />
+                org.readOnly ? null : (
+                  <IconButton
+                    icon={<PlusIcon size={20} color={Theme.semantic.text.inverse} />}
+                    accessibilityLabel={t("new_client")}
+                    onPress={() => router.push("/client/new")}
+                    variant="primary"
+                  />
+                )
               }
             />
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
