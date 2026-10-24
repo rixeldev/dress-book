@@ -42,8 +42,15 @@ export default {
     },
     plugins: [
       "./plugins/withGradleJdk17",
+      [
+        "./plugins/withWindowBackground",
+        {
+          light: "#F7F2EA",
+          dark: "#0E0C0B",
+        },
+      ],
       "@react-native-firebase/app",
-    "@react-native-firebase/crashlytics",
+      "@react-native-firebase/crashlytics",
       "expo-router",
       "expo-font",
       "@react-native-google-signin/google-signin",
