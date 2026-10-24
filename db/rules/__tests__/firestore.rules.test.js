@@ -120,7 +120,7 @@ describe("regs", () => {
 describe("version", () => {
   test("is publicly readable but not writable", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
-      await setDoc(doc(context.firestore(), "version", "current"), { android: "1.0.0" })
+      await setDoc(doc(context.firestore(), "version", "current"), { android: "1.1.0" })
     })
 
     const anonDb = testEnv.unauthenticatedContext().firestore()

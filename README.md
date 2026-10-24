@@ -113,5 +113,5 @@ This project is private and proprietary.
 
 - **App Name:** Dress Book
 - **Package Name:** com.rilisentertainment.dressbook
-- **Version:** 1.0.0
+- **Version:** 1.1.0
 - **Platforms:** Android, iOS, Web
