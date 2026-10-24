@@ -473,5 +473,6 @@
   "fabric_composition_linen": "Linen",
   "fabric_composition_cotton_polyester_blend": "Cotton/Polyester blend",
   "fabric_composition_wool_blend": "Wool blend",
-  "fabric_composition_mixed_blend": "Mixed blend"
+  "fabric_composition_mixed_blend": "Mixed blend",
+  "privacy_options": "Privacy options"
 }

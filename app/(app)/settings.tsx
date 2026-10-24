@@ -54,6 +54,7 @@ import { requestNotificationPermission } from "@/services/notifications"
 import { SettingsButton } from "@/components/SettingsButton"
 import { CustomModal } from "@/components/ui/CustomModal"
 import { deleteAccount, RecentLoginRequiredError } from "@/services/account"
+import { showPrivacyOptions } from "@/services/consent"
 import { useCurrency } from "@/contexts/CurrencyContext"
 import {
   BrandMark,
@@ -496,6 +497,11 @@ export default function Settings() {
             <SettingsButton
               onPress={() => Linking.openURL("https://rixel.dev/privacy")}
               title={t("privacy_policy")}
+              icon={<PrivacyIcon color={Theme.semantic.text.secondary} size={18} />}
+            />
+            <SettingsButton
+              onPress={() => showPrivacyOptions()}
+              title={t("privacy_options")}
               icon={<PrivacyIcon color={Theme.semantic.text.secondary} size={18} />}
             />
             <SettingsButton

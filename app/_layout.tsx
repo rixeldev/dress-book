@@ -16,6 +16,7 @@ import SplashScreen from "@/components/ui/SplashScreen"
 import { OfflinePill } from "@/components/ui"
 import { useStorage } from "@/hooks/useStorage"
 import { initializeAppCheck } from "@/services/appCheck"
+import { requestConsent } from "@/services/consent"
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext"
 import { AuthProvider, useAuth } from "@/contexts/AuthContext"
 import { OnboardingProvider } from "@/contexts/OnboardingContext"
@@ -45,6 +46,8 @@ function RootNavigator() {
       i18n.changeLanguage(languageCode ?? localeCode)
 
       // Dress Book is a professional tool for adults, not a child-directed app.
+      await requestConsent()
+
       await mobileAds().setRequestConfiguration({
         maxAdContentRating: MaxAdContentRating.PG,
       })
