@@ -9,6 +9,14 @@ export default {
     newArchEnabled: true,
     scheme: "dressbook",
     owner: "rikirilis",
+    runtimeVersion: {
+      policy: "appVersion",
+    },
+    updates: {
+      url: "https://u.expo.dev/24f07065-562e-4552-be5a-2a6efe1c1226",
+      fallbackToCacheTimeout: 0,
+      checkAutomatically: "ON_LOAD",
+    },
     splash: {
       image: "./assets/brand/splash-icon.png",
       resizeMode: "contain",
@@ -52,6 +60,7 @@ export default {
       "@react-native-firebase/app",
       "@react-native-firebase/crashlytics",
       "expo-router",
+      "expo-updates",
       "expo-font",
       "@react-native-google-signin/google-signin",
       [

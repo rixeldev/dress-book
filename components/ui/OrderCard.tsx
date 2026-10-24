@@ -1,3 +1,4 @@
+import { memo } from "react"
 import { StyleSheet, Text, View } from "react-native"
 import type { StyleProp, ViewStyle } from "react-native"
 import { useTranslation } from "react-i18next"
@@ -28,7 +29,7 @@ const statusTone: Record<string, BadgeTone> = {
   consultation: "neutral",
 }
 
-export function OrderCard({ order, onPress, style, testID }: OrderCardProps) {
+export const OrderCard = memo(function OrderCard({ order, onPress, style, testID }: OrderCardProps) {
   const { t } = useTranslation()
   const { Theme } = useAppTheme()
 
@@ -109,7 +110,7 @@ export function OrderCard({ order, onPress, style, testID }: OrderCardProps) {
       </View>
     </Card>
   )
-}
+})
 
 const styles = StyleSheet.create({
   card: {
