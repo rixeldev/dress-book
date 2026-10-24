@@ -1,6 +1,6 @@
 import { useState } from "react"
 import type { ReactNode } from "react"
-import { KeyboardAvoidingView, Platform, Text, View } from "react-native"
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from "react-native"
 import { Redirect, router } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { CheckIcon, UsersIcon } from "@/icons/Icons"
@@ -8,11 +8,18 @@ import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { useStorage } from "@/hooks/useStorage"
 import { useOnboarding } from "@/contexts/OnboardingContext"
-import { Button, Card, Chip, TextField } from "@/components/ui"
+import { useCurrency } from "@/contexts/CurrencyContext"
+import {
+  BrandMark,
+  Button,
+  Card,
+  Chip,
+  CountryPicker,
+  TextField,
+} from "@/components/ui"
 import { createClient } from "@/features/clients/repository"
 import {
   saveOnboardingProfile,
-  type CurrencyPreference,
   type MeasurementUnitPreference,
 } from "@/features/onboarding/repository"
 
@@ -24,34 +31,35 @@ export default function OnboardingScreen() {
   const { user } = useAuth()
   const { setItem } = useStorage()
   const { markComplete } = useOnboarding()
+  const { country, currency, setCountry } = useCurrency()
   const [step, setStep] = useState(0)
   const [units, setUnits] = useState<MeasurementUnitPreference>("cm")
-  const [currency, setCurrency] = useState<CurrencyPreference>("USD")
   const [clientName, setClientName] = useState("")
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   if (!user) return <Redirect href="/sign-in" />
 
-  const completeOnboarding = async () => {
+  const finish = async (withClient: boolean) => {
+    if (saving) return
     const normalizedName = clientName.trim()
-    if (!normalizedName || saving) return
+    if (withClient && !normalizedName) return
 
     setSaving(true)
     setError(null)
 
     try {
-      await Promise.all([
-        saveOnboardingProfile({ userId: user.uid, units, currency }),
-        createClient(user.uid, { name: normalizedName }),
-      ])
+      await saveOnboardingProfile({ userId: user.uid, units, currency })
+      if (withClient) {
+        await createClient(user.uid, { name: normalizedName })
+      }
       await Promise.all([
         setItem("measurementUnit", units),
         setItem("currency", currency),
         setItem(`onboarding:${user.uid}`, "complete"),
       ])
       markComplete()
-      router.replace("/clients")
+      router.replace("/")
     } catch (caughtError) {
       console.log("Failed to complete onboarding", caughtError)
       setError(t("onboarding_save_error"))
@@ -75,20 +83,29 @@ export default function OnboardingScreen() {
         }}
       >
         <View style={{ gap: Theme.spacing.lg }}>
-          <Text
-            style={{
-              color: Theme.semantic.text.secondary,
-              fontFamily: Theme.fonts.onestBold,
-              fontSize: Theme.fontSizes.caption,
-              letterSpacing: 1.2,
-            }}
-          >
-            {t("onboarding_step", { current: step + 1, total: stepCount })}
-          </Text>
+          <View style={styles.topBar}>
+            <BrandMark size={30} />
+            <View style={styles.progress}>
+              {Array.from({ length: stepCount }).map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.progressSegment,
+                    {
+                      backgroundColor:
+                        index <= step
+                          ? Theme.semantic.accent.primary
+                          : Theme.semantic.border.subtle,
+                    },
+                  ]}
+                />
+              ))}
+            </View>
+          </View>
 
           {step === 0 && (
             <OnboardingPage
-              icon={<CheckIcon size={32} color={Theme.semantic.accent.primary} />}
+              icon={<CheckIcon size={30} color={Theme.semantic.accent.primary} />}
               title={t("onboarding_welcome_title")}
               description={t("onboarding_welcome_desc")}
             />
@@ -109,14 +126,11 @@ export default function OnboardingScreen() {
                 selected={units}
                 onSelect={setUnits}
               />
-              <PreferenceGroup
-                label={t("currency")}
-                options={[
-                  { label: "USD ($)", value: "USD" as const },
-                  { label: "EUR (€)", value: "EUR" as const },
-                ]}
-                selected={currency}
-                onSelect={setCurrency}
+              <CountryPicker
+                label={t("region_and_currency")}
+                hint={`${t("preferred_currency")}: ${currency} · ${t("auto_detected")}`}
+                value={country.code}
+                onChange={setCountry}
               />
             </View>
           )}
@@ -124,9 +138,9 @@ export default function OnboardingScreen() {
           {step === 2 && (
             <View style={{ gap: Theme.spacing.xl }}>
               <OnboardingPage
-                icon={<UsersIcon size={32} color={Theme.semantic.accent.primary} />}
+                icon={<UsersIcon size={30} color={Theme.semantic.accent.primary} />}
                 title={t("onboarding_first_client_title")}
-                description={t("onboarding_first_client_desc")}
+                description={t("onboarding_first_client_optional")}
               />
               <TextField
                 label={t("client_name")}
@@ -136,7 +150,7 @@ export default function OnboardingScreen() {
                 autoFocus
                 autoCapitalize="words"
                 returnKeyType="done"
-                onSubmitEditing={completeOnboarding}
+                onSubmitEditing={() => finish(true)}
                 error={error ?? undefined}
               />
             </View>
@@ -152,14 +166,22 @@ export default function OnboardingScreen() {
               size="lg"
             />
           ) : (
-            <Button
-              label={t("onboarding_finish")}
-              onPress={completeOnboarding}
-              disabled={!clientName.trim()}
-              loading={saving}
-              fullWidth
-              size="lg"
-            />
+            <>
+              <Button
+                label={t("onboarding_finish")}
+                onPress={() => finish(true)}
+                disabled={!clientName.trim()}
+                loading={saving}
+                fullWidth
+                size="lg"
+              />
+              <Button
+                label={t("skip_for_now")}
+                onPress={() => finish(false)}
+                variant="ghost"
+                fullWidth
+              />
+            </>
           )}
           {step > 0 && (
             <Button
@@ -191,7 +213,7 @@ function OnboardingPage({
       {icon && (
         <Card
           padded={false}
-          style={{ width: 68, height: 68, alignItems: "center", justifyContent: "center" }}
+          style={{ width: 66, height: 66, alignItems: "center", justifyContent: "center" }}
         >
           {icon}
         </Card>
@@ -202,6 +224,7 @@ function OnboardingPage({
           fontFamily: Theme.fonts.display,
           fontSize: Theme.fontSizes.display,
           lineHeight: Theme.lineHeights.display,
+          letterSpacing: -0.6,
         }}
       >
         {title}
@@ -257,3 +280,21 @@ function PreferenceGroup<T extends string>({
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  topBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  progress: {
+    flex: 1,
+    flexDirection: "row",
+    gap: 6,
+  },
+  progressSegment: {
+    flex: 1,
+    height: 3,
+    borderRadius: 2,
+  },
+})
