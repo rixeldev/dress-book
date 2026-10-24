@@ -1,7 +1,7 @@
 import { doc, getFirestore, setDoc } from "@react-native-firebase/firestore"
 
 export type MeasurementUnitPreference = "cm" | "in"
-export type CurrencyPreference = "USD" | "EUR"
+export type CurrencyPreference = string
 
 const db = getFirestore()
 
