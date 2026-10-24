@@ -1,32 +1,47 @@
 import { useEffect, useState } from "react"
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native"
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native"
 import { router, Stack } from "expo-router"
 import { useTranslation } from "react-i18next"
-import { BackIcon } from "@/icons/Icons"
+import { BackIcon, UsersIcon } from "@/icons/Icons"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
+import { useCurrency } from "@/contexts/CurrencyContext"
 import { getClients } from "@/features/clients/repository"
 import { createOrder } from "@/features/orders/repository"
 import { scheduleOrderDueReminder } from "@/services/notifications"
 import { useStorage } from "@/hooks/useStorage"
 import type { Client } from "@/interfaces/Client"
 import { orderSchema } from "@/libs/schemas"
-import { Button, Card, Chip, Screen, TextField } from "@/components/ui"
+import {
+  Button,
+  Card,
+  Chip,
+  DateField,
+  EmptyState,
+  Flag,
+  IconButton,
+  Screen,
+  ScreenHeader,
+  SectionHeader,
+  TextField,
+} from "@/components/ui"
 
 export default function NewOrderScreen() {
   const { t } = useTranslation()
   const { Theme } = useAppTheme()
   const { user } = useAuth()
   const { getItem } = useStorage()
+  const { country, currency } = useCurrency()
   const [clients, setClients] = useState<Client[]>([])
   const [clientId, setClientId] = useState("")
   const [title, setTitle] = useState("")
   const [type, setType] = useState<"Clothes" | "Curtains" | "Others">("Clothes")
-  const [status, setStatus] = useState<"consultation" | "measurements" | "cutting" | "sewing" | "fitting" | "delivered" | "cancelled">("consultation")
+  const [status, setStatus] = useState<
+    "consultation" | "measurements" | "cutting" | "sewing" | "fitting" | "delivered" | "cancelled"
+  >("consultation")
   const [dueDate, setDueDate] = useState("")
   const [price, setPrice] = useState("")
   const [deposit, setDeposit] = useState("")
-  const [currency, setCurrency] = useState("USD")
   const [priority, setPriority] = useState<"low" | "normal" | "high">("normal")
   const [notes, setNotes] = useState("")
   const [saving, setSaving] = useState(false)
@@ -34,7 +49,9 @@ export default function NewOrderScreen() {
 
   useEffect(() => {
     if (!user) return
-    getClients(user.uid).then(setClients).catch(() => setClients([]))
+    getClients(user.uid)
+      .then(setClients)
+      .catch(() => setClients([]))
   }, [user])
 
   if (!user) return null
@@ -88,7 +105,11 @@ export default function NewOrderScreen() {
 
       const notificationsEnabled = await getItem("notifications")
       if (notificationsEnabled !== "false" && order.dueDate) {
-        await scheduleOrderDueReminder({ orderId: order.id, title: order.title, dueDate: order.dueDate })
+        await scheduleOrderDueReminder({
+          orderId: order.id,
+          title: order.title,
+          dueDate: order.dueDate,
+        })
       }
 
       router.replace("/orders")
@@ -100,98 +121,304 @@ export default function NewOrderScreen() {
     }
   }
 
+  const header = (
+    <Stack.Screen
+      options={{
+        headerTitle: t("new_order"),
+        headerLeft: () => (
+          <IconButton
+            icon={<BackIcon color={Theme.semantic.text.primary} size={24} />}
+            onPress={() => router.back()}
+            accessibilityLabel={t("back")}
+          />
+        ),
+        headerRight: () => null,
+      }}
+    />
+  )
+
+  if (clients.length === 0) {
+    return (
+      <Screen padding={0}>
+        {header}
+        <View style={{ paddingHorizontal: Theme.spacing.gutter, paddingTop: Theme.spacing.lg }}>
+          <ScreenHeader overline={t("studio")} title={t("new_order")} />
+        </View>
+        <EmptyState
+          icon={<UsersIcon color={Theme.semantic.accent.primary} size={30} />}
+          title={t("clients_empty_title")}
+          description={t("order_needs_client_desc")}
+          actionLabel={t("new_client")}
+          onAction={() => router.push("/client/new")}
+          actionVariant="primary"
+        />
+      </Screen>
+    )
+  }
+
   return (
     <Screen padding={0}>
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          headerTitle: t("new_order"),
-          headerLeft: () => <BackIcon color={Theme.colors.text} size={24} onPress={() => router.back()} />,
-        }}
-      />
+      {header}
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={{ flex: 1, backgroundColor: Theme.semantic.bg.canvas }}
+        style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerStyle={{ padding: Theme.spacing.lg, gap: Theme.spacing.lg }}
+          contentContainerStyle={{
+            padding: Theme.spacing.gutter,
+            paddingBottom: 40,
+            gap: Theme.spacing.lg,
+          }}
           keyboardShouldPersistTaps="handled"
         >
-          <Card>
-            <View style={{ gap: Theme.spacing.md }}>
-              <View style={{ gap: Theme.spacing.xs }}>
-                <Text style={{ color: Theme.semantic.text.primary, fontFamily: Theme.fonts.onestBold, fontSize: Theme.fontSizes.label }}>
-                  {t("client")}
+          <ScreenHeader
+            overline={t("studio")}
+            title={t("new_order")}
+            description={t("new_order_hint")}
+          />
+
+          <View style={{ gap: Theme.spacing.sm }}>
+            <SectionHeader title={t("client")} />
+            <Card>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: Theme.spacing.xs }}>
+                {clients.map((client) => (
+                  <Chip
+                    key={client.id}
+                    label={client.name}
+                    selected={clientId === client.id}
+                    onPress={() => setClientId(client.id)}
+                  />
+                ))}
+              </View>
+              {errors.clientId && (
+                <Text style={{ color: Theme.semantic.state.danger, fontFamily: Theme.fonts.onest }}>
+                  {errors.clientId}
                 </Text>
-                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: Theme.spacing.xs }}>
-                  {clients.map((client) => (
-                    <Chip
-                      key={client.id}
-                      label={client.name}
-                      selected={clientId === client.id}
-                      onPress={() => setClientId(client.id)}
-                    />
-                  ))}
-                </View>
-                {errors.clientId && <Text style={{ color: Theme.semantic.state.danger, fontFamily: Theme.fonts.onest }}>{errors.clientId}</Text>}
-              </View>
-
-              <TextField label={t("title")} value={title} onChangeText={setTitle} error={errors.title} />
-
-              <View style={{ gap: Theme.spacing.xs }}>
-                <Text style={{ color: Theme.semantic.text.primary, fontFamily: Theme.fonts.onestBold, fontSize: Theme.fontSizes.label }}>
-                  {t("type")}
-                </Text>
-                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: Theme.spacing.xs }}>
-                  {(["Clothes", "Curtains", "Others"] as const).map((option) => (
-                    <Chip key={option} label={t(option.toLowerCase())} selected={type === option} onPress={() => setType(option)} />
-                  ))}
-                </View>
-              </View>
-
-              <View style={{ gap: Theme.spacing.xs }}>
-                <Text style={{ color: Theme.semantic.text.primary, fontFamily: Theme.fonts.onestBold, fontSize: Theme.fontSizes.label }}>
-                  {t("status")}
-                </Text>
-                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: Theme.spacing.xs }}>
-                  {(["consultation", "measurements", "cutting", "sewing", "fitting", "delivered", "cancelled"] as const).map((option) => (
-                    <Chip key={option} label={t(option)} selected={status === option} onPress={() => setStatus(option)} />
-                  ))}
-                </View>
-              </View>
-
-              <TextField label={t("due_date")} value={dueDate} onChangeText={setDueDate} placeholder="2026-05-01" hint={t("due_date_hint")} error={errors.dueDate} />
-              <View style={{ flexDirection: "row", gap: Theme.spacing.sm }}>
-                <View style={{ flex: 1 }}>
-                  <TextField label={t("price")} value={price} onChangeText={setPrice} keyboardType="decimal-pad" error={errors.price} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <TextField label={t("deposit")} value={deposit} onChangeText={setDeposit} keyboardType="decimal-pad" error={errors.deposit} />
-                </View>
-              </View>
-              <TextField label={t("currency")} value={currency} onChangeText={setCurrency} autoCapitalize="characters" error={errors.currency} />
-
-              <View style={{ gap: Theme.spacing.xs }}>
-                <Text style={{ color: Theme.semantic.text.primary, fontFamily: Theme.fonts.onestBold, fontSize: Theme.fontSizes.label }}>
-                  {t("priority")}
-                </Text>
-                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: Theme.spacing.xs }}>
-                  {(["low", "normal", "high"] as const).map((option) => (
-                    <Chip key={option} label={t(option)} selected={priority === option} onPress={() => setPriority(option)} />
-                  ))}
-                </View>
-              </View>
-
-              <TextField label={t("notes")} value={notes} onChangeText={setNotes} multiline numberOfLines={4} error={errors.notes} />
-
-              {errors.form && (
-                <Text style={{ color: Theme.semantic.state.danger, fontFamily: Theme.fonts.onest }}>{errors.form}</Text>
               )}
-            </View>
-          </Card>
-          <Button label={t("save_order")} onPress={handleSave} loading={saving} fullWidth size="lg" />
+            </Card>
+          </View>
+
+          <View style={{ gap: Theme.spacing.sm }}>
+            <SectionHeader title={t("order_details")} />
+            <Card>
+              <View style={{ gap: Theme.spacing.md }}>
+                <TextField
+                  label={t("title")}
+                  value={title}
+                  onChangeText={setTitle}
+                  placeholder={t("order_title_placeholder")}
+                  error={errors.title}
+                />
+
+                <ChoiceGroup
+                  label={t("type")}
+                  options={(["Clothes", "Curtains", "Others"] as const).map((option) => ({
+                    value: option,
+                    label: t(option.toLowerCase()),
+                  }))}
+                  selected={type}
+                  onSelect={setType}
+                />
+
+                <ChoiceGroup
+                  label={t("status")}
+                  options={(
+                    [
+                      "consultation",
+                      "measurements",
+                      "cutting",
+                      "sewing",
+                      "fitting",
+                      "delivered",
+                      "cancelled",
+                    ] as const
+                  ).map((option) => ({ value: option, label: t(option) }))}
+                  selected={status}
+                  onSelect={setStatus}
+                />
+
+                <ChoiceGroup
+                  label={t("priority")}
+                  options={(["low", "normal", "high"] as const).map((option) => ({
+                    value: option,
+                    label: t(option),
+                  }))}
+                  selected={priority}
+                  onSelect={setPriority}
+                />
+              </View>
+            </Card>
+          </View>
+
+          <View style={{ gap: Theme.spacing.sm }}>
+            <SectionHeader title={t("payment")} />
+            <Card>
+              <View style={{ gap: Theme.spacing.md }}>
+                <View style={styles.pair}>
+                  <View style={{ flex: 1 }}>
+                    <TextField
+                      label={t("price")}
+                      value={price}
+                      onChangeText={setPrice}
+                      keyboardType="decimal-pad"
+                      error={errors.price}
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <TextField
+                      label={t("deposit")}
+                      value={deposit}
+                      onChangeText={setDeposit}
+                      keyboardType="decimal-pad"
+                      error={errors.deposit}
+                    />
+                  </View>
+                </View>
+
+                <View
+                  style={[
+                    styles.currencyRow,
+                    {
+                      backgroundColor: Theme.semantic.bg.sunken,
+                      borderColor: Theme.semantic.border.subtle,
+                    },
+                  ]}
+                >
+                  <Flag code={country.code} size={24} />
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      style={{
+                        color: Theme.semantic.text.primary,
+                        fontFamily: Theme.fonts.onestBold,
+                        fontSize: Theme.fontSizes.body,
+                      }}
+                    >
+                      {currency}
+                    </Text>
+                    <Text
+                      style={{
+                        color: Theme.semantic.text.secondary,
+                        fontFamily: Theme.fonts.onest,
+                        fontSize: Theme.fontSizes.caption,
+                      }}
+                    >
+                      {t("currency_from_settings")}
+                    </Text>
+                  </View>
+                  <Text
+                    onPress={() => router.push("/settings")}
+                    style={{
+                      color: Theme.semantic.accent.primary,
+                      fontFamily: Theme.fonts.onestBold,
+                      fontSize: Theme.fontSizes.label,
+                    }}
+                  >
+                    {t("change")}
+                  </Text>
+                </View>
+              </View>
+            </Card>
+          </View>
+
+          <View style={{ gap: Theme.spacing.sm }}>
+            <SectionHeader title={t("timeline")} />
+            <Card>
+              <View style={{ gap: Theme.spacing.md }}>
+                <DateField
+                  label={t("due_date")}
+                  value={dueDate}
+                  onChangeText={setDueDate}
+                  hint={t("due_date_hint")}
+                  error={errors.dueDate}
+                />
+                <TextField
+                  label={t("notes")}
+                  value={notes}
+                  onChangeText={setNotes}
+                  multiline
+                  numberOfLines={4}
+                  error={errors.notes}
+                />
+              </View>
+            </Card>
+          </View>
+
+          {errors.form && (
+            <Text
+              style={{
+                color: Theme.semantic.state.danger,
+                fontFamily: Theme.fonts.onest,
+                fontSize: Theme.fontSizes.label,
+              }}
+            >
+              {errors.form}
+            </Text>
+          )}
+
+          <Button
+            label={t("save_order")}
+            onPress={handleSave}
+            loading={saving}
+            fullWidth
+            size="lg"
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>
   )
 }
+
+function ChoiceGroup<T extends string>({
+  label,
+  options,
+  selected,
+  onSelect,
+}: {
+  label: string
+  options: { label: string; value: T }[]
+  selected: T
+  onSelect: (value: T) => void
+}) {
+  const { Theme } = useAppTheme()
+
+  return (
+    <View style={{ gap: Theme.spacing.xs }}>
+      <Text
+        style={{
+          color: Theme.semantic.text.secondary,
+          fontFamily: Theme.fonts.onestBold,
+          fontSize: Theme.fontSizes.caption,
+          letterSpacing: 1,
+          textTransform: "uppercase",
+        }}
+      >
+        {label}
+      </Text>
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: Theme.spacing.xs }}>
+        {options.map((option) => (
+          <Chip
+            key={option.value}
+            label={option.label}
+            selected={selected === option.value}
+            onPress={() => onSelect(option.value)}
+          />
+        ))}
+      </View>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  pair: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  currencyRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    borderWidth: 1,
+    borderRadius: 14,
+    padding: 12,
+  },
+})
