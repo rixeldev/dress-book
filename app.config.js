@@ -2,7 +2,7 @@ export default {
   expo: {
     name: "Dress Book",
     slug: "dress-book",
-    version: "1.0.0",
+    version: "1.1.0",
     orientation: "portrait",
     icon: "./assets/brand/icon-1024.png",
     userInterfaceStyle: "automatic",
@@ -34,8 +34,8 @@ export default {
       predictiveBackGestureEnabled: false,
       package: "com.rilisentertainment.dressbook",
       googleServicesFile: "./google-services.json",
-      versionCode: 1,
-      version: "1.0.0",
+      versionCode: 2,
+      version: "1.1.0",
       minSdkVersion: 24,
       ndkVersion: "29.0.14206865",
       softwareKeyboardLayoutMode: "pan",
@@ -43,6 +43,7 @@ export default {
     plugins: [
       "./plugins/withGradleJdk17",
       "@react-native-firebase/app",
+    "@react-native-firebase/crashlytics",
       "expo-router",
       "expo-font",
       "@react-native-google-signin/google-signin",
