@@ -31,7 +31,6 @@ export default {
         monochromeImage: "./assets/brand/adaptive-monochrome.png",
       },
       icon: "./assets/brand/icon-1024.png",
-      edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
       package: "com.rilisentertainment.dressbook",
       googleServicesFile: "./google-services.json",
