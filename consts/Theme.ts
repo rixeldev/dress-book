@@ -4,44 +4,50 @@ const { width, height } = Dimensions.get("screen")
 
 export const lightColors = {
   background: "#F7F2EA",
-  background2: "#EDE5D8",
-  text: "#1E1719",
-  primary: "#492532",
-  primary2: "#49253224",
-  secondary: "#E7D9C7",
-  accent: "#492532",
-  red: "#A32E2E",
-  green: "#2F6B4F",
-  yellow: "#C98A2E",
-  gray: "#6E625C",
-  ultraLightGray: "#EDE5D880",
-  lightGray: "#8A7C74",
-  darkGray: "#3B3035",
-  border: "#DED3C3",
-  modal: "#FFFDF9",
+  background2: "#EDE4D5",
+  text: "#191411",
+  primary: "#6E2A38",
+  primary2: "#6E2A381F",
+  secondary: "#E7DAC6",
+  accent: "#6E2A38",
+  red: "#A3322C",
+  green: "#2D6A4F",
+  yellow: "#A96E15",
+  gray: "#7B6B60",
+  ultraLightGray: "#EAE1D266",
+  lightGray: "#94857A",
+  darkGray: "#332B26",
+  border: "#DCD0BD",
+  modal: "#FFFDF8",
   transparent: "#00000000",
-  backdrop: "#1E171966",
+  backdrop: "#19141180",
+  brass: "#B98A4B",
+  accentSoft: "#F2E3E1",
+  surfaceAlt: "#FBF7F0",
 }
 
 export const darkColors = {
   background: "#0E0C0B",
-  background2: "#221C18",
-  text: "#F5EFE6",
-  primary: "#E8B4C8",
-  primary2: "#E8B4C830",
-  secondary: "#2C2420",
-  accent: "#E8B4C8",
-  red: "#FF6B6B",
-  green: "#69F0AE",
-  yellow: "#FFD740",
-  gray: "#B9ACA2",
-  ultraLightGray: "#2A221D88",
-  lightGray: "#C9BDB3",
-  darkGray: "#D8CCC2",
-  border: "#332A24",
-  modal: "#171310",
+  background2: "#1C1713",
+  text: "#F3ECE1",
+  primary: "#E8A8B4",
+  primary2: "#E8A8B42B",
+  secondary: "#251E19",
+  accent: "#E8A8B4",
+  red: "#F07B72",
+  green: "#6FD3A3",
+  yellow: "#E8B45E",
+  gray: "#B5A79B",
+  ultraLightGray: "#251E1988",
+  lightGray: "#C9BAB0",
+  darkGray: "#E1D4C7",
+  border: "#322822",
+  modal: "#191410",
   transparent: "#00000000",
-  backdrop: "#000000AA",
+  backdrop: "#000000B3",
+  brass: "#D8B273",
+  accentSoft: "#3A252B",
+  surfaceAlt: "#14100E",
 }
 
 const spacing = {
@@ -54,16 +60,19 @@ const spacing = {
   xxl: 32,
   xxxl: 40,
   huge: 48,
+  section: 28,
+  gutter: 20,
 } as const
 
 const radius = {
-  sm: 8,
-  md: 12,
-  lg: 20,
+  sm: 10,
+  md: 14,
+  lg: 22,
+  xl: 30,
   pill: 999,
-  input: 8,
-  card: 12,
-  sheet: 20,
+  input: 14,
+  card: 20,
+  sheet: 28,
 } as const
 
 const motion = {
@@ -84,15 +93,18 @@ export const createTheme = (isDark: boolean) => {
         canvas: colors.background,
         surface: colors.modal,
         sunken: colors.background2,
+        raised: colors.surfaceAlt,
       },
       text: {
         primary: colors.text,
         secondary: colors.gray,
+        tertiary: colors.lightGray,
         inverse: isDark ? lightColors.text : lightColors.modal,
       },
       accent: {
         primary: colors.primary,
-        brass: isDark ? "#D8B273" : "#B98A4B",
+        soft: colors.accentSoft,
+        brass: colors.brass,
       },
       state: {
         success: colors.green,
@@ -101,7 +113,17 @@ export const createTheme = (isDark: boolean) => {
       },
       border: {
         subtle: colors.border,
+        strong: isDark ? "#463A32" : "#CBBBA3",
       },
+      overlay: colors.backdrop,
+    },
+    gradient: {
+      hero: isDark
+        ? (["#2A1D20", "#171110"] as const)
+        : (["#7B3040", "#5A1F2C"] as const),
+      brass: isDark
+        ? (["#33261A", "#1D1714"] as const)
+        : (["#F6E9D3", "#EFE1CB"] as const),
     },
     fonts: {
       onest: "Onest",
@@ -120,21 +142,23 @@ export const createTheme = (isDark: boolean) => {
       height,
     },
     fontSizes: {
-      display: 32,
-      h1: 26,
-      h2: 20,
-      h3: 17,
+      hero: 40,
+      display: 34,
+      h1: 28,
+      h2: 22,
+      h3: 18,
       body: 15,
       label: 13,
       caption: 11,
     },
     lineHeights: {
-      display: 40,
-      h1: 34,
-      h2: 26,
-      h3: 24,
-      body: 22,
-      label: 18,
+      hero: 46,
+      display: 42,
+      h1: 36,
+      h2: 30,
+      h3: 26,
+      body: 23,
+      label: 19,
       caption: 16,
     },
     spacing,
@@ -144,19 +168,28 @@ export const createTheme = (isDark: boolean) => {
       card: isDark
         ? { borderWidth: 1, borderColor: colors.border }
         : {
-            shadowColor: lightColors.text,
+            shadowColor: "#2A1A10",
             shadowOffset: { width: 0, height: 8 },
-            shadowOpacity: 0.08,
-            shadowRadius: 16,
+            shadowOpacity: 0.07,
+            shadowRadius: 18,
             elevation: 2,
           },
       sheet: isDark
         ? { borderWidth: 1, borderColor: colors.border }
         : {
-            shadowColor: lightColors.text,
-            shadowOffset: { width: 0, height: -4 },
-            shadowOpacity: 0.1,
-            shadowRadius: 20,
+            shadowColor: "#2A1A10",
+            shadowOffset: { width: 0, height: -6 },
+            shadowOpacity: 0.12,
+            shadowRadius: 24,
+            elevation: 10,
+          },
+      floating: isDark
+        ? { borderWidth: 1, borderColor: colors.border }
+        : {
+            shadowColor: "#2A1A10",
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.18,
+            shadowRadius: 22,
             elevation: 8,
           },
     },
@@ -165,3 +198,5 @@ export const createTheme = (isDark: boolean) => {
 
 // Default export for backward compatibility
 export const Theme = createTheme(false)
+
+export type AppTheme = ReturnType<typeof createTheme>
