@@ -43,6 +43,15 @@ export function formatIsoDate(value: string | null | undefined, locale = "en-US"
   }).format(date)
 }
 
+export function formatIsoTime(value: string | null | undefined, locale = "en-US"): string {
+  const date = fromIsoString(value)
+  if (!date) return ""
+  return new Intl.DateTimeFormat(locale, {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date)
+}
+
 export function daysUntil(value: string | null | undefined): number | null {
   const date = fromIsoString(value)
   if (!date) return null

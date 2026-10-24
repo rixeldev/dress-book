@@ -11,7 +11,7 @@ export default function SignUpScreen() {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: Theme.colors.background,
+        backgroundColor: Theme.semantic.bg.canvas,
       }}
     >
       <LoginForm initialSignIn={false} />
