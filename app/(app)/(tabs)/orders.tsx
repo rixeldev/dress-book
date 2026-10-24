@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react"
-import { StyleSheet, Text, View } from "react-native"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { RefreshControl, StyleSheet, Text, View } from "react-native"
 import { FlashList } from "@shopify/flash-list"
 import { useTranslation } from "react-i18next"
 import { useAppTheme } from "@/hooks/useAppTheme"
@@ -8,6 +8,7 @@ import { getOrders } from "@/features/orders/repository"
 import type { Order } from "@/interfaces/Order"
 import {
   Button,
+  Chip,
   EmptyState,
   IconButton,
   OrderCard,
@@ -21,6 +22,11 @@ import { useSync } from "@/contexts/SyncContext"
 import { ListIcon, PlusIcon } from "@/icons/Icons"
 import { router } from "expo-router"
 
+type StatusFilter = "all" | "active" | "completed"
+type SortKey = "due" | "created" | "priority"
+
+const priorityRank: Record<Order["priority"], number> = { high: 0, normal: 1, low: 2 }
+
 export default function OrdersScreen() {
   const { t } = useTranslation()
   const { Theme } = useAppTheme()
@@ -29,24 +35,60 @@ export default function OrdersScreen() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [failed, setFailed] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all")
+  const [sortBy, setSortBy] = useState<SortKey>("due")
 
   const load = useCallback(async () => {
     if (!user) return
-    setLoading(true)
     setFailed(false)
     try {
       setOrders(await getOrders(user.uid))
     } catch (error) {
       console.log("Failed to load orders", error)
       setFailed(true)
-    } finally {
-      setLoading(false)
     }
   }, [user])
 
   useEffect(() => {
-    load()
+    if (!user) return
+    setLoading(true)
+    load().finally(() => setLoading(false))
+  }, [user, load])
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true)
+    await load()
+    setRefreshing(false)
   }, [load])
+
+  const activeCount = orders.filter(
+    (order) => order.status !== "delivered" && order.status !== "cancelled",
+  ).length
+  const completedCount = orders.length - activeCount
+
+  const filtered = useMemo(() => {
+    let list = [...orders]
+    if (statusFilter === "active") {
+      list = list.filter((order) => order.status !== "delivered" && order.status !== "cancelled")
+    } else if (statusFilter === "completed") {
+      list = list.filter((order) => order.status === "delivered" || order.status === "cancelled")
+    }
+
+    list.sort((a, b) => {
+      if (sortBy === "due") {
+        const aTime = a.dueDate ? new Date(a.dueDate).getTime() : Number.MAX_SAFE_INTEGER
+        const bTime = b.dueDate ? new Date(b.dueDate).getTime() : Number.MAX_SAFE_INTEGER
+        return aTime - bTime
+      }
+      if (sortBy === "created") {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      }
+      return priorityRank[a.priority] - priorityRank[b.priority]
+    })
+
+    return list
+  }, [orders, statusFilter, sortBy])
 
   if (loading) {
     return (
@@ -100,21 +142,26 @@ export default function OrdersScreen() {
     )
   }
 
-  const active = orders.filter((order) => order.status !== "delivered" && order.status !== "cancelled")
-  const closed = orders.filter((order) => order.status === "delivered" || order.status === "cancelled")
-
   return (
     <Screen padding={0}>
       <FlashList
         contentContainerStyle={{
           padding: Theme.spacing.gutter,
           paddingBottom: 140,
-          gap: Theme.spacing.sm,
         }}
-        data={[...active, ...closed]}
+        data={filtered}
         keyExtractor={(order) => order.id}
+        ItemSeparatorComponent={() => <View style={{ height: Theme.spacing.sm }} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={Theme.semantic.accent.primary}
+            colors={[Theme.semantic.accent.primary]}
+          />
+        }
         ListHeaderComponent={
-          <View style={{ gap: Theme.spacing.md, marginBottom: Theme.spacing.xs }}>
+          <View style={{ gap: Theme.spacing.md, marginBottom: Theme.spacing.sm }}>
             <ScreenHeader
               overline={t("studio")}
               title={t("orders")}
@@ -137,44 +184,80 @@ export default function OrdersScreen() {
                 variant="secondary"
               />
             </View>
+
+            <View style={{ gap: Theme.spacing.xs }}>
+              <Text
+                style={{
+                  color: Theme.semantic.text.secondary,
+                  fontFamily: Theme.fonts.onestBold,
+                  fontSize: Theme.fontSizes.caption,
+                  letterSpacing: 1.2,
+                  textTransform: "uppercase",
+                }}
+              >
+                {t("filter")}
+              </Text>
+              <View style={styles.chipRow}>
+                {(["all", "active", "completed"] as const).map((option) => (
+                  <Chip
+                    key={option}
+                    label={
+                      option === "all"
+                        ? t("all")
+                        : option === "active"
+                          ? `${t("active")} (${activeCount})`
+                          : `${t("completed")} (${completedCount})`
+                    }
+                    selected={statusFilter === option}
+                    onPress={() => setStatusFilter(option)}
+                  />
+                ))}
+              </View>
+            </View>
+
+            <View style={{ gap: Theme.spacing.xs }}>
+              <Text
+                style={{
+                  color: Theme.semantic.text.secondary,
+                  fontFamily: Theme.fonts.onestBold,
+                  fontSize: Theme.fontSizes.caption,
+                  letterSpacing: 1.2,
+                  textTransform: "uppercase",
+                }}
+              >
+                {t("sort_by")}
+              </Text>
+              <View style={styles.chipRow}>
+                {(["due", "created", "priority"] as const).map((option) => (
+                  <Chip
+                    key={option}
+                    label={t(`sort_${option}`)}
+                    selected={sortBy === option}
+                    onPress={() => setSortBy(option)}
+                  />
+                ))}
+              </View>
+            </View>
+
             <SectionHeader
               title={t("active_orders")}
               description={t("orders_in_progress")}
-              actionLabel={t("new_order")}
-              onAction={() => router.push("/order/new")}
             />
           </View>
         }
-        renderItem={({ item, index }) => {
-          const showClosedHeader = index === active.length && closed.length > 0
-          return (
-            <View style={{ gap: Theme.spacing.sm }}>
-              {showClosedHeader && (
-                <SectionHeader
-                  title={t("completed")}
-                  description={t("all_orders")}
-                  style={{ marginTop: Theme.spacing.sm }}
-                />
-              )}
-              <OrderCard order={item} onPress={() => router.push(`/order/${item.id}`)} />
-            </View>
-          )
-        }}
-        ListFooterComponent={
-          active.length === 0 ? (
-            <Text
-              style={{
-                color: Theme.semantic.text.secondary,
-                fontFamily: Theme.fonts.onest,
-                fontSize: Theme.fontSizes.label,
-                textAlign: "center",
-                paddingVertical: Theme.spacing.lg,
-              }}
-            >
-              {t("order_empty_desc")}
-            </Text>
-          ) : null
+        ListEmptyComponent={
+          <EmptyState
+            icon={<ListIcon color={Theme.semantic.accent.primary} size={30} />}
+            title={t("no_orders_for_filter")}
+            description={t("try_different_filter")}
+            actionLabel={t("new_order")}
+            onAction={() => router.push("/order/new")}
+            actionVariant="primary"
+          />
         }
+        renderItem={({ item }) => (
+          <OrderCard order={item} onPress={() => router.push(`/order/${item.id}`)} />
+        )}
       />
     </Screen>
   )
@@ -186,5 +269,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     gap: 12,
+  },
+  chipRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
   },
 })

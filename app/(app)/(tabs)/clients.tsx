@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import { Text, View } from "react-native"
+import { RefreshControl, Text, View } from "react-native"
 import { FlashList } from "@shopify/flash-list"
 import { router } from "expo-router"
 import { useTranslation } from "react-i18next"
@@ -8,7 +8,6 @@ import { useAuth } from "@/contexts/AuthContext"
 import { getClients } from "@/features/clients/repository"
 import type { Client } from "@/interfaces/Client"
 import {
-  Button,
   Card,
   EmptyState,
   IconButton,
@@ -29,6 +28,7 @@ export default function ClientsScreen() {
   const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
   const [failed, setFailed] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   const load = useCallback(async () => {
     if (!user) return
@@ -43,6 +43,12 @@ export default function ClientsScreen() {
       setLoading(false)
     }
   }, [user])
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true)
+    await load()
+    setRefreshing(false)
+  }, [load])
 
   useEffect(() => {
     load()
@@ -95,6 +101,14 @@ export default function ClientsScreen() {
   return (
     <Screen padding={0}>
       <FlashList
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={Theme.semantic.accent.primary}
+            colors={[Theme.semantic.accent.primary]}
+          />
+        }
         contentContainerStyle={{
           padding: Theme.spacing.gutter,
           paddingBottom: 140,
@@ -119,12 +133,6 @@ export default function ClientsScreen() {
             />
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
               <SyncPill status={syncStatus} />
-              <Button
-                label={t("new_client")}
-                onPress={() => router.push("/client/new")}
-                size="sm"
-                variant="secondary"
-              />
             </View>
           </View>
         }
