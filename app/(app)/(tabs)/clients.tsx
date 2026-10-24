@@ -7,9 +7,19 @@ import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { getClients } from "@/features/clients/repository"
 import type { Client } from "@/interfaces/Client"
-import { Button, EmptyState, ListRow, Screen, SectionHeader, Skeleton, SyncPill } from "@/components/ui"
+import {
+  Button,
+  Card,
+  EmptyState,
+  IconButton,
+  ListRow,
+  Screen,
+  ScreenHeader,
+  Skeleton,
+  SyncPill,
+} from "@/components/ui"
 import { useSync } from "@/contexts/SyncContext"
-import { UsersIcon } from "@/icons/Icons"
+import { PlusIcon, UsersIcon } from "@/icons/Icons"
 
 export default function ClientsScreen() {
   const { t } = useTranslation()
@@ -42,9 +52,9 @@ export default function ClientsScreen() {
     return (
       <Screen>
         <View style={{ gap: Theme.spacing.md }}>
-          <Skeleton width="42%" height={26} />
-          <Skeleton height={72} radius={Theme.radius.card} />
-          <Skeleton height={72} radius={Theme.radius.card} />
+          <Skeleton width="52%" height={38} />
+          <Skeleton height={84} radius={20} />
+          <Skeleton height={84} radius={20} />
         </View>
       </Screen>
     )
@@ -67,10 +77,16 @@ export default function ClientsScreen() {
   if (clients.length === 0) {
     return (
       <Screen padding={0}>
+        <View style={{ paddingHorizontal: Theme.spacing.gutter, paddingTop: Theme.spacing.lg }}>
+          <ScreenHeader overline={t("studio")} title={t("clients")} />
+        </View>
         <EmptyState
           icon={<UsersIcon color={Theme.semantic.accent.primary} size={30} />}
           title={t("clients_empty_title")}
           description={t("clients_empty_desc")}
+          actionLabel={t("new_client")}
+          onAction={() => router.push("/client/new")}
+          actionVariant="primary"
         />
       </Screen>
     )
@@ -79,46 +95,71 @@ export default function ClientsScreen() {
   return (
     <Screen padding={0}>
       <FlashList
-        contentContainerStyle={{ padding: Theme.spacing.md }}
+        contentContainerStyle={{
+          padding: Theme.spacing.gutter,
+          paddingBottom: 140,
+        }}
         data={clients}
         keyExtractor={(client) => client.id}
+        ItemSeparatorComponent={() => <View style={{ height: Theme.spacing.xs }} />}
         ListHeaderComponent={
-          <View style={{ gap: Theme.spacing.sm, marginBottom: Theme.spacing.sm }}>
-            <SyncPill status={syncStatus} />
-            <SectionHeader
+          <View style={{ gap: Theme.spacing.md, marginBottom: Theme.spacing.md }}>
+            <ScreenHeader
+              overline={t("studio")}
               title={t("clients")}
               description={t("clients_count", { count: clients.length })}
+              right={
+                <IconButton
+                  icon={<PlusIcon size={20} color={Theme.semantic.text.inverse} />}
+                  accessibilityLabel={t("new_client")}
+                  onPress={() => router.push("/client/new")}
+                  variant="primary"
+                />
+              }
             />
-            <Button label={t("new_client")} onPress={() => router.push("/client/new")} variant="secondary" />
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+              <SyncPill status={syncStatus} />
+              <Button
+                label={t("new_client")}
+                onPress={() => router.push("/client/new")}
+                size="sm"
+                variant="secondary"
+              />
+            </View>
           </View>
         }
         renderItem={({ item }) => (
-          <ListRow
-            title={item.name}
-            description={item.phone ?? item.email ?? t("client_no_contact")}
-            leading={
-              <View
-                style={{
-                  width: 32,
-                  height: 32,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: Theme.radius.pill,
-                  backgroundColor: Theme.colors.primary2,
-                }}
-              >
-                <Text
+          <Card padded={false} style={{ paddingHorizontal: Theme.spacing.md }}>
+            <ListRow
+              title={item.name}
+              description={item.phone ?? item.email ?? t("client_no_contact")}
+              divider={false}
+              chevron
+              onPress={() => router.push(`/client/${item.id}`)}
+              leading={
+                <View
                   style={{
-                    color: Theme.semantic.accent.primary,
-                    fontFamily: Theme.fonts.onestBold,
-                    fontSize: Theme.fontSizes.label,
+                    width: 42,
+                    height: 42,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 999,
+                    backgroundColor: Theme.semantic.accent.soft,
                   }}
                 >
-                  {item.name.charAt(0).toUpperCase()}
-                </Text>
-              </View>
-            }
-          />
+                  <Text
+                    style={{
+                      color: Theme.semantic.accent.primary,
+                      fontFamily: Theme.fonts.display,
+                      fontSize: 18,
+                    }}
+                  >
+                    {item.name.charAt(0).toUpperCase()}
+                  </Text>
+                </View>
+              }
+            />
+          </Card>
         )}
       />
     </Screen>
