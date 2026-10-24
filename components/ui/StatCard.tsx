@@ -53,6 +53,7 @@ export function StatCard({
             letterSpacing: 1.2,
             textTransform: "uppercase",
           }}
+          numberOfLines={2}
         >
           {label}
         </Text>

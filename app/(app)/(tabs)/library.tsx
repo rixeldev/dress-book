@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import { Alert, StyleSheet, Text, View } from "react-native"
+import { Alert, RefreshControl, StyleSheet, Text, View } from "react-native"
 import { FlashList } from "@shopify/flash-list"
 import { router } from "expo-router"
 import { useTranslation } from "react-i18next"
@@ -26,6 +26,7 @@ export default function LibraryScreen() {
   const { user } = useAuth()
   const [fabrics, setFabrics] = useState<Fabric[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
 
   const load = useCallback(async () => {
     if (!user) return
@@ -36,6 +37,12 @@ export default function LibraryScreen() {
       setLoading(false)
     }
   }, [user])
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true)
+    await load()
+    setRefreshing(false)
+  }, [load])
 
   useEffect(() => {
     load()
@@ -148,6 +155,14 @@ export default function LibraryScreen() {
   return (
     <Screen padding={0}>
       <FlashList
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={Theme.semantic.accent.primary}
+            colors={[Theme.semantic.accent.primary]}
+          />
+        }
         contentContainerStyle={{
           padding: Theme.spacing.gutter,
           paddingBottom: 140,
@@ -171,7 +186,7 @@ export default function LibraryScreen() {
               }
             />
             {designsShortcut}
-            <SectionHeader title={t("fabrics")} description={t("library")} />
+            <SectionHeader title={t("fabrics")} />
           </View>
         }
         renderItem={({ item }) => {

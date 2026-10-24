@@ -231,24 +231,15 @@ export default function StudioScreen() {
           <Card padded={false} style={{ paddingHorizontal: Theme.spacing.md }}>
             <ListRow
               title={t("designs")}
-              description={t("designs_empty_desc")}
               onPress={() => router.push("/designs")}
               chevron
               leading={<ImageIcon size={20} color={Theme.semantic.accent.primary} />}
             />
             <ListRow
               title={t("calendar")}
-              description={t("calendar_empty_desc")}
               onPress={() => router.push("/calendar")}
               chevron
               leading={<CalendarIcon size={20} color={Theme.semantic.accent.primary} />}
-            />
-            <ListRow
-              title={t("settings")}
-              description={t("preferences")}
-              onPress={() => router.push("/settings")}
-              chevron
-              leading={<CogIcon size={20} color={Theme.semantic.accent.primary} />}
             />
           </Card>
         </View>
@@ -355,11 +346,6 @@ export default function StudioScreen() {
           </View>
         )}
 
-        <Button
-          label={t("settings")}
-          onPress={() => router.push("/settings")}
-          variant="ghost"
-        />
       </ScrollView>
 
       <CustomModal
