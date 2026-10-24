@@ -9,7 +9,16 @@ import { useStorage } from "@/hooks/useStorage"
 import { createAppointment } from "@/features/appointments/repository"
 import { appointmentSchema } from "@/libs/schemas"
 import { scheduleAppointmentReminder } from "@/services/notifications"
-import { Button, Card, Screen, TextField } from "@/components/ui"
+import {
+  Button,
+  Card,
+  DateField,
+  IconButton,
+  Screen,
+  ScreenHeader,
+  SectionHeader,
+  TextField,
+} from "@/components/ui"
 
 export default function NewAppointmentScreen() {
   const { t } = useTranslation()
@@ -79,26 +88,89 @@ export default function NewAppointmentScreen() {
     <Screen padding={0}>
       <Stack.Screen
         options={{
-          headerShown: true,
           headerTitle: t("new_appointment"),
-          headerLeft: () => <BackIcon color={Theme.colors.text} size={24} onPress={() => router.back()} />,
+          headerLeft: () => (
+            <IconButton
+              icon={<BackIcon color={Theme.semantic.text.primary} size={24} />}
+              onPress={() => router.back()}
+              accessibilityLabel={t("back")}
+            />
+          ),
+          headerRight: () => null,
         }}
       />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={{ flex: 1, backgroundColor: Theme.semantic.bg.canvas }}
+        style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={{ padding: Theme.spacing.lg, gap: Theme.spacing.lg }} keyboardShouldPersistTaps="handled">
-          <Card>
-            <View style={{ gap: Theme.spacing.md }}>
-              <TextField label={t("title")} value={title} onChangeText={setTitle} error={errors.title} />
-              <TextField label={t("starts_at")} value={startsAt} onChangeText={setStartsAt} placeholder="2026-05-01T10:00:00" hint={t("starts_at_hint")} error={errors.startsAt} />
-              <TextField label={t("location")} value={location} onChangeText={setLocation} />
-              <TextField label={t("notes")} value={notes} onChangeText={setNotes} multiline numberOfLines={3} />
-              {errors.form && <Text style={{ color: Theme.semantic.state.danger, fontFamily: Theme.fonts.onest }}>{errors.form}</Text>}
-            </View>
-          </Card>
-          <Button label={t("save_appointment")} onPress={handleSave} loading={saving} fullWidth size="lg" />
+        <ScrollView
+          contentContainerStyle={{
+            padding: Theme.spacing.gutter,
+            paddingBottom: 40,
+            gap: Theme.spacing.lg,
+          }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <ScreenHeader
+            overline={t("calendar")}
+            title={t("new_appointment")}
+          />
+
+          <View style={{ gap: Theme.spacing.sm }}>
+            <SectionHeader title={t("details_section")} />
+            <Card>
+              <View style={{ gap: Theme.spacing.md }}>
+                <TextField
+                  label={t("title")}
+                  value={title}
+                  onChangeText={setTitle}
+                  placeholder={t("appointment_title_placeholder")}
+                  error={errors.title}
+                />
+                <DateField
+                  label={t("starts_at")}
+                  value={startsAt}
+                  onChangeText={setStartsAt}
+                  placeholder="2026-05-01T10:00:00"
+                  hint={t("starts_at_hint")}
+                  error={errors.startsAt}
+                />
+                <TextField
+                  label={t("location")}
+                  value={location}
+                  onChangeText={setLocation}
+                  placeholder={t("location_placeholder")}
+                />
+                <TextField
+                  label={t("notes")}
+                  value={notes}
+                  onChangeText={setNotes}
+                  multiline
+                  numberOfLines={3}
+                />
+              </View>
+            </Card>
+          </View>
+
+          {errors.form && (
+            <Text
+              style={{
+                color: Theme.semantic.state.danger,
+                fontFamily: Theme.fonts.onest,
+                fontSize: Theme.fontSizes.label,
+              }}
+            >
+              {errors.form}
+            </Text>
+          )}
+
+          <Button
+            label={t("save_appointment")}
+            onPress={handleSave}
+            loading={saving}
+            fullWidth
+            size="lg"
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>

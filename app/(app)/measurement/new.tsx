@@ -10,7 +10,7 @@ import { getEmptyMeasurements } from "@/libs/measurementTemplates"
 import { toCanonicalCm, fromCanonicalCm } from "@/libs/units"
 import type { FullBodyMeasurements } from "@/interfaces/FullBodyMeasurements"
 import type { RegType } from "@/interfaces/Regs"
-import { Button, Card, Chip, MeasurementDiagram, MeasurementRow, Screen, SegmentedControl, TextField } from "@/components/ui"
+import { Button, Card, Chip, IconButton, MeasurementDiagram, MeasurementRow, Screen, SegmentedControl, TextField } from "@/components/ui"
 
 const types: RegType[] = ["Clothes", "Curtains", "Others"]
 
@@ -138,9 +138,15 @@ export default function MeasurementStudioScreen() {
     <Screen padding={0}>
       <Stack.Screen
         options={{
-          headerShown: true,
           headerTitle: t("measurement_studio"),
-          headerLeft: () => <BackIcon color={Theme.colors.text} size={24} onPress={() => router.back()} />,
+          headerLeft: () => (
+            <IconButton
+              icon={<BackIcon color={Theme.semantic.text.primary} size={24} />}
+              onPress={() => router.back()}
+              accessibilityLabel={t("back")}
+            />
+          ),
+          headerRight: () => null,
         }}
       />
       <ScrollView contentContainerStyle={{ padding: Theme.spacing.lg, gap: Theme.spacing.lg }}>

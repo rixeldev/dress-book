@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native"
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native"
 import { router, Stack, useLocalSearchParams } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { BackIcon } from "@/icons/Icons"
@@ -7,7 +7,17 @@ import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { getFabrics, updateFabric } from "@/features/fabrics/repository"
 import { fabricSchema } from "@/libs/schemas"
-import { Button, Card, Screen, TextField } from "@/components/ui"
+import {
+  Button,
+  Card,
+  Chip,
+  IconButton,
+  Screen,
+  ScreenHeader,
+  SectionHeader,
+  Skeleton,
+  TextField,
+} from "@/components/ui"
 
 export default function EditFabricScreen() {
   const { t } = useTranslation()
@@ -43,7 +53,9 @@ export default function EditFabricScreen() {
         setWidth(fabric.width === null ? "" : String(fabric.width))
         setUnit(fabric.unit)
         setQuantity(fabric.quantity === null ? "" : String(fabric.quantity))
-        setLowStockThreshold(fabric.lowStockThreshold === null ? "" : String(fabric.lowStockThreshold))
+        setLowStockThreshold(
+          fabric.lowStockThreshold === null ? "" : String(fabric.lowStockThreshold),
+        )
         setCost(fabric.cost === null ? "" : String(fabric.cost))
         setLocation(fabric.location ?? "")
       })
@@ -106,9 +118,10 @@ export default function EditFabricScreen() {
   if (loading) {
     return (
       <Screen>
+        <Stack.Screen options={{ headerTitle: t("edit_fabric") }} />
         <View style={{ gap: Theme.spacing.md }}>
-          <View style={{ height: 48, borderRadius: 8, backgroundColor: Theme.colors.background2 }} />
-          <View style={{ height: 48, borderRadius: 8, backgroundColor: Theme.colors.background2 }} />
+          <Skeleton width="50%" height={38} />
+          <Skeleton height={64} radius={18} />
         </View>
       </Screen>
     )
@@ -118,47 +131,161 @@ export default function EditFabricScreen() {
     <Screen padding={0}>
       <Stack.Screen
         options={{
-          headerShown: true,
           headerTitle: t("edit_fabric"),
-          headerLeft: () => <BackIcon color={Theme.colors.text} size={24} onPress={() => router.back()} />,
+          headerLeft: () => (
+            <IconButton
+              icon={<BackIcon color={Theme.semantic.text.primary} size={24} />}
+              onPress={() => router.back()}
+              accessibilityLabel={t("back")}
+            />
+          ),
+          headerRight: () => null,
         }}
       />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={{ flex: 1, backgroundColor: Theme.semantic.bg.canvas }}
+        style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={{ padding: Theme.spacing.lg, gap: Theme.spacing.lg }} keyboardShouldPersistTaps="handled">
-          <Card>
-            <View style={{ gap: Theme.spacing.md }}>
-              <TextField label={t("fabric_name")} value={name} onChangeText={setName} error={errors.name} />
-              <TextField label={t("supplier")} value={supplier} onChangeText={setSupplier} />
-              <TextField label={t("sku")} value={sku} onChangeText={setSku} />
-              <TextField label={t("color")} value={color} onChangeText={setColor} />
-              <TextField label={t("composition")} value={composition} onChangeText={setComposition} />
-              <View style={{ flexDirection: "row", gap: Theme.spacing.sm }}>
-                <View style={{ flex: 1 }}>
-                  <TextField label={t("width")} value={width} onChangeText={setWidth} keyboardType="decimal-pad" />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <TextField label={t("unit")} value={unit} onChangeText={(value) => setUnit(value === "yd" ? "yd" : "m")} />
-                </View>
+        <ScrollView
+          contentContainerStyle={{
+            padding: Theme.spacing.gutter,
+            paddingBottom: 40,
+            gap: Theme.spacing.lg,
+          }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <ScreenHeader overline={t("library")} title={t("edit_fabric")} />
+
+          <View style={{ gap: Theme.spacing.sm }}>
+            <SectionHeader title={t("identity")} />
+            <Card>
+              <View style={{ gap: Theme.spacing.md }}>
+                <TextField
+                  label={t("fabric_name")}
+                  value={name}
+                  onChangeText={setName}
+                  error={errors.name}
+                />
+                <TextField label={t("supplier")} value={supplier} onChangeText={setSupplier} />
+                <TextField label={t("sku")} value={sku} onChangeText={setSku} />
+                <TextField label={t("color")} value={color} onChangeText={setColor} />
+                <TextField
+                  label={t("composition")}
+                  value={composition}
+                  onChangeText={setComposition}
+                />
               </View>
-              <View style={{ flexDirection: "row", gap: Theme.spacing.sm }}>
-                <View style={{ flex: 1 }}>
-                  <TextField label={t("quantity")} value={quantity} onChangeText={setQuantity} keyboardType="decimal-pad" />
+            </Card>
+          </View>
+
+          <View style={{ gap: Theme.spacing.sm }}>
+            <SectionHeader title={t("specs")} />
+            <Card>
+              <View style={{ gap: Theme.spacing.md }}>
+                <View style={styles.pair}>
+                  <View style={{ flex: 1 }}>
+                    <TextField
+                      label={t("width")}
+                      value={width}
+                      onChangeText={setWidth}
+                      keyboardType="decimal-pad"
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <View style={{ gap: 6 }}>
+                      <Text
+                        style={{
+                          color: Theme.semantic.text.secondary,
+                          fontFamily: Theme.fonts.onestBold,
+                          fontSize: Theme.fontSizes.caption,
+                          letterSpacing: 1,
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        {t("unit")}
+                      </Text>
+                      <View style={{ flexDirection: "row", gap: Theme.spacing.xs }}>
+                        {(["m", "yd"] as const).map((option) => (
+                          <Chip
+                            key={option}
+                            label={option}
+                            selected={unit === option}
+                            onPress={() => setUnit(option)}
+                          />
+                        ))}
+                      </View>
+                    </View>
+                  </View>
                 </View>
-                <View style={{ flex: 1 }}>
-                  <TextField label={t("low_stock_threshold")} value={lowStockThreshold} onChangeText={setLowStockThreshold} keyboardType="decimal-pad" />
-                </View>
+                <TextField
+                  label={t("cost")}
+                  value={cost}
+                  onChangeText={setCost}
+                  keyboardType="decimal-pad"
+                />
               </View>
-              <TextField label={t("cost")} value={cost} onChangeText={setCost} keyboardType="decimal-pad" />
-              <TextField label={t("location")} value={location} onChangeText={setLocation} />
-              {errors.form && <Text style={{ color: Theme.semantic.state.danger, fontFamily: Theme.fonts.onest }}>{errors.form}</Text>}
-            </View>
-          </Card>
-          <Button label={t("save_fabric")} onPress={handleSave} loading={saving} fullWidth size="lg" />
+            </Card>
+          </View>
+
+          <View style={{ gap: Theme.spacing.sm }}>
+            <SectionHeader title={t("inventory")} />
+            <Card>
+              <View style={{ gap: Theme.spacing.md }}>
+                <View style={styles.pair}>
+                  <View style={{ flex: 1 }}>
+                    <TextField
+                      label={t("quantity")}
+                      value={quantity}
+                      onChangeText={setQuantity}
+                      keyboardType="decimal-pad"
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <TextField
+                      label={t("low_stock_threshold")}
+                      value={lowStockThreshold}
+                      onChangeText={setLowStockThreshold}
+                      keyboardType="decimal-pad"
+                    />
+                  </View>
+                </View>
+                <TextField
+                  label={t("location")}
+                  value={location}
+                  onChangeText={setLocation}
+                />
+              </View>
+            </Card>
+          </View>
+
+          {errors.form && (
+            <Text
+              style={{
+                color: Theme.semantic.state.danger,
+                fontFamily: Theme.fonts.onest,
+                fontSize: Theme.fontSizes.label,
+              }}
+            >
+              {errors.form}
+            </Text>
+          )}
+
+          <Button
+            label={t("save_fabric")}
+            onPress={handleSave}
+            loading={saving}
+            fullWidth
+            size="lg"
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>
   )
 }
+
+const styles = StyleSheet.create({
+  pair: {
+    flexDirection: "row",
+    gap: 12,
+  },
+})
