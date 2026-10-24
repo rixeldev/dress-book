@@ -17,7 +17,6 @@ import {
   EmptyState,
   ListRow,
   Screen,
-  ScreenHeader,
   Skeleton,
   TextField,
 } from "@/components/ui"
@@ -91,7 +90,6 @@ export default function SearchScreen() {
           gap: Theme.spacing.md,
         }}
       >
-        <ScreenHeader overline={t("studio")} title={t("search")} />
         <TextField
           value={query}
           onChangeText={setQuery}

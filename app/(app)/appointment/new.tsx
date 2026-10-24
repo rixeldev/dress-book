@@ -15,7 +15,6 @@ import {
   DateField,
   IconButton,
   Screen,
-  ScreenHeader,
   SectionHeader,
   TextField,
 } from "@/components/ui"
@@ -111,11 +110,6 @@ export default function NewAppointmentScreen() {
           }}
           keyboardShouldPersistTaps="handled"
         >
-          <ScreenHeader
-            overline={t("calendar")}
-            title={t("new_appointment")}
-          />
-
           <View style={{ gap: Theme.spacing.sm }}>
             <SectionHeader title={t("details_section")} />
             <Card>

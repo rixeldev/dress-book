@@ -61,7 +61,6 @@ import {
   CountryPicker,
   IconButton,
   ListRow,
-  ScreenHeader,
   SectionHeader,
 } from "@/components/ui"
 
@@ -346,8 +345,6 @@ export default function Settings() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <ScreenHeader overline={t("preferences")} title={t("settings")} />
-
         <Card style={styles.profileCard}>
           <Pressable
             onPress={handlePickImage}
