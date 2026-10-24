@@ -72,7 +72,6 @@ export default {
           },
           android: {
             targetSdkVersion: 36,
-            compileSdk: 36,
             compileSdkVersion: 36,
             ndkVersion: "29.0.14206865",
           },
