@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import { Text, View } from "react-native"
+import { RefreshControl, Text, View } from "react-native"
 import { FlashList } from "@shopify/flash-list"
 import { router } from "expo-router"
 import { useTranslation } from "react-i18next"
@@ -36,10 +36,10 @@ export default function TodayScreen() {
   const [orders, setOrders] = useState<Order[]>([])
   const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
 
   const load = useCallback(async () => {
     if (!user) return
-    setLoading(true)
     try {
       const [loadedOrders, loadedClients] = await Promise.all([
         getOrders(user.uid),
@@ -51,6 +51,12 @@ export default function TodayScreen() {
       setLoading(false)
     }
   }, [user])
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true)
+    await load()
+    setRefreshing(false)
+  }, [load])
 
   useEffect(() => {
     load()
@@ -153,6 +159,14 @@ export default function TodayScreen() {
   return (
     <Screen padding={0}>
       <FlashList
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={Theme.semantic.accent.primary}
+            colors={[Theme.semantic.accent.primary]}
+          />
+        }
         contentContainerStyle={{
           padding: Theme.spacing.gutter,
           paddingBottom: 140,

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import { Alert, Image, Pressable, Text, View } from "react-native"
+import { Alert, Image, Pressable, RefreshControl, Text, View } from "react-native"
 import { FlashList } from "@shopify/flash-list"
 import { Stack } from "expo-router"
 
@@ -13,7 +13,6 @@ import {
   EmptyState,
   IconButton,
   Screen,
-  ScreenHeader,
   Skeleton,
 } from "@/components/ui"
 import { ImageIcon, PlusIcon, TrashIcon } from "@/icons/Icons"
@@ -24,6 +23,7 @@ export default function DesignsScreen() {
   const { user } = useAuth()
   const [designs, setDesigns] = useState<Design[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
 
   const load = useCallback(async () => {
     if (!user) return
@@ -34,6 +34,12 @@ export default function DesignsScreen() {
       setLoading(false)
     }
   }, [user])
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true)
+    await load()
+    setRefreshing(false)
+  }, [load])
 
   useEffect(() => {
     load()
@@ -96,6 +102,14 @@ export default function DesignsScreen() {
     <Screen padding={0}>
       <Stack.Screen options={{ headerTitle: t("designs") }} />
       <FlashList
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={Theme.semantic.accent.primary}
+            colors={[Theme.semantic.accent.primary]}
+          />
+        }
         contentContainerStyle={{
           padding: Theme.spacing.gutter,
           paddingBottom: 120,
@@ -106,19 +120,34 @@ export default function DesignsScreen() {
         ItemSeparatorComponent={() => <View style={{ height: Theme.spacing.sm }} />}
         ListHeaderComponent={
           <View style={{ gap: Theme.spacing.md, marginBottom: Theme.spacing.md }}>
-            <ScreenHeader
-              overline={t("studio")}
-              title={t("designs")}
-              description={t("designs_count", { count: designs.length })}
-              right={
-                <IconButton
-                  icon={<PlusIcon size={20} color={Theme.semantic.text.inverse} />}
-                  accessibilityLabel={t("add_design")}
-                  onPress={handleAdd}
-                  variant="primary"
-                />
-              }
-            />
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+              <View>
+                <Text
+                  style={{
+                    color: Theme.semantic.text.primary,
+                    fontFamily: Theme.fonts.display,
+                    fontSize: Theme.fontSizes.h1,
+                  }}
+                >
+                  {t("designs")}
+                </Text>
+                <Text
+                  style={{
+                    color: Theme.semantic.text.secondary,
+                    fontFamily: Theme.fonts.onest,
+                    fontSize: Theme.fontSizes.label,
+                  }}
+                >
+                  {t("designs_count", { count: designs.length })}
+                </Text>
+              </View>
+              <IconButton
+                icon={<PlusIcon size={20} color={Theme.semantic.text.inverse} />}
+                accessibilityLabel={t("add_design")}
+                onPress={handleAdd}
+                variant="primary"
+              />
+            </View>
           </View>
         }
         ListEmptyComponent={

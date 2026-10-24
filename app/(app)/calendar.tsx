@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import { Alert, StyleSheet, Text, View } from "react-native"
+import { Alert, RefreshControl, StyleSheet, Text, View } from "react-native"
 import { FlashList } from "@shopify/flash-list"
 import { Stack, router } from "expo-router"
 
@@ -14,7 +14,6 @@ import {
   EmptyState,
   IconButton,
   Screen,
-  ScreenHeader,
   Skeleton,
 } from "@/components/ui"
 import { CalendarIcon, ClockIcon, PlusIcon, TrashIcon } from "@/icons/Icons"
@@ -26,6 +25,7 @@ export default function CalendarScreen() {
   const { user } = useAuth()
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
 
   const load = useCallback(async () => {
     if (!user) return
@@ -36,6 +36,12 @@ export default function CalendarScreen() {
       setLoading(false)
     }
   }, [user])
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true)
+    await load()
+    setRefreshing(false)
+  }, [load])
 
   useEffect(() => {
     load()
@@ -79,6 +85,14 @@ export default function CalendarScreen() {
     <Screen padding={0}>
       <Stack.Screen options={{ headerTitle: t("calendar") }} />
       <FlashList
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={Theme.semantic.accent.primary}
+            colors={[Theme.semantic.accent.primary]}
+          />
+        }
         contentContainerStyle={{
           padding: Theme.spacing.gutter,
           paddingBottom: 120,
@@ -89,19 +103,34 @@ export default function CalendarScreen() {
         ItemSeparatorComponent={() => <View style={{ height: Theme.spacing.xs }} />}
         ListHeaderComponent={
           <View style={{ gap: Theme.spacing.md, marginBottom: Theme.spacing.md }}>
-            <ScreenHeader
-              overline={t("studio")}
-              title={t("calendar")}
-              description={t("appointments_count", { count: appointments.length })}
-              right={
-                <IconButton
-                  icon={<PlusIcon size={20} color={Theme.semantic.text.inverse} />}
-                  accessibilityLabel={t("new_appointment")}
-                  onPress={() => router.push("/appointment/new")}
-                  variant="primary"
-                />
-              }
-            />
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+              <View>
+                <Text
+                  style={{
+                    color: Theme.semantic.text.primary,
+                    fontFamily: Theme.fonts.display,
+                    fontSize: Theme.fontSizes.h1,
+                  }}
+                >
+                  {t("calendar")}
+                </Text>
+                <Text
+                  style={{
+                    color: Theme.semantic.text.secondary,
+                    fontFamily: Theme.fonts.onest,
+                    fontSize: Theme.fontSizes.label,
+                  }}
+                >
+                  {t("appointments_count", { count: appointments.length })}
+                </Text>
+              </View>
+              <IconButton
+                icon={<PlusIcon size={20} color={Theme.semantic.text.inverse} />}
+                accessibilityLabel={t("new_appointment")}
+                onPress={() => router.push("/appointment/new")}
+                variant="primary"
+              />
+            </View>
             <Button
               label={t("new_appointment")}
               onPress={() => router.push("/appointment/new")}
