@@ -42,6 +42,7 @@ export default {
       softwareKeyboardLayoutMode: "pan",
     },
     plugins: [
+      "./plugins/withGradleJdk17",
       "@react-native-firebase/app",
       "expo-router",
       "expo-font",
