@@ -18,6 +18,11 @@ export function TabBarButton({ onPress, onLongPress, isFocused, label, icon }: P
     <PlatformPressable
       onPress={onPress}
       onLongPress={onLongPress}
+      android_ripple={{
+        borderless: true,
+        radius: 26,
+        color: `${Theme.semantic.accent.primary}22`,
+      }}
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ selected: isFocused }}
@@ -26,7 +31,10 @@ export function TabBarButton({ onPress, onLongPress, isFocused, label, icon }: P
       <View
         style={[
           styles.iconWrap,
-          isFocused && { backgroundColor: Theme.semantic.accent.soft },
+          isFocused && {
+            backgroundColor: Theme.semantic.accent.soft,
+            borderRadius: 999,
+          },
         ]}
       >
         {icon}
@@ -53,6 +61,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 3,
+    overflow: "hidden",
+    borderRadius: 16,
   },
   iconWrap: {
     minWidth: 40,

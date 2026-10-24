@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react"
-import { DeviceEventEmitter, Platform, StyleSheet, Vibration, View } from "react-native"
+import { Platform, StyleSheet, Vibration, View } from "react-native"
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs"
 import { BannerAd, BannerAdSize, TestIds, useForeground } from "react-native-google-mobile-ads"
 import { useFocusEffect } from "expo-router"
@@ -8,7 +8,6 @@ import { useAppTheme } from "@/hooks/useAppTheme"
 import { useStorage } from "@/hooks/useStorage"
 import { parseBoolean } from "@/libs/parseBoolean"
 import { adBannerId } from "@/db/firebaseConfig"
-import { AddButton } from "./AddButton"
 import { TabBarButton } from "./TabBarButton"
 
 export const REG_ADDED_EVENT = "reg_added"
@@ -88,10 +87,6 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         })}
       </View>
 
-      <View style={styles.quickAdd} pointerEvents="box-none">
-        <AddButton onRegAdded={() => DeviceEventEmitter.emit(REG_ADDED_EVENT)} />
-      </View>
-
       {/* The banner keeps loading while collapsed; zero height means an empty
           ad slot never reserves visible space. */}
       <View style={[styles.ad, isAdLoaded ? styles.adVisible : styles.adHidden]}>
@@ -123,12 +118,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     paddingHorizontal: 4,
     paddingVertical: 6,
-  },
-  quickAdd: {
-    position: "absolute",
-    top: -42,
-    alignSelf: "center",
-    zIndex: 3,
   },
   ad: {
     alignItems: "center",
