@@ -15,41 +15,43 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: Theme.semantic.accent.primary,
+        sceneStyle: { backgroundColor: Theme.semantic.bg.canvas },
+        animation: "fade",
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ color }) => <HomeIcon color={color} />,
+          tabBarIcon: ({ color }) => <HomeIcon color={color} size={22} />,
           title: t("home"),
         }}
       />
       <Tabs.Screen
         name="clients"
         options={{
-          tabBarIcon: ({ color }) => <UsersIcon color={color} />,
+          tabBarIcon: ({ color }) => <UsersIcon color={color} size={22} />,
           title: t("clients"),
         }}
       />
       <Tabs.Screen
         name="orders"
         options={{
-          tabBarIcon: ({ color }) => <ListIcon color={color} />,
+          tabBarIcon: ({ color }) => <ListIcon color={color} size={22} />,
           title: t("orders"),
         }}
       />
       <Tabs.Screen
         name="library"
         options={{
-          tabBarIcon: ({ color }) => <PackageIcon color={color} />,
+          tabBarIcon: ({ color }) => <PackageIcon color={color} size={22} />,
           title: t("library"),
         }}
       />
       <Tabs.Screen
         name="more"
         options={{
-          tabBarIcon: ({ color }) => <UserIcon color={color} />,
-          title: t("more"),
+          tabBarIcon: ({ color }) => <UserIcon color={color} size={22} />,
+          title: t("studio"),
         }}
       />
     </Tabs>

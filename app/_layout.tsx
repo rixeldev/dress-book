@@ -20,6 +20,7 @@ import { ThemeProvider, useTheme } from "@/contexts/ThemeContext"
 import { AuthProvider, useAuth } from "@/contexts/AuthContext"
 import { OnboardingProvider } from "@/contexts/OnboardingContext"
 import { SyncProvider } from "@/contexts/SyncContext"
+import { CurrencyProvider } from "@/contexts/CurrencyContext"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 function RootNavigator() {
@@ -82,9 +83,9 @@ function RootNavigator() {
   const needsUpdate = Boolean(user) && isAppUpdated === false
 
   return (
-    <SafeAreaProvider style={{ height: "100%", backgroundColor: theme.colors.background }}>
+    <SafeAreaProvider style={{ height: "100%", backgroundColor: theme.semantic.bg.canvas }}>
       <StatusBar style={isDark ? "light" : "dark"} />
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1, backgroundColor: theme.semantic.bg.canvas }}>
         <OfflinePill />
         {isBooting ? (
           <SplashScreen onFinish={() => {}} />
@@ -93,7 +94,11 @@ function RootNavigator() {
         ) : (
           <Stack
             initialRouteName={user?.emailVerified ? "(app)" : "(auth)"}
-            screenOptions={{ headerShown: false }}
+            screenOptions={{
+              headerShown: false,
+              animation: "fade",
+              contentStyle: { backgroundColor: theme.semantic.bg.canvas },
+            }}
           >
             <Stack.Screen name="(auth)" />
             <Stack.Screen name="(app)" />
@@ -107,15 +112,17 @@ function RootNavigator() {
 export default function Layout() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <OnboardingProvider>
-          <SyncProvider>
-            <ErrorBoundary>
-              <RootNavigator />
-            </ErrorBoundary>
-          </SyncProvider>
-        </OnboardingProvider>
-      </AuthProvider>
+      <CurrencyProvider>
+        <AuthProvider>
+          <OnboardingProvider>
+            <SyncProvider>
+              <ErrorBoundary>
+                <RootNavigator />
+              </ErrorBoundary>
+            </SyncProvider>
+          </OnboardingProvider>
+        </AuthProvider>
+      </CurrencyProvider>
     </ThemeProvider>
   )
 }

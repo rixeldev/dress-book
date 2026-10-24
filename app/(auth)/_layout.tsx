@@ -25,7 +25,7 @@ export default function AuthLayout() {
       screenOptions={{
         headerShown: false,
         animation: "fade",
-        contentStyle: { backgroundColor: Theme.colors.background },
+        contentStyle: { backgroundColor: Theme.semantic.bg.canvas },
       }}
     />
   )
