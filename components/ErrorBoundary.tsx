@@ -18,12 +18,12 @@ const ErrorFallback = ({ onRetry }: { onRetry: () => void }) => {
   const { t } = useTranslation()
 
   return (
-    <View style={[styles.container, { backgroundColor: Theme.colors.background }]}>
-      <Text style={[styles.title, { color: Theme.colors.text, fontFamily: Theme.fonts.onestBold }]}>
+    <View style={[styles.container, { backgroundColor: Theme.semantic.bg.canvas }]}>
+      <Text style={[styles.title, { color: Theme.semantic.text.primary, fontFamily: Theme.fonts.onestBold }]}>
         {t("error_boundary_title")}
       </Text>
       <Text
-        style={[styles.description, { color: Theme.colors.gray, fontFamily: Theme.fonts.onest }]}
+        style={[styles.description, { color: Theme.semantic.text.secondary, fontFamily: Theme.fonts.onest }]}
       >
         {t("error_boundary_desc")}
       </Text>

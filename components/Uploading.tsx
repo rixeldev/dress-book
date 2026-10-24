@@ -31,7 +31,7 @@ export const Updaloading = ({
         <View style={styles.modalView}>
           <Text
             style={{
-              color: Theme.colors.gray,
+              color: Theme.semantic.text.secondary,
               fontFamily: Theme.fonts.onestBold,
               fontSize: Theme.sizes.h3,
               alignSelf: "center",
@@ -66,7 +66,7 @@ export const Updaloading = ({
                 onPress={onClose}
                 style={({ pressed }) => [
                   {
-                    backgroundColor: pressed ? Theme.colors.background2 : Theme.colors.transparent,
+                    backgroundColor: pressed ? Theme.semantic.bg.sunken : "transparent",
                   },
                   styles.modalBottomButtons,
                 ]}
@@ -74,7 +74,7 @@ export const Updaloading = ({
                 <Text
                   style={{
                     fontFamily: Theme.fonts.onest,
-                    color: Theme.colors.red,
+                    color: Theme.semantic.state.danger,
                   }}
                 >
                   {t("cancel")}
@@ -85,7 +85,7 @@ export const Updaloading = ({
                 onPress={onAccept}
                 style={({ pressed }) => [
                   {
-                    backgroundColor: pressed ? Theme.colors.background2 : Theme.colors.transparent,
+                    backgroundColor: pressed ? Theme.semantic.bg.sunken : "transparent",
                   },
                   styles.modalBottomButtons,
                 ]}
@@ -93,7 +93,7 @@ export const Updaloading = ({
                 <Text
                   style={{
                     fontFamily: Theme.fonts.onest,
-                    color: Theme.colors.accent,
+                    color: Theme.semantic.accent.primary,
                   }}
                 >
                   {t("accept")}
@@ -122,7 +122,7 @@ const createStyles = (Theme: any) =>
     },
     modalView: {
       margin: 20,
-      backgroundColor: Theme.colors.modal,
+      backgroundColor: Theme.semantic.bg.surface,
       borderRadius: 20,
       padding: 20,
       shadowColor: "#000",

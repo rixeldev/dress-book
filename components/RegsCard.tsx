@@ -106,13 +106,13 @@ export const RegsCard = ({ reg, index, onEdit, onDelete, onToggleDelivered }: Pr
   const getIcon = () => {
     switch (reg.type) {
       case "Clothes":
-        return <ClothIcon size={20} color={Theme.colors.accent} />
+        return <ClothIcon size={20} color={Theme.semantic.accent.primary} />
       case "Curtains":
-        return <CurtainIcon size={20} color={Theme.colors.accent} />
+        return <CurtainIcon size={20} color={Theme.semantic.accent.primary} />
       case "Others":
-        return <PackageIcon size={20} color={Theme.colors.accent} />
+        return <PackageIcon size={20} color={Theme.semantic.accent.primary} />
       default:
-        return <PackageIcon size={20} color={Theme.colors.accent} />
+        return <PackageIcon size={20} color={Theme.semantic.accent.primary} />
     }
   }
 
@@ -166,7 +166,7 @@ export const RegsCard = ({ reg, index, onEdit, onDelete, onToggleDelivered }: Pr
             </View>
 
             <View style={{ height: "100%", justifyContent: "center", alignItems: "center" }}>
-              <ForwardIcon color={Theme.colors.accent} size={28} />
+              <ForwardIcon color={Theme.semantic.accent.primary} size={28} />
             </View>
           </View>
         </Pressable>
@@ -190,7 +190,7 @@ export const RegsCard = ({ reg, index, onEdit, onDelete, onToggleDelivered }: Pr
               ]}
             >
               <TouchableOpacity style={styles.menuItem} onPress={handleEdit} activeOpacity={0.7}>
-                <EditIcon size={18} color={Theme.colors.text} />
+                <EditIcon size={18} color={Theme.semantic.text.primary} />
                 <Text style={styles.menuText}>{t("edit")}</Text>
               </TouchableOpacity>
 
@@ -204,7 +204,7 @@ export const RegsCard = ({ reg, index, onEdit, onDelete, onToggleDelivered }: Pr
                 <Ionicons
                   name={reg.delivered ? "refresh-outline" : "checkmark-done-outline"}
                   size={18}
-                  color={Theme.colors.text}
+                  color={Theme.semantic.text.primary}
                 />
                 <Text style={styles.menuText}>
                   {reg.delivered ? t("mark_as_undelivered") : t("mark_as_delivered")}
@@ -214,8 +214,8 @@ export const RegsCard = ({ reg, index, onEdit, onDelete, onToggleDelivered }: Pr
               <View style={styles.menuDivider} />
 
               <TouchableOpacity style={styles.menuItem} onPress={handleDelete} activeOpacity={0.7}>
-                <Ionicons name="trash-outline" size={18} color={Theme.colors.red} />
-                <Text style={[styles.menuText, { color: Theme.colors.red }]}>{t("delete")}</Text>
+                <Ionicons name="trash-outline" size={18} color={Theme.semantic.state.danger} />
+                <Text style={[styles.menuText, { color: Theme.semantic.state.danger }]}>{t("delete")}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -229,7 +229,7 @@ const createStyles = (Theme: any) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",
-      backgroundColor: Theme.colors.ultraLightGray,
+      backgroundColor: Theme.semantic.bg.sunken,
       marginBottom: 12,
       maxWidth: "100%",
       overflow: "hidden",
@@ -246,14 +246,14 @@ const createStyles = (Theme: any) =>
       height: 147,
     },
     title: {
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
       fontFamily: Theme.fonts.onestBold,
       fontSize: 18,
       marginVertical: 10,
     },
     description: {
       flexWrap: "wrap",
-      color: Theme.colors.darkGray,
+      color: Theme.semantic.text.secondary,
       fontSize: 14,
       fontFamily: Theme.fonts.onest,
       marginBottom: 10,
@@ -262,7 +262,7 @@ const createStyles = (Theme: any) =>
       overflow: "hidden",
     },
     timestamp: {
-      color: Theme.colors.lightGray,
+      color: Theme.semantic.text.tertiary,
       fontFamily: Theme.fonts.onest,
       fontSize: 12,
       marginBottom: 10,
@@ -277,7 +277,7 @@ const createStyles = (Theme: any) =>
     },
     deadlinePill: {
       flex: 1,
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
       borderRadius: 12,
       paddingVertical: 6,
       paddingHorizontal: 12,
@@ -285,12 +285,12 @@ const createStyles = (Theme: any) =>
     deadlineLabel: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: 12,
-      color: Theme.colors.lightGray,
+      color: Theme.semantic.text.tertiary,
     },
     deadlineValue: {
       fontFamily: Theme.fonts.onest,
       fontSize: 14,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
     },
     pressables: {
       borderRadius: 26,
@@ -305,7 +305,7 @@ const createStyles = (Theme: any) =>
       width: 8,
       height: 8,
       borderRadius: 4,
-      backgroundColor: Theme.colors.yellow,
+      backgroundColor: Theme.semantic.state.warning,
       marginRight: 8,
     },
     modalOverlay: {
@@ -314,7 +314,7 @@ const createStyles = (Theme: any) =>
     },
     contextMenu: {
       position: "absolute",
-      backgroundColor: Theme.colors.modal,
+      backgroundColor: Theme.semantic.bg.surface,
       borderRadius: 12,
       paddingVertical: 4,
       minWidth: 140,
@@ -334,11 +334,11 @@ const createStyles = (Theme: any) =>
     menuText: {
       fontFamily: Theme.fonts.onest,
       fontSize: 14,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
     },
     menuDivider: {
       height: 1,
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
       marginHorizontal: 8,
     },
   })

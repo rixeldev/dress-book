@@ -8,7 +8,7 @@ export const Divider = () => {
       style={{
         width: "100%",
         height: 0.4,
-        backgroundColor: Theme.colors.background2,
+        backgroundColor: Theme.semantic.bg.sunken,
       }}
     />
   )

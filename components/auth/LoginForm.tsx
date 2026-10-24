@@ -248,11 +248,11 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
           style={[
             styles.loadingOverlay,
             {
-              backgroundColor: Theme.colors.backdrop,
+              backgroundColor: Theme.semantic.overlay,
             },
           ]}
         >
-          <ActivityIndicator size="large" color={Theme.colors.accent} style={styles.loader} />
+          <ActivityIndicator size="large" color={Theme.semantic.accent.primary} style={styles.loader} />
         </View>
       )}
 
@@ -275,13 +275,13 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
             {!signInForm && (
               <View style={styles.field}>
                 <View style={styles.iconLeft}>
-                  <UserIcon color={Theme.colors.gray} />
+                  <UserIcon color={Theme.semantic.text.secondary} />
                 </View>
 
                 <TextInput
                   style={styles.input}
                   placeholder={t("username")}
-                  placeholderTextColor={Theme.colors.gray}
+                  placeholderTextColor={Theme.semantic.text.secondary}
                   keyboardType="default"
                   autoCapitalize="none"
                   autoComplete="name-given"
@@ -290,19 +290,19 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
                   returnKeyType="next"
                   accessibilityLabel={t("username")}
                   importantForAutofill="yes"
-                  cursorColor={Theme.colors.accent}
+                  cursorColor={Theme.semantic.accent.primary}
                 />
               </View>
             )}
 
             <View style={styles.field}>
               <View style={styles.iconLeft}>
-                <MailIcon color={Theme.colors.gray} />
+                <MailIcon color={Theme.semantic.text.secondary} />
               </View>
               <TextInput
                 style={styles.input}
                 placeholder={t("email")}
-                placeholderTextColor={Theme.colors.gray}
+                placeholderTextColor={Theme.semantic.text.secondary}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoComplete="email"
@@ -311,19 +311,19 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
                 returnKeyType="next"
                 accessibilityLabel={t("email")}
                 importantForAutofill="yes"
-                cursorColor={Theme.colors.accent}
+                cursorColor={Theme.semantic.accent.primary}
               />
             </View>
 
             <View style={styles.field}>
               <View style={styles.iconLeft}>
-                <LockIcon color={Theme.colors.gray} />
+                <LockIcon color={Theme.semantic.text.secondary} />
               </View>
 
               <TextInput
                 style={styles.input}
                 placeholder={t("password")}
-                placeholderTextColor={Theme.colors.gray}
+                placeholderTextColor={Theme.semantic.text.secondary}
                 secureTextEntry={!showPassword}
                 value={password}
                 onChangeText={setPassword}
@@ -332,7 +332,7 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
                 onSubmitEditing={handleSignin}
                 accessibilityLabel={t("password")}
                 autoComplete="current-password"
-                cursorColor={Theme.colors.accent}
+                cursorColor={Theme.semantic.accent.primary}
               />
 
               <Pressable
@@ -343,9 +343,9 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
                 hitSlop={10}
               >
                 {showPassword ? (
-                  <EyeOffIcon color={Theme.colors.gray} />
+                  <EyeOffIcon color={Theme.semantic.text.secondary} />
                 ) : (
-                  <EyeIcon color={Theme.colors.gray} />
+                  <EyeIcon color={Theme.semantic.text.secondary} />
                 )}
               </Pressable>
             </View>
@@ -353,13 +353,13 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
             {!signInForm && (
               <View style={styles.field}>
                 <View style={styles.iconLeft}>
-                  <LockIcon color={Theme.colors.gray} />
+                  <LockIcon color={Theme.semantic.text.secondary} />
                 </View>
 
                 <TextInput
                   style={styles.input}
                   placeholder={t("repeat_password")}
-                  placeholderTextColor={Theme.colors.gray}
+                  placeholderTextColor={Theme.semantic.text.secondary}
                   secureTextEntry={!showPassword}
                   value={repeatPassword}
                   onChangeText={setRepeatPassword}
@@ -368,7 +368,7 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
                   onSubmitEditing={handleSignin}
                   accessibilityLabel={t("repeat_password")}
                   autoComplete="new-password"
-                  cursorColor={Theme.colors.accent}
+                  cursorColor={Theme.semantic.accent.primary}
                 />
 
                 <Pressable
@@ -379,9 +379,9 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
                   hitSlop={10}
                 >
                   {showPassword ? (
-                    <EyeOffIcon color={Theme.colors.gray} />
+                    <EyeOffIcon color={Theme.semantic.text.secondary} />
                   ) : (
-                    <EyeIcon color={Theme.colors.gray} />
+                    <EyeIcon color={Theme.semantic.text.secondary} />
                   )}
                 </Pressable>
               </View>
@@ -419,7 +419,7 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
                 accessibilityState={{ busy: loading }}
               >
                 {loading ? (
-                  <ActivityIndicator color={Theme.colors.modal} />
+                  <ActivityIndicator color={Theme.semantic.bg.surface} />
                 ) : (
                   <Text style={styles.submitText}>{signInForm ? t("sign_in") : t("sign_up")}</Text>
                 )}
@@ -444,11 +444,11 @@ export const LoginForm = ({ initialSignIn = true }: LoginFormProps) => {
 
             <View>
               <View style={styles.dividerContainer}>
-                <View style={[styles.dividerLine, { backgroundColor: Theme.colors.background2 }]} />
-                <Text style={[styles.dividerText, { color: Theme.colors.gray }]}>
+                <View style={[styles.dividerLine, { backgroundColor: Theme.semantic.bg.sunken }]} />
+                <Text style={[styles.dividerText, { color: Theme.semantic.text.secondary }]}>
                   {t("or_sign_in_with")}
                 </Text>
-                <View style={[styles.dividerLine, { backgroundColor: Theme.colors.background2 }]} />
+                <View style={[styles.dividerLine, { backgroundColor: Theme.semantic.bg.sunken }]} />
               </View>
 
               <Pressable
@@ -497,7 +497,7 @@ const createStyles = (Theme: any) =>
       width: "100%",
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: Theme.colors.background,
+      backgroundColor: Theme.semantic.bg.canvas,
     },
     container: {
       padding: 20,
@@ -542,20 +542,20 @@ const createStyles = (Theme: any) =>
       fontFamily: Theme.fonts.display,
       fontSize: Theme.fontSizes.display,
       lineHeight: Theme.lineHeights.display,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
       textAlign: "center",
     },
     field: {
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
       borderRadius: 16,
       paddingHorizontal: 16,
       paddingVertical: 14,
       marginBottom: 16,
       borderWidth: 1,
-      borderColor: Theme.colors.ultraLightGray,
-      shadowColor: Theme.colors.text,
+      borderColor: Theme.semantic.bg.sunken,
+      shadowColor: Theme.semantic.text.primary,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.05,
       shadowRadius: 4,
@@ -571,7 +571,7 @@ const createStyles = (Theme: any) =>
     },
     input: {
       flex: 1,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
       fontSize: Theme.sizes.h4,
       fontFamily: Theme.fonts.onest,
       paddingVertical: 2,
@@ -584,19 +584,19 @@ const createStyles = (Theme: any) =>
       minHeight: 24,
     },
     forgotText: {
-      color: Theme.colors.primary,
+      color: Theme.semantic.accent.primary,
       fontFamily: Theme.fonts.onest,
       fontSize: Theme.sizes.h5,
     },
     error: {
-      color: Theme.colors.red,
+      color: Theme.semantic.state.danger,
       marginBottom: 8,
       fontFamily: Theme.fonts.onest,
       fontSize: Theme.sizes.h5,
       flex: 1,
     },
     submit: {
-      backgroundColor: Theme.colors.primary,
+      backgroundColor: Theme.semantic.accent.primary,
       paddingVertical: 16,
       borderRadius: 16,
       alignItems: "center",
@@ -605,14 +605,14 @@ const createStyles = (Theme: any) =>
       flexDirection: "row",
       justifyContent: "center",
       gap: 8,
-      shadowColor: Theme.colors.primary,
+      shadowColor: Theme.semantic.accent.primary,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.3,
       shadowRadius: 8,
       elevation: 4,
     },
     submitText: {
-      color: Theme.colors.modal,
+      color: Theme.semantic.bg.surface,
       fontSize: Theme.sizes.h4,
       fontFamily: Theme.fonts.onestBold,
       letterSpacing: 0.5,
@@ -626,11 +626,11 @@ const createStyles = (Theme: any) =>
     line: {
       flex: 1,
       height: 1,
-      backgroundColor: Theme.colors.background ?? Theme.colors.darkGray,
+      backgroundColor: Theme.semantic.bg.canvas ?? Theme.semantic.text.secondary,
     },
     orText: {
       marginHorizontal: 8,
-      color: Theme.colors.darkGray,
+      color: Theme.semantic.text.secondary,
       fontFamily: Theme.fonts.onest,
     },
     dividerContainer: {
@@ -657,12 +657,12 @@ const createStyles = (Theme: any) =>
       flex: 1,
       paddingVertical: 10,
       borderRadius: 12,
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
       alignItems: "center",
       marginHorizontal: 4,
     },
     socialText: {
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
       fontFamily: Theme.fonts.onest,
     },
     footer: {
@@ -673,19 +673,19 @@ const createStyles = (Theme: any) =>
       flexWrap: "wrap",
     },
     footerText: {
-      color: Theme.colors.gray,
+      color: Theme.semantic.text.secondary,
       fontFamily: Theme.fonts.onest,
       fontSize: Theme.sizes.h5,
     },
     footerPolicy: {
-      color: Theme.colors.darkGray,
+      color: Theme.semantic.text.secondary,
       fontFamily: Theme.fonts.onest,
       marginVertical: 12,
       fontSize: Theme.sizes.h5,
       textDecorationLine: "underline",
     },
     signupText: {
-      color: Theme.colors.primary,
+      color: Theme.semantic.accent.primary,
       fontFamily: Theme.fonts.onestBold,
       fontSize: Theme.sizes.h5,
     },
@@ -694,12 +694,12 @@ const createStyles = (Theme: any) =>
       justifyContent: "center",
       alignItems: "center",
       borderWidth: 1.5,
-      borderColor: Theme.colors.primary2,
-      backgroundColor: Theme.colors.modal,
+      borderColor: Theme.semantic.accent.soft,
+      backgroundColor: Theme.semantic.bg.surface,
       paddingVertical: 14,
       borderRadius: 16,
       marginBottom: 16,
-      shadowColor: Theme.colors.text,
+      shadowColor: Theme.semantic.text.primary,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,

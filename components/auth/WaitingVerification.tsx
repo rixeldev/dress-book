@@ -81,14 +81,14 @@ export const WaitingVerification = () => {
 
   return (
     <View style={styles.container}>
-      <VerifiedIcon color={Theme.colors.accent} size={132} />
+      <VerifiedIcon color={Theme.semantic.accent.primary} size={132} />
       <Text style={styles.title}>{t("verify_your_email")}</Text>
       <Text style={styles.subtitle}>
         {t("verify_your_email_desc_1")}
         {"\n"}
         {t("verify_your_email_desc_2")}
       </Text>
-      <ActivityIndicator size="large" color={Theme.colors.primary} style={styles.loader} />
+      <ActivityIndicator size="large" color={Theme.semantic.accent.primary} style={styles.loader} />
       <Text style={styles.hint}>{t("waiting_verification")}</Text>
       <Animated.View style={{ transform: [{ scale: btnScale }], width: "100%" }}>
         <Pressable
@@ -136,7 +136,7 @@ const createStyles = (Theme: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: Theme.colors.background,
+      backgroundColor: Theme.semantic.bg.canvas,
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: 24,
@@ -145,13 +145,13 @@ const createStyles = (Theme: any) =>
     title: {
       fontSize: Theme.sizes.h1,
       fontFamily: Theme.fonts.onestBold,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
       marginBottom: 12,
     },
     subtitle: {
       fontSize: Theme.sizes.h4,
       fontFamily: Theme.fonts.onest,
-      color: Theme.colors.gray,
+      color: Theme.semantic.text.secondary,
       textAlign: "center",
       lineHeight: 22,
       marginBottom: 32,
@@ -161,11 +161,11 @@ const createStyles = (Theme: any) =>
     },
     hint: {
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.gray,
+      color: Theme.semantic.text.secondary,
       fontFamily: Theme.fonts.onest,
     },
     submit: {
-      backgroundColor: Theme.colors.primary,
+      backgroundColor: Theme.semantic.accent.primary,
       padding: 14,
       borderRadius: 14,
       alignItems: "center",
@@ -181,7 +181,7 @@ const createStyles = (Theme: any) =>
       fontFamily: Theme.fonts.onestBold,
     },
     signout: {
-      backgroundColor: Theme.colors.red,
+      backgroundColor: Theme.semantic.state.danger,
       padding: 14,
       borderRadius: 14,
       alignItems: "center",
