@@ -22,13 +22,13 @@ import {
 } from "@/components/ui"
 
 const COMPOSITION_OPTIONS = [
-  "Cotton",
-  "Polyester",
-  "Wool",
-  "Linen",
-  "Cotton/Polyester blend",
-  "Wool blend",
-  "Mixed blend",
+  { value: "Cotton", key: "cotton" },
+  { value: "Polyester", key: "polyester" },
+  { value: "Wool", key: "wool" },
+  { value: "Linen", key: "linen" },
+  { value: "Cotton/Polyester blend", key: "cotton_polyester_blend" },
+  { value: "Wool blend", key: "wool_blend" },
+  { value: "Mixed blend", key: "mixed_blend" },
 ]
 
 const COLOR_SWATCHES = [
@@ -54,7 +54,7 @@ export default function NewFabricScreen() {
   const [supplier, setSupplier] = useState("")
   const [sku, setSku] = useState("")
   const [color, setColor] = useState(COLOR_SWATCHES[0])
-  const [composition, setComposition] = useState(COMPOSITION_OPTIONS[0])
+  const [composition, setComposition] = useState(COMPOSITION_OPTIONS[0].value)
   const [width, setWidth] = useState("")
   const [unit, setUnit] = useState<"m" | "yd">("m")
   const [quantity, setQuantity] = useState("")
@@ -211,8 +211,8 @@ export default function NewFabricScreen() {
                   label={t("composition")}
                   value={composition}
                   options={COMPOSITION_OPTIONS.map((option) => ({
-                    label: option,
-                    value: option,
+                    label: t(`fabric_composition_${option.key}`),
+                    value: option.value,
                   }))}
                   onChange={setComposition}
                 />

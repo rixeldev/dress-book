@@ -466,5 +466,12 @@
   "photo": "Photo",
   "no_photo": "No photo yet",
   "add_photo": "Add photo",
-  "select_date": "Select date"
+  "select_date": "Select date",
+  "fabric_composition_cotton": "Cotton",
+  "fabric_composition_polyester": "Polyester",
+  "fabric_composition_wool": "Wool",
+  "fabric_composition_linen": "Linen",
+  "fabric_composition_cotton_polyester_blend": "Cotton/Polyester blend",
+  "fabric_composition_wool_blend": "Wool blend",
+  "fabric_composition_mixed_blend": "Mixed blend"
 }

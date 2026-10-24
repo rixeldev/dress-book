@@ -466,5 +466,12 @@
   "photo": "Foto",
   "no_photo": "Sin foto todavía",
   "add_photo": "Añadir foto",
-  "select_date": "Seleccionar fecha"
+  "select_date": "Seleccionar fecha",
+  "fabric_composition_cotton": "Algodón",
+  "fabric_composition_polyester": "Poliéster",
+  "fabric_composition_wool": "Lana",
+  "fabric_composition_linen": "Lino",
+  "fabric_composition_cotton_polyester_blend": "Mezcla algodón/poliéster",
+  "fabric_composition_wool_blend": "Mezcla de lana",
+  "fabric_composition_mixed_blend": "Mezcla mixta"
 }
