@@ -10,6 +10,7 @@ import { getMeasurements } from "@/features/measurements/repository"
 import type { Measurement } from "@/interfaces/Measurement"
 import type { Client } from "@/interfaces/Client"
 import { exportMeasurementSheet } from "@/services/pdf"
+import { AnalyticsEvents } from "@/services/analytics"
 import {
   Avatar,
   Badge,
@@ -298,6 +299,7 @@ export default function ClientDetailScreen() {
                   Record<string, number | undefined>
                 >,
               })
+              AnalyticsEvents.measurementExported()
             }}
             variant="secondary"
             fullWidth

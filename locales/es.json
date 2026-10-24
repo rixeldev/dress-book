@@ -474,5 +474,10 @@
   "fabric_composition_cotton_polyester_blend": "Mezcla algodón/poliéster",
   "fabric_composition_wool_blend": "Mezcla de lana",
   "fabric_composition_mixed_blend": "Mezcla mixta",
-  "privacy_options": "Opciones de privacidad"
+  "privacy_options": "Opciones de privacidad",
+  "upgrade_required": "Actualización requerida",
+  "premium_dev": "Premium (dev)",
+  "enabled": "Activado",
+  "disabled": "Desactivado",
+  "recent_searches": "Búsquedas recientes"
 }

@@ -474,5 +474,10 @@
   "fabric_composition_cotton_polyester_blend": "Cotton/Polyester blend",
   "fabric_composition_wool_blend": "Wool blend",
   "fabric_composition_mixed_blend": "Mixed blend",
-  "privacy_options": "Privacy options"
+  "privacy_options": "Privacy options",
+  "upgrade_required": "Upgrade required",
+  "premium_dev": "Premium (dev)",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
+  "recent_searches": "Recent searches"
 }

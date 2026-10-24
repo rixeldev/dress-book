@@ -9,6 +9,7 @@ import { useStorage } from "@/hooks/useStorage"
 import { createAppointment } from "@/features/appointments/repository"
 import { appointmentSchema } from "@/libs/schemas"
 import { scheduleAppointmentReminder } from "@/services/notifications"
+import { AnalyticsEvents } from "@/services/analytics"
 import {
   Button,
   Card,
@@ -74,6 +75,7 @@ export default function NewAppointmentScreen() {
         })
       }
 
+      AnalyticsEvents.appointmentCreated()
       router.replace("/calendar")
     } catch (error) {
       console.log("Failed to create appointment", error)

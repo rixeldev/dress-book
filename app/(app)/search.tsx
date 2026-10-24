@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next"
 import { ListIcon, SearchIcon, UsersIcon } from "@/icons/Icons"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
+import { useStorage } from "@/hooks/useStorage"
 import { getClients } from "@/features/clients/repository"
 import { getOrders } from "@/features/orders/repository"
 import type { Client } from "@/interfaces/Client"
@@ -14,6 +15,7 @@ import type { Order } from "@/interfaces/Order"
 import {
   Badge,
   Card,
+  Chip,
   EmptyState,
   ListRow,
   Screen,
@@ -33,10 +35,18 @@ export default function SearchScreen() {
   const { t } = useTranslation()
   const { Theme } = useAppTheme()
   const { user } = useAuth()
+  const { getItem, setItem } = useStorage()
   const [query, setQuery] = useState("")
+  const [recent, setRecent] = useState<string[]>([])
   const [clients, setClients] = useState<Client[]>([])
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getItem("recent_searches").then((raw) => {
+      if (raw) setRecent(JSON.parse(raw))
+    })
+  }, [getItem])
 
   useEffect(() => {
     if (!user) return
@@ -75,6 +85,11 @@ export default function SearchScreen() {
   const results = query.trim() ? fuse.search(query).map((result) => result.item) : []
 
   const handleOpen = (result: SearchResult) => {
+    if (query.trim()) {
+      const next = [query.trim(), ...recent.filter((q) => q !== query.trim())].slice(0, 8)
+      setRecent(next)
+      setItem("recent_searches", JSON.stringify(next))
+    }
     if (result.type === "client") router.push(`/client/${result.id}`)
     else router.push(`/order/${result.id}`)
   }
@@ -106,11 +121,36 @@ export default function SearchScreen() {
             <Skeleton height={64} radius={18} />
           </View>
         ) : results.length === 0 ? (
-          <EmptyState
-            icon={<SearchIcon color={Theme.semantic.accent.primary} size={30} />}
-            title={query.trim() ? t("search_no_results") : t("search_start")}
-            description={query.trim() ? t("search_no_results_desc") : t("search_start_desc")}
-          />
+          query.trim() || recent.length === 0 ? (
+            <EmptyState
+              icon={<SearchIcon color={Theme.semantic.accent.primary} size={30} />}
+              title={query.trim() ? t("search_no_results") : t("search_start")}
+              description={query.trim() ? t("search_no_results_desc") : t("search_start_desc")}
+            />
+          ) : (
+            <View style={{ gap: Theme.spacing.sm }}>
+              <Text
+                style={{
+                  color: Theme.semantic.text.secondary,
+                  fontFamily: Theme.fonts.onestBold,
+                  fontSize: Theme.fontSizes.caption,
+                  letterSpacing: 1.2,
+                  textTransform: "uppercase",
+                }}
+              >
+                {t("recent_searches")}
+              </Text>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: Theme.spacing.xs }}>
+                {recent.map((item) => (
+                  <Chip
+                    key={item}
+                    label={item}
+                    onPress={() => setQuery(item)}
+                  />
+                ))}
+              </View>
+            </View>
+          )
         ) : (
           <FlashList
             data={results}

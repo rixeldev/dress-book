@@ -1,12 +1,15 @@
 import { useState } from "react"
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native"
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native"
 import { router, Stack } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { BackIcon } from "@/icons/Icons"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { createClient } from "@/features/clients/repository"
+import { getClients } from "@/features/clients/repository"
+import { canCreateClient } from "@/services/entitlements"
 import { clientSchema } from "@/libs/schemas"
+import { AnalyticsEvents } from "@/services/analytics"
 import { Button, Card, IconButton, Screen, TextField } from "@/components/ui"
 
 export default function NewClientScreen() {
@@ -24,6 +27,13 @@ export default function NewClientScreen() {
   if (!user) return null
 
   const handleSave = async () => {
+    if (!user) return
+    const existing = await getClients(user.uid)
+    const gate = await canCreateClient(existing.length)
+    if (!gate.allowed) {
+      Alert.alert(t("upgrade_required"), gate.reason ?? "")
+      return
+    }
     const result = clientSchema.safeParse({
       name,
       phone: phone || null,
@@ -48,6 +58,7 @@ export default function NewClientScreen() {
     setErrors({})
     try {
       await createClient(user.uid, result.data)
+      AnalyticsEvents.clientCreated()
       router.replace("/clients")
     } catch (error) {
       console.log("Failed to create client", error)

@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next"
 import { BackIcon } from "@/icons/Icons"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
+import { AnalyticsEvents } from "@/services/analytics"
 import { createMeasurement, getMeasurements } from "@/features/measurements/repository"
 import { getEmptyMeasurements } from "@/libs/measurementTemplates"
 import { toCanonicalCm, fromCanonicalCm } from "@/libs/units"
@@ -126,6 +127,7 @@ export default function MeasurementStudioScreen() {
         takenAt: new Date().toISOString(),
         notes: notes || null,
       })
+      AnalyticsEvents.measurementSaved(type)
       router.replace(`/client/${clientId}`)
     } catch (error) {
       console.log("Failed to save measurement", error)

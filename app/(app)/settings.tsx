@@ -55,6 +55,7 @@ import { SettingsButton } from "@/components/SettingsButton"
 import { CustomModal } from "@/components/ui/CustomModal"
 import { deleteAccount, RecentLoginRequiredError } from "@/services/account"
 import { showPrivacyOptions } from "@/services/consent"
+import { isPremium, setPremium } from "@/services/entitlements"
 import { useCurrency } from "@/contexts/CurrencyContext"
 import {
   BrandMark,
@@ -89,6 +90,7 @@ export default function Settings() {
   const [userName, setUserName] = useState<string | null | undefined>("Anon-12345678")
   const [userId, setUserId] = useState<string | undefined>("1234567890101112131415")
   const [userEmail, setUserEmail] = useState<string | undefined>("email@email.com")
+  const [isPremiumUser, setIsPremiumUser] = useState(false)
 
   const { t, i18n } = useTranslation()
   const { setItem, getItem } = useStorage()
@@ -110,6 +112,7 @@ export default function Settings() {
       setUserId(auth.currentUser?.uid)
       setUserEmail(auth.currentUser?.email ?? "email@email.com")
       setUserName(auth.currentUser?.displayName)
+      setIsPremiumUser(await isPremium())
     }
 
     const unsubscription = NetInfo.addEventListener((state) => {
@@ -465,6 +468,16 @@ export default function Settings() {
               title={t("language")}
               description={languageSelected === "es" ? t("es") : t("en")}
               icon={<LanguageIcon color={Theme.semantic.text.secondary} size={18} />}
+            />
+            <SettingsButton
+              onPress={async () => {
+                const next = !isPremiumUser
+                await setPremium(next)
+                setIsPremiumUser(next)
+              }}
+              title={t("premium_dev")}
+              description={isPremiumUser ? t("enabled") : t("disabled")}
+              icon={<StarIcon color={Theme.semantic.text.secondary} size={18} />}
             />
           </Card>
         </View>

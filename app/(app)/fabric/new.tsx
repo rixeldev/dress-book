@@ -7,6 +7,7 @@ import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { createFabric } from "@/features/fabrics/repository"
 import { fabricSchema } from "@/libs/schemas"
+import { AnalyticsEvents } from "@/services/analytics"
 import * as ImagePicker from "expo-image-picker"
 import { ref, uploadBytesResumable, getDownloadURL } from "@react-native-firebase/storage"
 import { storage } from "@/db/firebaseConfig"
@@ -154,6 +155,7 @@ export default function NewFabricScreen() {
         location: result.data.location ?? null,
         photoUrl: result.data.photoUrl ?? null,
       })
+      AnalyticsEvents.fabricCreated()
       router.replace("/library")
     } catch (error) {
       console.log("Failed to create fabric", error)

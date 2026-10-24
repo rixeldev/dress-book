@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useStorage } from "@/hooks/useStorage"
 import { useOnboarding } from "@/contexts/OnboardingContext"
 import { useCurrency } from "@/contexts/CurrencyContext"
+import { AnalyticsEvents } from "@/services/analytics"
 import {
   BrandMark,
   Button,
@@ -59,6 +60,7 @@ export default function OnboardingScreen() {
         setItem(`onboarding:${user.uid}`, "complete"),
       ])
       markComplete()
+      AnalyticsEvents.onboardingCompleted(withClient)
       router.replace("/")
     } catch (caughtError) {
       console.log("Failed to complete onboarding", caughtError)

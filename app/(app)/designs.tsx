@@ -6,6 +6,7 @@ import { Stack } from "expo-router"
 import * as ImagePicker from "expo-image-picker"
 import { useTranslation } from "react-i18next"
 import { useAppTheme } from "@/hooks/useAppTheme"
+import { AnalyticsEvents } from "@/services/analytics"
 import { useAuth } from "@/contexts/AuthContext"
 import { getDesigns, deleteDesign } from "@/features/designs/repository"
 import type { Design } from "@/interfaces/Design"
@@ -68,6 +69,7 @@ export default function DesignsScreen() {
       imageUris: uris,
     })
     await load()
+    AnalyticsEvents.designUploaded(uris.length)
   }
 
   const confirmDelete = (design: Design) => {

@@ -1,5 +1,6 @@
 import "@/services/i18next"
 import { StatusBar } from "expo-status-bar"
+import { Platform } from "react-native"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { Stack } from "expo-router"
@@ -11,12 +12,14 @@ import { FetchVersion } from "@/db/FetchVersion"
 import { getVersion } from "react-native-device-info"
 import * as RNLocalize from "react-native-localize"
 import { useFonts } from "expo-font"
+import { requestTrackingPermissionsAsync } from "expo-tracking-transparency"
 import { Fraunces_600SemiBold } from "@expo-google-fonts/fraunces/600SemiBold"
 import SplashScreen from "@/components/ui/SplashScreen"
 import { OfflinePill } from "@/components/ui"
 import { useStorage } from "@/hooks/useStorage"
 import { initializeAppCheck } from "@/services/appCheck"
 import { requestConsent } from "@/services/consent"
+import { initRemoteConfig } from "@/services/remoteConfig"
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext"
 import { AuthProvider, useAuth } from "@/contexts/AuthContext"
 import { OnboardingProvider } from "@/contexts/OnboardingContext"
@@ -54,6 +57,16 @@ function RootNavigator() {
 
       await mobileAds().initialize()
       await initializeAppCheck()
+      await initRemoteConfig()
+
+      // ATT on iOS
+      if (Platform.OS === "ios") {
+        try {
+          await requestTrackingPermissionsAsync()
+        } catch (error) {
+          console.log("ATT request failed", error)
+        }
+      }
 
       try {
         const currentVersion = getVersion()

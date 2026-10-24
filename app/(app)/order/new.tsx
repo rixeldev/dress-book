@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
 import { router, Stack } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { BackIcon, UsersIcon } from "@/icons/Icons"
@@ -8,8 +8,10 @@ import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { useCurrency } from "@/contexts/CurrencyContext"
 import { getClients } from "@/features/clients/repository"
-import { createOrder } from "@/features/orders/repository"
+import { createOrder, getOrders } from "@/features/orders/repository"
+import { canCreateOrder } from "@/services/entitlements"
 import { scheduleOrderDueReminder } from "@/services/notifications"
+import { AnalyticsEvents } from "@/services/analytics"
 import { useStorage } from "@/hooks/useStorage"
 import type { Client } from "@/interfaces/Client"
 import { orderSchema } from "@/libs/schemas"
@@ -59,6 +61,13 @@ export default function NewOrderScreen() {
   const selectedClient = clients.find((client) => client.id === clientId)
 
   const handleSave = async () => {
+    if (!user) return
+    const existing = await getOrders(user.uid)
+    const gate = await canCreateOrder(existing.length)
+    if (!gate.allowed) {
+      Alert.alert(t("upgrade_required"), gate.reason ?? "")
+      return
+    }
     const result = orderSchema.safeParse({
       clientId,
       clientName: selectedClient?.name ?? "",
@@ -111,6 +120,8 @@ export default function NewOrderScreen() {
           dueDate: order.dueDate,
         })
       }
+
+      AnalyticsEvents.orderCreated(type)
 
       router.replace("/orders")
     } catch (error) {
