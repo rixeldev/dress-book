@@ -387,11 +387,11 @@ export default function Details() {
   const getTypeIcon = (type?: RegType) => {
     switch (type) {
       case "Clothes":
-        return <ClothIcon size={24} color={Theme.colors.accent} />
+        return <ClothIcon size={24} color={Theme.semantic.accent.primary} />
       case "Curtains":
-        return <CurtainIcon size={24} color={Theme.colors.accent} />
+        return <CurtainIcon size={24} color={Theme.semantic.accent.primary} />
       default:
-        return <PackageIcon size={24} color={Theme.colors.accent} />
+        return <PackageIcon size={24} color={Theme.semantic.accent.primary} />
     }
   }
 
@@ -412,7 +412,7 @@ export default function Details() {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Theme.colors.accent} />
+        <ActivityIndicator size="large" color={Theme.semantic.accent.primary} />
       </View>
     )
   }
@@ -436,7 +436,7 @@ export default function Details() {
           onPress={() => router.back()}
           style={({ pressed }) => [styles.headerBackBtn, { opacity: pressed ? 0.5 : 1 }]}
         >
-          <BackIcon size={28} color={Theme.colors.text} />
+          <BackIcon size={28} color={Theme.semantic.text.primary} />
         </Pressable>
         <View style={styles.headerInfo}>
           {getTypeIcon(reg.type)}
@@ -504,7 +504,7 @@ export default function Details() {
                 ]}
               >
                 {isSaving ? (
-                  <ActivityIndicator size="small" color={Theme.colors.background} />
+                  <ActivityIndicator size="small" color={Theme.semantic.bg.canvas} />
                 ) : (
                   <Text style={styles.saveBtnText}>{t("save")}</Text>
                 )}
@@ -549,7 +549,7 @@ export default function Details() {
                               onChangeText={(text) => updateMeasurement(category, field, text)}
                               keyboardType="decimal-pad"
                               placeholder={unit}
-                              placeholderTextColor={Theme.colors.lightGray}
+                              placeholderTextColor={Theme.semantic.text.tertiary}
                             />
                           ) : (
                             <Text style={styles.measurementValue}>
@@ -577,24 +577,24 @@ const createStyles = (Theme: any) =>
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: Theme.colors.background,
+      backgroundColor: Theme.semantic.bg.canvas,
     },
     errorText: {
       fontFamily: Theme.fonts.onest,
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.lightGray,
+      color: Theme.semantic.text.tertiary,
       marginBottom: 16,
     },
     backButton: {
       paddingVertical: 12,
       paddingHorizontal: 24,
-      backgroundColor: Theme.colors.accent,
+      backgroundColor: Theme.semantic.accent.primary,
       borderRadius: 12,
     },
     backButtonText: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.background,
+      color: Theme.semantic.bg.canvas,
     },
     header: {
       flexDirection: "row",
@@ -616,31 +616,31 @@ const createStyles = (Theme: any) =>
     headerTitle: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: Theme.sizes.h2,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
     },
     headerDate: {
       fontFamily: Theme.fonts.onest,
       fontSize: Theme.sizes.h6,
-      color: Theme.colors.lightGray,
+      color: Theme.semantic.text.tertiary,
     },
     descriptionCard: {
       marginHorizontal: 16,
       marginBottom: 20,
       padding: 16,
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
       borderRadius: 12,
     },
     descriptionText: {
       fontFamily: Theme.fonts.onest,
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
       lineHeight: 22,
     },
     deliveryCard: {
       marginHorizontal: 16,
       marginBottom: 20,
       padding: 16,
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
       borderRadius: 12,
       gap: 12,
     },
@@ -652,12 +652,12 @@ const createStyles = (Theme: any) =>
     deliveryLabel: {
       fontFamily: Theme.fonts.onest,
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.lightGray,
+      color: Theme.semantic.text.tertiary,
     },
     deliveryValue: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
     },
     deliveryStatus: {
       fontFamily: Theme.fonts.onestBold,
@@ -668,12 +668,12 @@ const createStyles = (Theme: any) =>
       overflow: "hidden",
     },
     deliveryStatusDelivered: {
-      backgroundColor: Theme.colors.primary2,
-      color: Theme.colors.accent,
+      backgroundColor: Theme.semantic.accent.soft,
+      color: Theme.semantic.accent.primary,
     },
     deliveryStatusPending: {
-      backgroundColor: Theme.colors.background,
-      color: Theme.colors.text,
+      backgroundColor: Theme.semantic.bg.canvas,
+      color: Theme.semantic.text.primary,
     },
     editToggleRow: {
       flexDirection: "row",
@@ -685,18 +685,18 @@ const createStyles = (Theme: any) =>
     sectionTitle: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: Theme.sizes.h4,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
     },
     editBtn: {
       paddingVertical: 8,
       paddingHorizontal: 20,
-      backgroundColor: Theme.colors.primary2,
+      backgroundColor: Theme.semantic.accent.soft,
       borderRadius: 8,
     },
     editBtnText: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: Theme.sizes.h6,
-      color: Theme.colors.accent,
+      color: Theme.semantic.accent.primary,
     },
     editActions: {
       flexDirection: "row",
@@ -705,18 +705,18 @@ const createStyles = (Theme: any) =>
     cancelBtn: {
       paddingVertical: 8,
       paddingHorizontal: 16,
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
       borderRadius: 8,
     },
     cancelBtnText: {
       fontFamily: Theme.fonts.onest,
       fontSize: Theme.sizes.h6,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
     },
     saveBtn: {
       paddingVertical: 8,
       paddingHorizontal: 20,
-      backgroundColor: Theme.colors.accent,
+      backgroundColor: Theme.semantic.accent.primary,
       borderRadius: 8,
       minWidth: 60,
       alignItems: "center",
@@ -724,12 +724,12 @@ const createStyles = (Theme: any) =>
     saveBtnText: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: Theme.sizes.h6,
-      color: Theme.colors.background,
+      color: Theme.semantic.bg.canvas,
     },
     categoryCard: {
       marginHorizontal: 16,
       marginBottom: 12,
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
       borderRadius: 16,
       overflow: "hidden",
     },
@@ -747,18 +747,18 @@ const createStyles = (Theme: any) =>
     categoryTitle: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
     },
     hasValuesDot: {
       width: 6,
       height: 6,
       borderRadius: 3,
-      backgroundColor: Theme.colors.accent,
+      backgroundColor: Theme.semantic.accent.primary,
     },
     expandIcon: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: 20,
-      color: Theme.colors.lightGray,
+      color: Theme.semantic.text.tertiary,
     },
     measurementsList: {
       paddingHorizontal: 16,
@@ -770,28 +770,28 @@ const createStyles = (Theme: any) =>
       alignItems: "center",
       paddingVertical: 10,
       borderBottomWidth: 1,
-      borderBottomColor: Theme.colors.ultraLightGray,
+      borderBottomColor: Theme.semantic.bg.sunken,
     },
     measurementLabel: {
       flex: 1,
       fontFamily: Theme.fonts.onest,
       fontSize: Theme.sizes.h6,
-      color: Theme.colors.lightGray,
+      color: Theme.semantic.text.tertiary,
     },
     measurementValue: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
       minWidth: 80,
       textAlign: "right",
     },
     measurementInput: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
       minWidth: 80,
       textAlign: "right",
-      backgroundColor: Theme.colors.background,
+      backgroundColor: Theme.semantic.bg.canvas,
       paddingVertical: 6,
       paddingHorizontal: 12,
       borderRadius: 8,
