@@ -56,9 +56,11 @@ import { CustomModal } from "@/components/ui/CustomModal"
 import { deleteAccount, RecentLoginRequiredError } from "@/services/account"
 import { showPrivacyOptions } from "@/services/consent"
 import { isPremium, setPremium } from "@/services/entitlements"
+import { useProducts, purchaseSubscription, syncPremiumFromStore, formatProductPrice } from "@/services/subscriptions"
 import { useCurrency } from "@/contexts/CurrencyContext"
 import {
   BrandMark,
+  Button,
   Card,
   CountryPicker,
   IconButton,
@@ -96,6 +98,7 @@ export default function Settings() {
   const { setItem, getItem } = useStorage()
   const { Theme, themeMode, setThemeMode } = useAppTheme()
   const { country, currency, setCountry } = useCurrency()
+  const { products, loading: productsLoading } = useProducts()
 
   const sheetRef = useRef<BottomSheet>(null)
   const themeSheetRef = useRef<BottomSheet>(null)
@@ -479,6 +482,61 @@ export default function Settings() {
               description={isPremiumUser ? t("enabled") : t("disabled")}
               icon={<StarIcon color={Theme.semantic.text.secondary} size={18} />}
             />
+          </Card>
+        </View>
+
+        <View style={{ gap: Theme.spacing.sm }}>
+          <SectionHeader title={t("premium")} />
+          <Card>
+            <View style={{ gap: Theme.spacing.md }}>
+              <Text
+                style={{
+                  color: Theme.semantic.text.primary,
+                  fontFamily: Theme.fonts.onestBold,
+                  fontSize: Theme.fontSizes.body,
+                }}
+              >
+                {isPremiumUser ? t("premium_active") : t("premium_inactive")}
+              </Text>
+              {!isPremiumUser && (
+                <View style={{ gap: Theme.spacing.xs }}>
+                  {products.map((product) => (
+                    <Button
+                      key={product.id}
+                      label={`${product.title} — ${formatProductPrice(product)}`}
+                      onPress={async () => {
+                        const ok = await purchaseSubscription(product.id)
+                        if (ok) {
+                          setIsPremiumUser(true)
+                          Alert.alert(t("success"), t("premium_activated"))
+                        }
+                      }}
+                      fullWidth
+                    />
+                  ))}
+                  {productsLoading && (
+                    <Text style={{ color: Theme.semantic.text.secondary, fontFamily: Theme.fonts.onest }}>
+                      {t("loading")}
+                    </Text>
+                  )}
+                  {products.length === 0 && !productsLoading && (
+                    <Text style={{ color: Theme.semantic.text.secondary, fontFamily: Theme.fonts.onest, fontSize: Theme.fontSizes.label }}>
+                      {t("no_products")}
+                    </Text>
+                  )}
+                </View>
+              )}
+              <Button
+                label={t("restore_purchases")}
+                onPress={async () => {
+                  const active = await syncPremiumFromStore()
+                  setIsPremiumUser(active)
+                  Alert.alert(t("success"), active ? t("premium_restored") : t("no_purchases_found"))
+                }}
+                variant="secondary"
+                fullWidth
+              />
+            </View>
           </Card>
         </View>
 

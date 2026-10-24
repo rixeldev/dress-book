@@ -516,5 +516,13 @@
   "search_org_placeholder": "Nombre de la organización",
   "request_join_confirm": "¿Quieres solicitar unirte a esta organización?",
   "request_join": "Solicitar unión",
-  "approve": "Aprobar"
+  "approve": "Aprobar",
+  "premium": "Premium",
+  "premium_active": "Premium activo",
+  "premium_inactive": "Plan gratuito",
+  "premium_activated": "Premium activado",
+  "restore_purchases": "Restaurar compras",
+  "premium_restored": "Compras restauradas",
+  "no_purchases_found": "Sin compras encontradas",
+  "no_products": "Sin productos disponibles"
 }

@@ -20,6 +20,7 @@ import { useStorage } from "@/hooks/useStorage"
 import { initializeAppCheck } from "@/services/appCheck"
 import { requestConsent } from "@/services/consent"
 import { initRemoteConfig } from "@/services/remoteConfig"
+import { initIAP, syncPremiumFromStore } from "@/services/subscriptions"
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext"
 import { AuthProvider, useAuth } from "@/contexts/AuthContext"
 import { OnboardingProvider } from "@/contexts/OnboardingContext"
@@ -59,6 +60,8 @@ function RootNavigator() {
       await mobileAds().initialize()
       await initializeAppCheck()
       await initRemoteConfig()
+      await initIAP()
+      await syncPremiumFromStore()
 
       // ATT on iOS
       if (Platform.OS === "ios") {
