@@ -331,6 +331,8 @@ export default function NewOrderScreen() {
                   </Text>
                   <Pressable
                     onPress={() => setShowDatePicker(true)}
+                    accessibilityRole="button"
+                    accessibilityLabel={t("due_date")}
                     style={[
                       styles.dateRow,
                       {

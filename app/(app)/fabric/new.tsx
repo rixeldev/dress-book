@@ -229,6 +229,8 @@ export default function NewFabricScreen() {
                     <Pressable
                       key={swatch}
                       onPress={() => setColor(swatch)}
+                      accessibilityRole="button"
+                      accessibilityLabel={`${t("color")} ${swatch}`}
                       style={[
                         styles.swatch,
                         {
