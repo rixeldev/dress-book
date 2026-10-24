@@ -18,3 +18,20 @@ export interface OrgSuggestion {
   createdAt: string
   reviewedAt: string | null
 }
+
+export interface OrgJoinRequest {
+  id: string
+  orgOwnerId: string
+  memberUid: string
+  memberEmail: string | null
+  status: "pending" | "approved" | "rejected"
+  createdAt: string
+}
+
+export interface PublicOrg {
+  ownerId: string
+  orgName: string
+  inviteCode: string
+  memberCount: number
+  createdAt: string
+}

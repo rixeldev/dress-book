@@ -46,9 +46,19 @@ service cloud.firestore {
       allow delete: if isOwner(uid);
     }
 
-    // All future user-owned data. Owners have full access; active org members
-    // (recorded under users/{uid}/orgMembers/{memberUid}) get read-only access.
-    match /users/{uid}/{document=**} {
+    // Public organization directory (only when owner opts in).
+    match /publicOrgs/{orgId} {
+      allow read: if signedIn();
+      allow write: if isOwner(orgId);
+    }
+
+    // Join requests submitted by members to an owner.
+    match /users/{uid}/joinRequests/{requestId} {
+      allow read: if isOwner(uid) || (signedIn() && requestId == request.auth.uid);
+      allow create: if signedIn() && requestId == request.auth.uid;
+      allow update: if isOwner(uid);
+      allow delete: if isOwner(uid) || (signedIn() && requestId == request.auth.uid);
+    }
       allow read: if isOwner(uid)
         || exists(/databases/$(database)/documents/users/$(uid)/orgMembers/$(request.auth.uid));
       allow write: if isOwner(uid);

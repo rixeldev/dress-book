@@ -506,5 +506,15 @@
   "join_org_failed": "No se pudo unir a la organización",
   "leave_org": "Salir de la organización",
   "viewing_org_readonly": "Viendo el estudio de {{name}} (solo lectura)",
-  "reject": "Rechazar"
+  "reject": "Rechazar",
+  "join_org_invite": "Únete a mi estudio en Dress Book:",
+  "org_public": "Organización pública",
+  "org_public_hint": "Permite que otros encuentren y soliciten unirse a tu estudio.",
+  "join_requests": "Solicitudes de unión",
+  "find_org": "Buscar una organización",
+  "search_org": "Buscar organizaciones",
+  "search_org_placeholder": "Nombre de la organización",
+  "request_join_confirm": "¿Quieres solicitar unirte a esta organización?",
+  "request_join": "Solicitar unión",
+  "approve": "Aprobar"
 }

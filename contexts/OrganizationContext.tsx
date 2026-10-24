@@ -12,23 +12,37 @@ import {
   reviewSuggestion,
   setOrgProfile,
   getOrgProfile,
+  setOrgPublic,
+  searchPublicOrgs,
+  createJoinRequest,
+  getJoinRequests,
+  approveJoinRequest,
+  rejectJoinRequest,
 } from "@/features/organizations/repository"
-import type { OrgMember, OrgSuggestion } from "@/interfaces/Organization"
+import type { OrgMember, OrgSuggestion, OrgJoinRequest, PublicOrg } from "@/interfaces/Organization"
 
 interface OrganizationContextValue {
   activeOwnerId: string | null
   readOnly: boolean
   members: OrgMember[]
   suggestions: OrgSuggestion[]
+  joinRequests: OrgJoinRequest[]
   orgName: string | null
   inviteCode: string
+  isPublic: boolean
+  searchResults: PublicOrg[]
   setActiveOrg: (ownerId: string | null) => Promise<void>
   setupOrg: (name: string) => Promise<void>
+  togglePublic: (isPublic: boolean) => Promise<void>
   joinOrg: (ownerId: string) => Promise<void>
+  requestJoin: (ownerId: string) => Promise<void>
   leaveOrg: () => Promise<void>
   removeMember: (memberUid: string) => Promise<void>
-  submitSuggestion: (input: Omit<OrgSuggestion, "id" | "orgOwnerId" | "status" | "createdAt" | "reviewedAt" | "memberUid" | "memberEmail"> & { targetId: string | null }) => Promise<void>
+  searchOrgs: (term: string) => Promise<void>
+  submitSuggestion: (input: { type: OrgSuggestion["type"]; targetId: string | null; changes: Record<string, unknown> }) => Promise<void>
   reviewSuggestion: (id: string, status: "accepted" | "rejected") => Promise<void>
+  approveJoinRequest: (memberUid: string, memberEmail: string | null) => Promise<void>
+  rejectJoinRequest: (memberUid: string) => Promise<void>
   refresh: () => Promise<void>
 }
 
@@ -40,8 +54,11 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
   const [activeOwnerId, setActiveOwnerIdState] = useState<string | null>(null)
   const [members, setMembers] = useState<OrgMember[]>([])
   const [suggestions, setSuggestions] = useState<OrgSuggestion[]>([])
+  const [joinRequests, setJoinRequests] = useState<OrgJoinRequest[]>([])
   const [orgName, setOrgName] = useState<string | null>(null)
   const [inviteCode, setInviteCode] = useState("")
+  const [isPublic, setIsPublic] = useState(false)
+  const [searchResults, setSearchResults] = useState<PublicOrg[]>([])
 
   const ownerId = activeOwnerId ?? user?.uid ?? null
   const readOnly = Boolean(activeOwnerId && activeOwnerId !== user?.uid)
@@ -56,13 +73,16 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
     const profile = await getOrgProfile(target)
     setOrgName(profile.orgName)
     setInviteCode(profile.inviteCode ?? target)
+    setIsPublic(profile.isPublic)
 
     if (target === user.uid) {
       setMembers(await getOrgMembers(user.uid))
       setSuggestions(await getSuggestions(user.uid))
+      setJoinRequests(await getJoinRequests(user.uid))
     } else {
       setMembers(await getOrgMembers(target))
       setSuggestions([])
+      setJoinRequests([])
     }
   }, [user, getItem])
 
@@ -91,6 +111,18 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
     [user, refresh],
   )
 
+  const togglePublic = useCallback(
+    async (value: boolean) => {
+      if (!user) return
+      const name = orgName || "My Studio"
+      const code = inviteCode || user.uid
+      await setOrgPublic(user.uid, value, name, code)
+      setIsPublic(value)
+      await refresh()
+    },
+    [user, orgName, inviteCode, refresh],
+  )
+
   const joinOrg = useCallback(
     async (ownerIdValue: string) => {
       if (!user) return
@@ -109,6 +141,14 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
     [user, setActiveOrg],
   )
 
+  const requestJoin = useCallback(
+    async (ownerIdValue: string) => {
+      if (!user) return
+      await createJoinRequest(ownerIdValue, user.uid, user.email ?? null)
+    },
+    [user],
+  )
+
   const leaveOrg = useCallback(async () => {
     await setActiveOrg(null)
   }, [setActiveOrg])
@@ -122,8 +162,13 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
     [user, refresh],
   )
 
+  const searchOrgs = useCallback(async (term: string) => {
+    const results = await searchPublicOrgs(term)
+    setSearchResults(results)
+  }, [])
+
   const submitSuggestion = useCallback(
-    async (input: Omit<OrgSuggestion, "id" | "orgOwnerId" | "status" | "createdAt" | "reviewedAt" | "memberUid" | "memberEmail"> & { targetId: string | null }) => {
+    async (input: { type: OrgSuggestion["type"]; targetId: string | null; changes: Record<string, unknown> }) => {
       if (!user || !activeOwnerId) return
       await createSuggestion(activeOwnerId, {
         memberUid: user.uid,
@@ -146,20 +191,46 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
     [user, refresh],
   )
 
+  const approve = useCallback(
+    async (memberUid: string, memberEmail: string | null) => {
+      if (!user) return
+      await approveJoinRequest(user.uid, memberUid, memberEmail)
+      await refresh()
+    },
+    [user, refresh],
+  )
+
+  const reject = useCallback(
+    async (memberUid: string) => {
+      if (!user) return
+      await rejectJoinRequest(user.uid, memberUid)
+      await refresh()
+    },
+    [user, refresh],
+  )
+
   const value: OrganizationContextValue = {
     activeOwnerId,
     readOnly,
     members,
     suggestions,
+    joinRequests,
     orgName,
     inviteCode,
+    isPublic,
+    searchResults,
     setActiveOrg,
     setupOrg,
+    togglePublic,
     joinOrg,
+    requestJoin,
     leaveOrg,
     removeMember,
+    searchOrgs,
     submitSuggestion,
     reviewSuggestion: review,
+    approveJoinRequest: approve,
+    rejectJoinRequest: reject,
     refresh,
   }
 

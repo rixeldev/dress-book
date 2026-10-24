@@ -506,5 +506,15 @@
   "join_org_failed": "Could not join organization",
   "leave_org": "Leave organization",
   "viewing_org_readonly": "Viewing {{name}}'s studio (read-only)",
-  "reject": "Reject"
+  "reject": "Reject",
+  "join_org_invite": "Join my studio on Dress Book:",
+  "org_public": "Public organization",
+  "org_public_hint": "Allow others to find and request to join your studio.",
+  "join_requests": "Join requests",
+  "find_org": "Find an organization",
+  "search_org": "Search organizations",
+  "search_org_placeholder": "Organization name",
+  "request_join_confirm": "Do you want to request to join this organization?",
+  "request_join": "Request to join",
+  "approve": "Approve"
 }
