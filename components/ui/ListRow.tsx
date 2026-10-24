@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native"
 import type { ReactNode } from "react"
 import type { StyleProp, ViewStyle } from "react-native"
 import { useAppTheme } from "@/hooks/useAppTheme"
+import { ChevronRightIcon } from "@/icons/Icons"
 
 export interface ListRowProps {
   title: string
@@ -12,6 +13,8 @@ export interface ListRowProps {
   destructive?: boolean
   titleColor?: string
   disabled?: boolean
+  divider?: boolean
+  chevron?: boolean
   style?: StyleProp<ViewStyle>
   accessibilityLabel?: string
   testID?: string
@@ -26,6 +29,8 @@ export function ListRow({
   destructive = false,
   titleColor,
   disabled = false,
+  divider = true,
+  chevron = false,
   style,
   accessibilityLabel,
   testID,
@@ -63,6 +68,11 @@ export function ListRow({
         )}
       </View>
       {trailing && <View style={styles.trailing}>{trailing}</View>}
+      {chevron && (
+        <View style={styles.chevron}>
+          <ChevronRightIcon size={18} color={Theme.semantic.text.tertiary} />
+        </View>
+      )}
     </>
   )
 
@@ -70,6 +80,7 @@ export function ListRow({
     styles.row,
     {
       borderBottomColor: Theme.semantic.border.subtle,
+      borderBottomWidth: divider ? StyleSheet.hairlineWidth : 0,
       opacity: disabled ? 0.45 : 1,
     },
     style,
@@ -91,7 +102,10 @@ export function ListRow({
       accessibilityLabel={accessibilityLabel ?? title}
       accessibilityState={{ disabled }}
       testID={testID}
-      style={({ pressed }) => [rowStyle, pressed && !disabled && styles.pressed]}
+      style={({ pressed }) => [
+        rowStyle,
+        pressed && !disabled && { backgroundColor: Theme.semantic.bg.sunken },
+      ]}
     >
       {content}
     </Pressable>
@@ -100,15 +114,15 @@ export function ListRow({
 
 const styles = StyleSheet.create({
   row: {
-    minHeight: 56,
+    minHeight: 64,
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    gap: 14,
+    paddingVertical: 12,
   },
   leading: {
-    width: 32,
+    width: 40,
+    height: 40,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -121,7 +135,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
   },
-  pressed: {
-    opacity: 0.7,
+  chevron: {
+    marginLeft: -4,
   },
 })

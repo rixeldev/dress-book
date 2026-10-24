@@ -42,31 +42,36 @@ export function Button({
     primary: {
       backgroundColor: Theme.semantic.accent.primary,
       color: Theme.semantic.text.inverse,
+      borderWidth: 0,
+      borderColor: "transparent",
     },
     secondary: {
-      backgroundColor: Theme.semantic.bg.sunken,
+      backgroundColor: "transparent",
       color: Theme.semantic.text.primary,
-      borderWidth: 1,
-      borderColor: Theme.semantic.border.subtle,
+      borderWidth: 1.5,
+      borderColor: Theme.semantic.border.strong,
     },
     ghost: {
       backgroundColor: "transparent",
       color: Theme.semantic.accent.primary,
+      borderWidth: 0,
+      borderColor: "transparent",
     },
     danger: {
       backgroundColor: Theme.semantic.state.danger,
       color: Theme.semantic.text.inverse,
+      borderWidth: 0,
+      borderColor: "transparent",
     },
   }[variant]
 
   const metrics = {
-    sm: { minHeight: 36, paddingHorizontal: Theme.spacing.sm, gap: Theme.spacing.xxs },
-    md: { minHeight: 44, paddingHorizontal: Theme.spacing.md, gap: Theme.spacing.xs },
-    lg: { minHeight: 52, paddingHorizontal: Theme.spacing.lg, gap: Theme.spacing.sm },
+    sm: { minHeight: 38, paddingHorizontal: Theme.spacing.md, gap: Theme.spacing.xxs },
+    md: { minHeight: 48, paddingHorizontal: Theme.spacing.lg, gap: Theme.spacing.xs },
+    lg: { minHeight: 56, paddingHorizontal: Theme.spacing.xl, gap: Theme.spacing.sm },
   }[size]
 
-  const fontSize =
-    size === "sm" ? Theme.fontSizes.label : size === "lg" ? Theme.fontSizes.body : Theme.fontSizes.body
+  const fontSize = size === "sm" ? Theme.fontSizes.label : Theme.fontSizes.body
 
   return (
     <Pressable
@@ -97,6 +102,7 @@ export function Button({
             color: palette.color,
             fontFamily: Theme.fonts.onestBold,
             fontSize,
+            letterSpacing: 0.2,
           },
           styles.label,
           labelStyle,
@@ -114,23 +120,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 12,
+    borderRadius: 999,
   },
   fullWidth: {
     alignSelf: "stretch",
   },
   disabled: {
-    opacity: 0.45,
+    opacity: 0.4,
   },
   pressed: {
     opacity: 0.82,
+    transform: [{ scale: 0.99 }],
   },
   icon: {
     alignItems: "center",
     justifyContent: "center",
   },
   label: {
-    letterSpacing: 0.2,
     textAlign: "center",
   },
 })

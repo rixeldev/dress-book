@@ -50,7 +50,7 @@ export function IconButton({
   }[variant]
 
   const dimensions = {
-    sm: 36,
+    sm: 34,
     md: 44,
     lg: 52,
   }[size]
@@ -85,9 +85,10 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   disabled: {
-    opacity: 0.45,
+    opacity: 0.4,
   },
   pressed: {
-    opacity: 0.75,
+    opacity: 0.7,
+    transform: [{ scale: 0.96 }],
   },
 })

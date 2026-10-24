@@ -37,12 +37,10 @@ export function Chip({
       style={({ pressed }) => [
         styles.chip,
         {
-          backgroundColor: selected
-            ? Theme.semantic.accent.primary
-            : Theme.semantic.bg.sunken,
+          backgroundColor: selected ? Theme.semantic.accent.primary : "transparent",
           borderColor: selected
             ? Theme.semantic.accent.primary
-            : Theme.semantic.border.subtle,
+            : Theme.semantic.border.strong,
           opacity: disabled ? 0.45 : 1,
         },
         pressed && !disabled && styles.pressed,
@@ -55,6 +53,7 @@ export function Chip({
           color: selected ? Theme.semantic.text.inverse : Theme.semantic.text.primary,
           fontFamily: Theme.fonts.onestBold,
           fontSize: Theme.fontSizes.label,
+          letterSpacing: 0.2,
         }}
         numberOfLines={1}
       >
@@ -66,14 +65,14 @@ export function Chip({
 
 const styles = StyleSheet.create({
   chip: {
-    minHeight: 36,
+    minHeight: 38,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderRadius: 999,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 6,
   },
   icon: {
@@ -81,6 +80,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   pressed: {
-    opacity: 0.8,
+    opacity: 0.75,
   },
 })

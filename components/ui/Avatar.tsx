@@ -29,7 +29,7 @@ export function Avatar({ name, imageUrl, size = "md", style }: AvatarProps) {
           width: dimension,
           height: dimension,
           borderRadius: dimension / 2,
-          backgroundColor: Theme.colors.primary2,
+          backgroundColor: Theme.semantic.accent.soft,
         },
         style,
       ]}

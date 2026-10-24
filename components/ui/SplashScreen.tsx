@@ -50,7 +50,7 @@ export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
   }, [reduceMotion])
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: Theme.colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: Theme.semantic.bg.canvas }]}>
       <Animated.Image
         source={require("@/assets/icons/ic_brand.png")}
         resizeMode="contain"

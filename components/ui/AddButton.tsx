@@ -201,7 +201,7 @@ export const AddButton = ({ onRegAdded }: AddButtonProps) => {
         style={({ pressed }) => [styles.button, pressed && { opacity: 0.9 }]}
       >
         <Animated.View style={rotationStyle}>
-          <PlusIcon color="#fff" size={24} />
+          <PlusIcon color={Theme.semantic.text.inverse} size={26} />
         </Animated.View>
       </Pressable>
 
@@ -266,20 +266,23 @@ const createStyles = (Theme: any) =>
     container: {
       alignItems: "center",
       justifyContent: "center",
-      marginBottom: 50,
       zIndex: 100,
     },
     button: {
-      padding: 12,
-      width: 85,
-      height: 85,
-      borderRadius: 200,
+      width: 62,
+      height: 62,
+      borderRadius: 31,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: Theme.colors.accent,
-      borderWidth: 8,
-      borderColor: Theme.colors.background,
+      backgroundColor: Theme.semantic.accent.primary,
+      borderWidth: 4,
+      borderColor: Theme.semantic.bg.canvas,
       zIndex: 10,
+      shadowColor: "#2A1A10",
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.25,
+      shadowRadius: 14,
+      elevation: 10,
     },
     menuItem: {
       position: "absolute",
@@ -297,19 +300,22 @@ const createStyles = (Theme: any) =>
       width: BUBBLE_SIZE,
       height: BUBBLE_SIZE,
       borderRadius: BUBBLE_SIZE / 2,
-      backgroundColor: Theme.colors.modal,
+      backgroundColor: Theme.semantic.bg.surface,
+      borderWidth: 1,
+      borderColor: Theme.semantic.border.subtle,
       justifyContent: "center",
       alignItems: "center",
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 4,
-      elevation: 5,
+      shadowColor: "#2A1A10",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.18,
+      shadowRadius: 10,
+      elevation: 6,
+      paddingHorizontal: 4,
     },
     menuText: {
       fontFamily: Theme.fonts.onestBold,
-      color: Theme.colors.text,
-      fontSize: 10,
+      color: Theme.semantic.text.primary,
+      fontSize: 11,
       textAlign: "center",
     },
   })

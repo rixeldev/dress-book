@@ -26,10 +26,10 @@ export function SectionHeader({
       {overline && (
         <Text
           style={{
-            color: Theme.semantic.text.secondary,
+            color: Theme.semantic.accent.brass,
             fontFamily: Theme.fonts.onestBold,
             fontSize: Theme.fontSizes.caption,
-            letterSpacing: 1.2,
+            letterSpacing: 1.8,
             textTransform: "uppercase",
           }}
         >
@@ -42,8 +42,10 @@ export function SectionHeader({
           style={{
             flex: 1,
             color: Theme.semantic.text.primary,
-            fontFamily: Theme.fonts.onestBold,
-            fontSize: Theme.fontSizes.h3,
+            fontFamily: Theme.fonts.display,
+            fontSize: Theme.fontSizes.h2,
+            lineHeight: Theme.lineHeights.h2,
+            letterSpacing: -0.3,
           }}
         >
           {title}
@@ -55,7 +57,7 @@ export function SectionHeader({
             accessibilityRole="button"
             accessibilityLabel={actionLabel}
             hitSlop={8}
-            style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
+            style={({ pressed }) => [{ opacity: pressed ? 0.55 : 1 }]}
           >
             <Text
               style={{
@@ -88,7 +90,7 @@ export function SectionHeader({
 
 const styles = StyleSheet.create({
   container: {
-    gap: 4,
+    gap: 3,
   },
   titleRow: {
     flexDirection: "row",

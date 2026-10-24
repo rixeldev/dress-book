@@ -23,8 +23,21 @@ export function SegmentedControl<T extends string>({
   const { Theme } = useAppTheme()
 
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={style}>
-      <View style={[styles.container, { backgroundColor: Theme.semantic.bg.sunken }]}>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={style}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: Theme.semantic.bg.surface,
+            borderColor: Theme.semantic.border.subtle,
+          },
+        ]}
+      >
         {options.map((option) => {
           const selected = option.value === value
           return (
@@ -41,8 +54,8 @@ export function SegmentedControl<T extends string>({
             >
               <Text
                 style={{
-                  color: selected ? Theme.semantic.text.inverse : Theme.semantic.text.primary,
-                  fontFamily: selected ? Theme.fonts.onestBold : Theme.fonts.onest,
+                  color: selected ? Theme.semantic.text.inverse : Theme.semantic.text.secondary,
+                  fontFamily: Theme.fonts.onestBold,
                   fontSize: Theme.fontSizes.label,
                 }}
               >
@@ -60,17 +73,18 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     borderRadius: 999,
+    borderWidth: 1,
     padding: 4,
-    gap: 4,
+    gap: 2,
   },
   segment: {
-    minHeight: 36,
+    minHeight: 40,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 999,
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
   },
   pressed: {
-    opacity: 0.7,
+    opacity: 0.65,
   },
 })

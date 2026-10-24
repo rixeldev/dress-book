@@ -14,8 +14,8 @@ export const ProgressBar = ({ progress }: Props) => {
   return (
     <View>
       <Svg width={bartWidth} height="7">
-        <Rect width={bartWidth} height="100%" fill={Theme.colors.darkGray} rx={3.5} ry={3.5} />
-        <Rect width={progressWidth} height="100%" fill={Theme.colors.accent} rx={3.5} ry={3.5} />
+        <Rect width={bartWidth} height="100%" fill={Theme.semantic.text.secondary} rx={3.5} ry={3.5} />
+        <Rect width={progressWidth} height="100%" fill={Theme.semantic.accent.primary} rx={3.5} ry={3.5} />
       </Svg>
     </View>
   )

@@ -9,10 +9,19 @@ export interface StatCardProps {
   hint?: string
   icon?: ReactNode
   trend?: "up" | "down" | "neutral"
+  tone?: "surface" | "sunken"
   style?: StyleProp<ViewStyle>
 }
 
-export function StatCard({ label, value, hint, icon, trend = "neutral", style }: StatCardProps) {
+export function StatCard({
+  label,
+  value,
+  hint,
+  icon,
+  trend = "neutral",
+  tone = "surface",
+  style,
+}: StatCardProps) {
   const { Theme } = useAppTheme()
 
   const trendColor =
@@ -27,7 +36,8 @@ export function StatCard({ label, value, hint, icon, trend = "neutral", style }:
       style={[
         styles.card,
         {
-          backgroundColor: Theme.semantic.bg.surface,
+          backgroundColor:
+            tone === "surface" ? Theme.semantic.bg.surface : Theme.semantic.bg.sunken,
           borderColor: Theme.semantic.border.subtle,
         },
         Theme.elevation.card,
@@ -40,7 +50,7 @@ export function StatCard({ label, value, hint, icon, trend = "neutral", style }:
             color: Theme.semantic.text.secondary,
             fontFamily: Theme.fonts.onestBold,
             fontSize: Theme.fontSizes.caption,
-            letterSpacing: 0.6,
+            letterSpacing: 1.2,
             textTransform: "uppercase",
           }}
         >
@@ -54,12 +64,22 @@ export function StatCard({ label, value, hint, icon, trend = "neutral", style }:
           fontFamily: Theme.fonts.display,
           fontSize: Theme.fontSizes.display,
           lineHeight: Theme.lineHeights.display,
+          letterSpacing: -0.5,
         }}
+        numberOfLines={1}
+        adjustsFontSizeToFit
       >
         {value}
       </Text>
       {hint && (
-        <Text style={{ color: trendColor, fontFamily: Theme.fonts.onest, fontSize: Theme.fontSizes.label }}>
+        <Text
+          style={{
+            color: trendColor,
+            fontFamily: Theme.fonts.onest,
+            fontSize: Theme.fontSizes.label,
+          }}
+          numberOfLines={1}
+        >
           {hint}
         </Text>
       )}
@@ -70,13 +90,14 @@ export function StatCard({ label, value, hint, icon, trend = "neutral", style }:
 const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 20,
+    padding: 18,
     gap: 6,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    gap: 8,
   },
 })

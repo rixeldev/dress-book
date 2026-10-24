@@ -34,14 +34,14 @@ export const CustomModal = ({
       transparent={false}
       visible={modalVisible}
       onRequestClose={onRequestClose}
-      backdropColor={Theme.colors.backdrop}
+      backdropColor={Theme.semantic.overlay}
     >
       <View style={styles.centeredView}>
         <Card style={styles.modalView} padded={false}>
           <View>
             <Text
               style={{
-                color: Theme.colors.accent,
+                color: Theme.semantic.accent.primary,
                 fontFamily: Theme.fonts.onestBold,
                 fontSize: Theme.sizes.h3,
               }}
@@ -54,7 +54,7 @@ export const CustomModal = ({
             <Text
               style={{
                 fontFamily: Theme.fonts.onest,
-                color: Theme.colors.gray,
+                color: Theme.semantic.text.secondary,
               }}
             >
               {description}
@@ -94,13 +94,13 @@ const createStyles = (Theme: any) =>
       alignSelf: "flex-start",
     },
     texts: {
-      color: Theme.colors.lightGray,
+      color: Theme.semantic.text.tertiary,
       alignSelf: "flex-start",
       fontFamily: Theme.fonts.onestBold,
     },
     modalView: {
       margin: 20,
-      backgroundColor: Theme.colors.modal,
+      backgroundColor: Theme.semantic.bg.surface,
       borderRadius: 20,
       padding: 20,
     },

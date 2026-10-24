@@ -39,7 +39,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   )
 
   return (
-    <View style={[styles.container, { paddingBottom: isAdLoaded ? 0 : insets.bottom + 8 }]}>
+    <View style={[styles.container, { paddingBottom: insets.bottom + 8 }]}>
       <View
         style={[
           styles.bar,
@@ -47,7 +47,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             backgroundColor: Theme.semantic.bg.surface,
             borderColor: Theme.semantic.border.subtle,
           },
-          Theme.elevation.card,
+          Theme.elevation.floating,
         ]}
       >
         {state.routes.map((route, index) => {
@@ -82,7 +82,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
               onLongPress={() => navigation.emit({ type: "tabLongPress", target: route.key })}
               isFocused={isFocused}
               label={label.toString()}
-              icon={options.tabBarIcon?.({ focused: isFocused, color, size: 24 })}
+              icon={options.tabBarIcon?.({ focused: isFocused, color, size: 22 })}
             />
           )
         })}
@@ -92,7 +92,9 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         <AddButton onRegAdded={() => DeviceEventEmitter.emit(REG_ADDED_EVENT)} />
       </View>
 
-      <View style={[styles.ad, { opacity: isAdLoaded ? 1 : 0 }]}>
+      {/* The banner keeps loading while collapsed; zero height means an empty
+          ad slot never reserves visible space. */}
+      <View style={[styles.ad, isAdLoaded ? styles.adVisible : styles.adHidden]}>
         <BannerAd
           ref={bannerRef}
           unitId={adUnitId}
@@ -110,22 +112,32 @@ const styles = StyleSheet.create({
   container: {
     position: "relative",
     backgroundColor: "transparent",
+    paddingHorizontal: 12,
+    paddingTop: 6,
   },
   bar: {
-    minHeight: 64,
+    minHeight: 68,
     flexDirection: "row",
     alignItems: "center",
-    borderTopWidth: 1,
-    paddingHorizontal: 6,
-    paddingVertical: 4,
+    borderWidth: 1,
+    borderRadius: 24,
+    paddingHorizontal: 4,
+    paddingVertical: 6,
   },
   quickAdd: {
     position: "absolute",
-    top: -58,
+    top: -42,
     alignSelf: "center",
-    zIndex: 2,
+    zIndex: 3,
   },
   ad: {
     alignItems: "center",
+  },
+  adHidden: {
+    height: 0,
+    overflow: "hidden",
+  },
+  adVisible: {
+    marginTop: 6,
   },
 })

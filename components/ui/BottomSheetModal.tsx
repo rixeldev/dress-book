@@ -21,8 +21,8 @@ export const BottomSheetModal = forwardRef<BottomSheet, Props>(
 
     return (
       <BottomSheet
-        handleIndicatorStyle={{ backgroundColor: Theme.colors.gray }}
-        backgroundStyle={{ backgroundColor: Theme.colors.modal }}
+        handleIndicatorStyle={{ backgroundColor: Theme.semantic.text.secondary }}
+        backgroundStyle={{ backgroundColor: Theme.semantic.bg.surface }}
         ref={ref}
         snapPoints={snapPoint}
         index={-1}
@@ -48,11 +48,11 @@ export const BottomSheetModal = forwardRef<BottomSheet, Props>(
               style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
               onPress={() => ref?.current?.close()}
             >
-              <CloseIcon size={28} color={Theme.colors.gray} />
+              <CloseIcon size={28} color={Theme.semantic.text.secondary} />
             </Pressable>
             <Text
               style={{
-                color: Theme.colors.text,
+                color: Theme.semantic.text.primary,
                 fontFamily: Theme.fonts.onestBold,
                 fontSize: Theme.sizes.h3,
               }}

@@ -20,23 +20,28 @@ export function Badge({ label, tone = "neutral", dot = false, style, testID }: B
 
   const palette = {
     neutral: {
-      backgroundColor: Theme.semantic.bg.sunken,
+      backgroundColor: "transparent",
+      borderColor: Theme.semantic.border.strong,
       color: Theme.semantic.text.secondary,
     },
     accent: {
-      backgroundColor: Theme.colors.primary2,
+      backgroundColor: Theme.semantic.accent.soft,
+      borderColor: "transparent",
       color: Theme.semantic.accent.primary,
     },
     success: {
-      backgroundColor: withAlpha(Theme.semantic.state.success, "1F"),
+      backgroundColor: withAlpha(Theme.semantic.state.success, "1A"),
+      borderColor: "transparent",
       color: Theme.semantic.state.success,
     },
     warning: {
-      backgroundColor: withAlpha(Theme.semantic.state.warning, "24"),
+      backgroundColor: withAlpha(Theme.semantic.state.warning, "22"),
+      borderColor: "transparent",
       color: Theme.semantic.state.warning,
     },
     danger: {
-      backgroundColor: withAlpha(Theme.semantic.state.danger, "1F"),
+      backgroundColor: withAlpha(Theme.semantic.state.danger, "1A"),
+      borderColor: "transparent",
       color: Theme.semantic.state.danger,
     },
   }[tone]
@@ -44,7 +49,14 @@ export function Badge({ label, tone = "neutral", dot = false, style, testID }: B
   return (
     <View
       testID={testID}
-      style={[styles.badge, { backgroundColor: palette.backgroundColor }, style]}
+      style={[
+        styles.badge,
+        {
+          backgroundColor: palette.backgroundColor,
+          borderColor: palette.borderColor,
+        },
+        style,
+      ]}
     >
       {dot && <View style={[styles.dot, { backgroundColor: palette.color }]} />}
       <Text
@@ -52,7 +64,8 @@ export function Badge({ label, tone = "neutral", dot = false, style, testID }: B
           color: palette.color,
           fontFamily: Theme.fonts.onestBold,
           fontSize: Theme.fontSizes.caption,
-          letterSpacing: 0.3,
+          letterSpacing: 0.7,
+          textTransform: "uppercase",
         }}
       >
         {label}
@@ -63,18 +76,19 @@ export function Badge({ label, tone = "neutral", dot = false, style, testID }: B
 
 const styles = StyleSheet.create({
   badge: {
-    minHeight: 22,
+    minHeight: 24,
     alignSelf: "flex-start",
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
+    borderWidth: 1,
     borderRadius: 999,
-    paddingHorizontal: 8,
+    paddingHorizontal: 9,
     paddingVertical: 3,
   },
   dot: {
-    width: 6,
-    height: 6,
+    width: 5,
+    height: 5,
     borderRadius: 3,
   },
 })

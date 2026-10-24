@@ -7,7 +7,9 @@ export interface CardProps {
   children: ReactNode
   padded?: boolean
   onPress?: () => void
-  tone?: "surface" | "sunken"
+  tone?: "surface" | "sunken" | "accent"
+  /** Draws a brass rule along the left edge — useful for highlighted cards. */
+  ruled?: boolean
   style?: StyleProp<ViewStyle>
   accessibilityLabel?: string
   testID?: string
@@ -18,6 +20,7 @@ export function Card({
   padded = true,
   onPress,
   tone = "surface",
+  ruled = false,
   style,
   accessibilityLabel,
   testID,
@@ -28,18 +31,37 @@ export function Card({
     styles.base,
     {
       backgroundColor:
-        tone === "surface" ? Theme.semantic.bg.surface : Theme.semantic.bg.sunken,
-      borderColor: Theme.semantic.border.subtle,
-      padding: padded ? Theme.spacing.md : 0,
+        tone === "sunken"
+          ? Theme.semantic.bg.sunken
+          : tone === "accent"
+            ? Theme.semantic.accent.soft
+            : Theme.semantic.bg.surface,
+      borderColor:
+        tone === "accent" ? "transparent" : Theme.semantic.border.subtle,
+      padding: padded ? Theme.spacing.lg : 0,
     },
     Theme.elevation.card,
     style,
   ]
 
+  const content = (
+    <>
+      {ruled && (
+        <View
+          style={[
+            styles.rule,
+            { backgroundColor: Theme.semantic.accent.brass },
+          ]}
+        />
+      )}
+      {children}
+    </>
+  )
+
   if (!onPress) {
     return (
       <View style={baseStyle} testID={testID}>
-        {children}
+        {content}
       </View>
     )
   }
@@ -52,7 +74,7 @@ export function Card({
       testID={testID}
       style={({ pressed }) => [baseStyle, pressed && styles.pressed]}
     >
-      {children}
+      {content}
     </Pressable>
   )
 }
@@ -60,9 +82,18 @@ export function Card({
 const styles = StyleSheet.create({
   base: {
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 20,
+    overflow: "hidden",
   },
   pressed: {
-    opacity: 0.9,
+    opacity: 0.92,
+    transform: [{ scale: 0.995 }],
+  },
+  rule: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 4,
   },
 })

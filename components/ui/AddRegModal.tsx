@@ -72,7 +72,7 @@ export const AddRegModal = ({
             <View style={styles.descriptionContainer}>
               <TextInput
                 placeholder={t("enter_description")}
-                placeholderTextColor={Theme.colors.gray}
+                placeholderTextColor={Theme.semantic.text.secondary}
                 value={description}
                 onChangeText={setDescription}
                 multiline
@@ -95,10 +95,10 @@ export const AddRegModal = ({
 
           <View style={styles.buttonContainer}>
             <Pressable onPress={onClose} style={[styles.button, styles.buttonCancel]}>
-              <Text style={[styles.textStyle, { color: Theme.colors.red }]}>{t("cancel")}</Text>
+              <Text style={[styles.textStyle, { color: Theme.semantic.state.danger }]}>{t("cancel")}</Text>
             </Pressable>
             <Pressable onPress={handleSave} style={[styles.button, styles.buttonSave]}>
-              <Text style={[styles.textStyle, { color: Theme.colors.background }]}>{t("save")}</Text>
+              <Text style={[styles.textStyle, { color: Theme.semantic.bg.canvas }]}>{t("save")}</Text>
             </Pressable>
           </View>
         </View>
@@ -113,11 +113,11 @@ const createStyles = (Theme: any) =>
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: Theme.colors.backdrop,
+      backgroundColor: Theme.semantic.overlay,
     },
     modalView: {
       width: "90%",
-      backgroundColor: Theme.colors.background,
+      backgroundColor: Theme.semantic.bg.canvas,
       borderRadius: 20,
       padding: 24,
       shadowColor: "#000",
@@ -133,7 +133,7 @@ const createStyles = (Theme: any) =>
     modalTitle: {
       fontSize: 20,
       fontFamily: Theme.fonts.onestBold,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
       textAlign: "center",
       marginBottom: 8,
     },
@@ -142,23 +142,23 @@ const createStyles = (Theme: any) =>
     },
     label: {
       fontFamily: Theme.fonts.onestBold,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
       fontSize: 14,
     },
     helperText: {
       fontFamily: Theme.fonts.onest,
-      color: Theme.colors.lightGray,
+      color: Theme.semantic.text.tertiary,
       fontSize: 12,
     },
     descriptionContainer: {
       borderRadius: 12,
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
       minHeight: 100,
     },
     descriptionInput: {
       paddingHorizontal: 12,
       paddingVertical: 14,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
       fontFamily: Theme.fonts.onest,
       fontSize: Theme.sizes.h4,
       minHeight: 100,
@@ -177,10 +177,10 @@ const createStyles = (Theme: any) =>
       alignItems: "center",
     },
     buttonCancel: {
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
     },
     buttonSave: {
-      backgroundColor: Theme.colors.accent,
+      backgroundColor: Theme.semantic.accent.primary,
     },
     textStyle: {
       fontFamily: Theme.fonts.onestBold,

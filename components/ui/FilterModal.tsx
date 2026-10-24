@@ -75,9 +75,9 @@ export function FilterModal({ visible, onClose, onApply, initialFilters }: Props
   }
 
   const typeOptions: { type: RegType; icon: React.ReactNode; label: string }[] = [
-    { type: "Clothes", icon: <ClothIcon size={20} color={Theme.colors.text} />, label: t("clothes") },
-    { type: "Curtains", icon: <CurtainIcon size={20} color={Theme.colors.text} />, label: t("curtains") },
-    { type: "Others", icon: <PackageIcon size={20} color={Theme.colors.text} />, label: t("others") },
+    { type: "Clothes", icon: <ClothIcon size={20} color={Theme.semantic.text.primary} />, label: t("clothes") },
+    { type: "Curtains", icon: <CurtainIcon size={20} color={Theme.semantic.text.primary} />, label: t("curtains") },
+    { type: "Others", icon: <PackageIcon size={20} color={Theme.semantic.text.primary} />, label: t("others") },
   ]
 
   const sortOptions: { value: SortOption; label: string }[] = [
@@ -118,7 +118,7 @@ export function FilterModal({ visible, onClose, onApply, initialFilters }: Props
               onPress={onClose}
               style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
             >
-              <CloseIcon size={24} color={Theme.colors.text} />
+              <CloseIcon size={24} color={Theme.semantic.text.primary} />
             </Pressable>
           </View>
 
@@ -256,11 +256,11 @@ const createStyles = (Theme: any) =>
   StyleSheet.create({
     overlay: {
       flex: 1,
-      backgroundColor: Theme.colors.backdrop,
+      backgroundColor: Theme.semantic.overlay,
       justifyContent: "flex-end",
     },
     container: {
-      backgroundColor: Theme.colors.modal,
+      backgroundColor: Theme.semantic.bg.surface,
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
       paddingHorizontal: 20,
@@ -277,7 +277,7 @@ const createStyles = (Theme: any) =>
     title: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: Theme.sizes.h2,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
     },
     section: {
       marginBottom: 24,
@@ -285,7 +285,7 @@ const createStyles = (Theme: any) =>
     sectionTitle: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.lightGray,
+      color: Theme.semantic.text.tertiary,
       marginBottom: 12,
     },
     optionsRow: {
@@ -303,21 +303,21 @@ const createStyles = (Theme: any) =>
       paddingVertical: 10,
       paddingHorizontal: 16,
       borderRadius: 12,
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
       borderWidth: 2,
-      borderColor: Theme.colors.transparent,
+      borderColor: "transparent",
     },
     typeChipSelected: {
-      borderColor: Theme.colors.accent,
-      backgroundColor: Theme.colors.primary2,
+      borderColor: Theme.semantic.accent.primary,
+      backgroundColor: Theme.semantic.accent.soft,
     },
     typeChipText: {
       fontFamily: Theme.fonts.onest,
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
     },
     typeChipTextSelected: {
-      color: Theme.colors.accent,
+      color: Theme.semantic.accent.primary,
     },
     radioOption: {
       flexDirection: "row",
@@ -326,17 +326,17 @@ const createStyles = (Theme: any) =>
       paddingVertical: 12,
       paddingHorizontal: 16,
       borderRadius: 12,
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
     },
     radioOptionSelected: {
-      backgroundColor: Theme.colors.primary2,
+      backgroundColor: Theme.semantic.accent.soft,
     },
     radioOuter: {
       width: 20,
       height: 20,
       borderRadius: 10,
       borderWidth: 2,
-      borderColor: Theme.colors.accent,
+      borderColor: Theme.semantic.accent.primary,
       justifyContent: "center",
       alignItems: "center",
     },
@@ -344,32 +344,32 @@ const createStyles = (Theme: any) =>
       width: 10,
       height: 10,
       borderRadius: 5,
-      backgroundColor: Theme.colors.accent,
+      backgroundColor: Theme.semantic.accent.primary,
     },
     radioLabel: {
       fontFamily: Theme.fonts.onest,
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
     },
     syncChip: {
       paddingVertical: 10,
       paddingHorizontal: 16,
       borderRadius: 12,
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
       borderWidth: 2,
-      borderColor: Theme.colors.transparent,
+      borderColor: "transparent",
     },
     syncChipSelected: {
-      borderColor: Theme.colors.accent,
-      backgroundColor: Theme.colors.primary2,
+      borderColor: Theme.semantic.accent.primary,
+      backgroundColor: Theme.semantic.accent.soft,
     },
     syncChipText: {
       fontFamily: Theme.fonts.onest,
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
     },
     syncChipTextSelected: {
-      color: Theme.colors.accent,
+      color: Theme.semantic.accent.primary,
     },
     footer: {
       flexDirection: "row",
@@ -380,25 +380,25 @@ const createStyles = (Theme: any) =>
       flex: 1,
       paddingVertical: 14,
       borderRadius: 12,
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
       alignItems: "center",
     },
     resetButtonText: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
     },
     applyButton: {
       flex: 2,
       paddingVertical: 14,
       borderRadius: 12,
-      backgroundColor: Theme.colors.accent,
+      backgroundColor: Theme.semantic.accent.primary,
       alignItems: "center",
     },
     applyButtonText: {
       fontFamily: Theme.fonts.onestBold,
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.background,
+      color: Theme.semantic.bg.canvas,
     },
   })
 

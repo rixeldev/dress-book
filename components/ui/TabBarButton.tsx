@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { StyleSheet, Text } from "react-native"
+import { StyleSheet, Text, View } from "react-native"
 import { PlatformPressable } from "@react-navigation/elements"
 import { useAppTheme } from "@/hooks/useAppTheme"
 
@@ -23,13 +23,21 @@ export function TabBarButton({ onPress, onLongPress, isFocused, label, icon }: P
       accessibilityState={{ selected: isFocused }}
       style={styles.item}
     >
-      {icon}
+      <View
+        style={[
+          styles.iconWrap,
+          isFocused && { backgroundColor: Theme.semantic.accent.soft },
+        ]}
+      >
+        {icon}
+      </View>
       <Text
         numberOfLines={1}
         style={{
           color: isFocused ? Theme.semantic.accent.primary : Theme.semantic.text.secondary,
           fontSize: Theme.fontSizes.caption,
           fontFamily: isFocused ? Theme.fonts.onestBold : Theme.fonts.onest,
+          letterSpacing: 0.2,
         }}
       >
         {label}
@@ -41,9 +49,17 @@ export function TabBarButton({ onPress, onLongPress, isFocused, label, icon }: P
 const styles = StyleSheet.create({
   item: {
     flex: 1,
-    minHeight: 48,
+    minHeight: 54,
     alignItems: "center",
     justifyContent: "center",
     gap: 3,
+  },
+  iconWrap: {
+    minWidth: 40,
+    height: 28,
+    paddingHorizontal: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 999,
   },
 })

@@ -57,7 +57,9 @@ export function TextField({
           style={{
             color: Theme.semantic.text.secondary,
             fontFamily: Theme.fonts.onestBold,
-            fontSize: Theme.fontSizes.label,
+            fontSize: Theme.fontSizes.caption,
+            letterSpacing: 1,
+            textTransform: "uppercase",
           }}
         >
           {label}
@@ -68,7 +70,7 @@ export function TextField({
         style={[
           styles.inputShell,
           {
-            minHeight: multiline ? 112 : 48,
+            minHeight: multiline ? 116 : 52,
             alignItems: multiline ? "flex-start" : "center",
             paddingVertical: multiline ? Theme.spacing.sm : 0,
             backgroundColor: Theme.semantic.bg.sunken,
@@ -87,7 +89,7 @@ export function TextField({
           onBlur={handleBlur}
           accessibilityLabel={accessibilityLabel ?? label}
           accessibilityHint={accessibilityHint ?? hint}
-          placeholderTextColor={Theme.semantic.text.secondary}
+          placeholderTextColor={Theme.semantic.text.tertiary}
           selectionColor={Theme.semantic.accent.primary}
           style={[
             styles.input,
@@ -136,8 +138,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    borderWidth: 1,
-    borderRadius: 8,
+    borderWidth: 1.5,
+    borderRadius: 14,
     paddingHorizontal: 14,
   },
   input: {
@@ -148,8 +150,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   focused: {
-    borderWidth: 2,
-    paddingHorizontal: 13,
+    borderWidth: 1.5,
   },
   disabled: {
     opacity: 0.55,

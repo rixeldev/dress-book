@@ -13,8 +13,8 @@ export function Screen({ children, padding }: Props) {
       behavior="padding"
       style={{
         flex: 1,
-        backgroundColor: Theme.colors.background,
-        padding: padding ?? 16,
+        backgroundColor: Theme.semantic.bg.canvas,
+        padding: padding ?? Theme.spacing.gutter,
         width: "100%",
       }}
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
