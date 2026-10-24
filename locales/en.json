@@ -456,5 +456,15 @@
   "order_title_placeholder": "e.g. Wedding dress",
   "outdated": "Outdated",
   "specs": "Specs",
-  "tap_to_edit": "Tap to edit"
+  "tap_to_edit": "Tap to edit",
+  "sort_due": "Due date",
+  "sort_created": "Newest",
+  "sort_priority": "Priority",
+  "no_orders_for_filter": "No orders for this filter",
+  "try_different_filter": "Try a different filter.",
+  "custom_color_hex": "Custom color (hex)",
+  "photo": "Photo",
+  "no_photo": "No photo yet",
+  "add_photo": "Add photo",
+  "select_date": "Select date"
 }

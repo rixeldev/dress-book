@@ -456,5 +456,15 @@
   "order_title_placeholder": "p. ej. Vestido de novia",
   "outdated": "Desactualizado",
   "specs": "Especificaciones",
-  "tap_to_edit": "Toca para editar"
+  "tap_to_edit": "Toca para editar",
+  "sort_due": "Fecha de entrega",
+  "sort_created": "Más recientes",
+  "sort_priority": "Prioridad",
+  "no_orders_for_filter": "Sin pedidos para este filtro",
+  "try_different_filter": "Prueba otro filtro.",
+  "custom_color_hex": "Color personalizado (hex)",
+  "photo": "Foto",
+  "no_photo": "Sin foto todavía",
+  "add_photo": "Añadir foto",
+  "select_date": "Seleccionar fecha"
 }
