@@ -21,6 +21,7 @@ import {
 } from "@/icons/Icons"
 import { Stack, useNavigation } from "expo-router"
 import { useEffect, useRef, useState } from "react"
+import type { ReactNode } from "react"
 import {
   Alert,
   Image,
@@ -50,13 +51,30 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { ref, uploadBytesResumable, getDownloadURL } from "@react-native-firebase/storage"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { requestNotificationPermission } from "@/services/notifications"
-import { Divider } from "@/components/Divider"
 import { SettingsButton } from "@/components/SettingsButton"
 import { CustomModal } from "@/components/ui/CustomModal"
 import { deleteAccount, RecentLoginRequiredError } from "@/services/account"
+import { useCurrency } from "@/contexts/CurrencyContext"
+import {
+  BrandMark,
+  Card,
+  CountryPicker,
+  IconButton,
+  ListRow,
+  ScreenHeader,
+  SectionHeader,
+} from "@/components/ui"
 
 const languageCodes = ["en", "es"]
 const appVersion = pkg.expo.android.version
+
+interface ToggleRowProps {
+  title: string
+  description: string
+  icon: ReactNode
+  value: boolean
+  onToggle: () => void
+}
 
 export default function Settings() {
   const [isVibrationEnabled, setIsVibrationEnabled] = useState(false)
@@ -75,6 +93,7 @@ export default function Settings() {
   const { t, i18n } = useTranslation()
   const { setItem, getItem } = useStorage()
   const { Theme, themeMode, setThemeMode } = useAppTheme()
+  const { country, currency, setCountry } = useCurrency()
 
   const sheetRef = useRef<BottomSheet>(null)
   const themeSheetRef = useRef<BottomSheet>(null)
@@ -184,7 +203,7 @@ export default function Settings() {
   const handlePickImage = async () => {
     await ImagePicker.requestMediaLibraryPermissionsAsync()
 
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [2, 2],
@@ -251,42 +270,58 @@ export default function Settings() {
 
   const handleShareApp = async () => {
     try {
-      const result = await Share.share({
+      await Share.share({
         message: `${t("sharing_text")} https://play.google.com/store/apps/details?id=com.rilisentertainment.dressbook`,
       })
-
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // Shared with activity type of result.activityType
-        } else {
-          // Shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // Dismissed
-      }
     } catch (error: any) {
       console.log("Error sharing:", error.message)
     }
   }
 
+  const ToggleRow = ({ title, description, icon, value, onToggle }: ToggleRowProps) => (
+    <ListRow
+      title={title}
+      description={description}
+      style={styles.row}
+      leading={
+        <View
+          style={[
+            styles.icon,
+            {
+              backgroundColor: Theme.semantic.bg.sunken,
+              borderColor: Theme.semantic.border.subtle,
+            },
+          ]}
+        >
+          {icon}
+        </View>
+      }
+      trailing={
+        <Switch
+          trackColor={{
+            false: Theme.semantic.border.strong,
+            true: Theme.semantic.accent.primary,
+          }}
+          thumbColor={Theme.semantic.bg.surface}
+          ios_backgroundColor={Theme.semantic.border.strong}
+          onValueChange={onToggle}
+          value={value}
+        />
+      }
+    />
+  )
+
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: Theme.colors.background,
-        width: "100%",
-      }}
-    >
+    <View style={{ flex: 1, backgroundColor: Theme.semantic.bg.canvas }}>
       <Stack.Screen
         options={{
-          headerTintColor: Theme.colors.text,
           headerTitle: t("settings"),
-          headerTitleStyle: {
-            fontSize: Theme.fontSizes.h1,
-            fontFamily: Theme.fonts.display,
-          },
           headerLeft: () => (
-            <BackIcon color={Theme.colors.text} size={34} onPress={() => navigation.goBack()} />
+            <IconButton
+              icon={<BackIcon color={Theme.semantic.text.primary} size={24} />}
+              onPress={() => navigation.goBack()}
+              accessibilityLabel={t("back")}
+            />
           ),
           headerRight: () => null,
         }}
@@ -301,301 +336,228 @@ export default function Settings() {
         uploading={uploading}
       />
 
-      <ScrollView style={{ flex: 1, paddingTop: insets.top }}>
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            paddingBottom: 22,
-          }}
-        >
-          <View
-            style={{
-              position: "relative",
-            }}
-          >
-            <Pressable
-              onPress={handlePickImage}
-              style={{
-                width: 96,
-                height: 96,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: Theme.colors.primary2,
-                borderRadius: 100,
-                marginBottom: 4,
-                overflow: "hidden",
-              }}
-            >
-              {auth.currentUser?.photoURL ? (
-                <Image
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    resizeMode: "cover",
-                    borderRadius: 100,
-                    alignSelf: "center",
-                  }}
-                  source={{ uri: auth.currentUser?.photoURL }}
-                />
-              ) : (
-                <UserIcon size={76} color={Theme.colors.accent} />
-              )}
-            </Pressable>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          paddingTop: Theme.spacing.lg,
+          paddingHorizontal: Theme.spacing.gutter,
+          paddingBottom: insets.bottom + 56,
+          gap: Theme.spacing.section,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <ScreenHeader overline={t("preferences")} title={t("settings")} />
 
-            <Pressable
-              onPress={handlePickImage}
-              style={({ pressed }) => [
-                { opacity: pressed ? 0.6 : 1 },
+        <Card style={styles.profileCard}>
+          <Pressable
+            onPress={handlePickImage}
+            accessibilityRole="button"
+            accessibilityLabel={t("change_photo")}
+            style={styles.avatarWrap}
+          >
+            <View
+              style={[
+                styles.avatar,
                 {
-                  position: "absolute",
-                  bottom: 4,
-                  right: 4,
-                  backgroundColor: Theme.colors.accent,
-                  borderRadius: 100,
-                  padding: 6,
-                  elevation: 3,
+                  backgroundColor: Theme.semantic.accent.soft,
+                  borderColor: Theme.semantic.accent.brass,
                 },
               ]}
             >
-              <EditIcon color={Theme.colors.background2} size={14} />
-            </Pressable>
-          </View>
+              {auth.currentUser?.photoURL ? (
+                <Image
+                  style={styles.avatarImage}
+                  source={{ uri: auth.currentUser?.photoURL }}
+                />
+              ) : (
+                <UserIcon size={44} color={Theme.semantic.accent.primary} />
+              )}
+            </View>
+            <View
+              style={[
+                styles.editBubble,
+                {
+                  backgroundColor: Theme.semantic.accent.primary,
+                  borderColor: Theme.semantic.bg.surface,
+                },
+              ]}
+            >
+              <EditIcon color={Theme.semantic.text.inverse} size={12} />
+            </View>
+          </Pressable>
 
           <Text
             style={{
-              color: Theme.colors.accent,
-              fontFamily: Theme.fonts.onestBold,
-              fontSize: Theme.sizes.h0,
+              color: Theme.semantic.text.primary,
+              fontFamily: Theme.fonts.display,
+              fontSize: Theme.fontSizes.h1,
+              textAlign: "center",
             }}
           >
-            {userName ?? "User"}
+            {userName || t("user")}
           </Text>
-
           <Text
             style={{
-              color: Theme.colors.darkGray,
+              color: Theme.semantic.text.secondary,
               fontFamily: Theme.fonts.onest,
-              fontSize: Theme.sizes.h5,
+              fontSize: Theme.fontSizes.label,
+              textAlign: "center",
             }}
           >
             {userEmail}
           </Text>
 
-          <View
-            style={{
-              flexDirection: "row",
-              gap: 4,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+          <Pressable
+            onPress={copyUserId}
+            accessibilityRole="button"
+            accessibilityLabel={t("copy_user_id")}
+            style={({ pressed }) => [styles.idRow, { opacity: pressed ? 0.6 : 1 }]}
           >
             <Text
+              numberOfLines={1}
               style={{
-                color: Theme.colors.gray,
+                color: Theme.semantic.text.tertiary,
                 fontFamily: Theme.fonts.onest,
-                fontSize: Theme.sizes.h6,
+                fontSize: Theme.fontSizes.caption,
               }}
             >
               {userId}
             </Text>
+            <CopyIcon color={Theme.semantic.text.tertiary} size={12} />
+          </Pressable>
+        </Card>
 
-            <Pressable
-              style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
-              onPress={copyUserId}
-            >
-              <CopyIcon color={Theme.colors.darkGray} size={12} />
-            </Pressable>
-          </View>
+        <View style={{ gap: Theme.spacing.sm }}>
+          <SectionHeader title={t("region_and_currency")} description={t("currency_hint")} />
+          <Card>
+            <CountryPicker
+              label={t("country")}
+              hint={`${t("preferred_currency")}: ${currency}`}
+              value={country.code}
+              onChange={setCountry}
+            />
+          </Card>
         </View>
 
-        <Divider />
-
-        <Pressable
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? Theme.colors.background2 : Theme.colors.transparent,
-              opacity: pressed ? 0.6 : 1,
-              flexDirection: "row",
-              gap: 12,
-              alignItems: "center",
-              paddingVertical: 16,
-              padding: 16,
-            },
-          ]}
-          onPress={toggleVibrationSwitch}
-        >
-          <View>
-            <VibrationIcon color={Theme.colors.gray} />
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <Text style={{ color: Theme.colors.text }}>{t("vibration")}</Text>
-            <Text style={{ color: Theme.colors.gray }}>{t("vibration_desc")}</Text>
-          </View>
-
-          <View>
-            <Switch
-              trackColor={{
-                false: Theme.colors.darkGray,
-                true: Theme.colors.primary2,
-              }}
-              thumbColor={isVibrationEnabled ? Theme.colors.primary : Theme.colors.text}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={toggleVibrationSwitch}
+        <View style={{ gap: Theme.spacing.sm }}>
+          <SectionHeader title={t("preferences")} />
+          <Card padded={false} style={{ paddingHorizontal: Theme.spacing.md }}>
+            <ToggleRow
+              title={t("vibration")}
+              description={t("vibration_desc")}
+              icon={<VibrationIcon color={Theme.semantic.text.secondary} size={18} />}
               value={isVibrationEnabled}
+              onToggle={toggleVibrationSwitch}
             />
-          </View>
-        </Pressable>
-
-        <Pressable
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? Theme.colors.background2 : Theme.colors.transparent,
-              opacity: pressed ? 0.6 : 1,
-              flexDirection: "row",
-              gap: 12,
-              alignItems: "center",
-              paddingVertical: 16,
-              padding: 16,
-            },
-          ]}
-          onPress={toggleNotifications}
-        >
-          <View>
-            <SoundIcon color={Theme.colors.gray} />
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <Text style={{ color: Theme.colors.text }}>{t("notifications")}</Text>
-            <Text style={{ color: Theme.colors.gray }}>{t("notifications_desc")}</Text>
-          </View>
-
-          <View>
-            <Switch
-              trackColor={{
-                false: Theme.colors.darkGray,
-                true: Theme.colors.primary2,
-              }}
-              thumbColor={isNotificationsEnabled ? Theme.colors.primary : Theme.colors.text}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={toggleNotifications}
+            <ToggleRow
+              title={t("notifications")}
+              description={t("notifications_desc")}
+              icon={<SoundIcon color={Theme.semantic.text.secondary} size={18} />}
               value={isNotificationsEnabled}
+              onToggle={toggleNotifications}
             />
-          </View>
-        </Pressable>
+            <SettingsButton
+              onPress={() => themeSheetRef.current?.expand()}
+              title={t("theme")}
+              description={getThemeLabel()}
+              icon={<SunIcon color={Theme.semantic.text.secondary} size={18} />}
+            />
+            <SettingsButton
+              onPress={() => sheetRef.current?.expand()}
+              title={t("language")}
+              description={languageSelected === "es" ? t("es") : t("en")}
+              icon={<LanguageIcon color={Theme.semantic.text.secondary} size={18} />}
+            />
+          </Card>
+        </View>
 
-        <SettingsButton
-          onPress={() => themeSheetRef.current?.expand()}
-          title={t("theme")}
-          description={getThemeLabel()}
-          icon={<SunIcon color={Theme.colors.gray} />}
-        />
+        <View style={{ gap: Theme.spacing.sm }}>
+          <SectionHeader title={t("about")} />
+          <Card padded={false} style={{ paddingHorizontal: Theme.spacing.md }}>
+            <SettingsButton
+              onPress={handleShareApp}
+              title={t("invite_friends")}
+              description={t("invite_friends_desc")}
+              icon={<ShareIcon color={Theme.semantic.text.secondary} size={18} />}
+            />
+            <SettingsButton
+              onPress={() =>
+                Linking.openURL(
+                  "https://play.google.com/store/apps/details?id=com.rilisentertainment.dressbook",
+                )
+              }
+              title={t("rate_app")}
+              description={t("rate_app_desc")}
+              icon={<StarIcon color={Theme.semantic.text.secondary} size={18} />}
+            />
+            <SettingsButton
+              onPress={() => Linking.openURL("https://rixel.dev")}
+              title={t("site")}
+              description={t("site_desc")}
+              icon={<WebIcon color={Theme.semantic.text.secondary} size={18} />}
+            />
+            <SettingsButton
+              onPress={() => Linking.openURL("https://rixel.dev/privacy")}
+              title={t("privacy_policy")}
+              icon={<PrivacyIcon color={Theme.semantic.text.secondary} size={18} />}
+            />
+            <SettingsButton
+              onPress={() => Linking.openURL("https://rixel.dev/terms")}
+              title={t("terms_conditions")}
+              icon={<ListIcon color={Theme.semantic.text.secondary} size={18} />}
+            />
+            <SettingsButton
+              onPress={() => Linking.openURL("https://github.com/rixeldev/dress-book")}
+              title="GitHub"
+              icon={<GithubIcon color={Theme.semantic.text.secondary} size={18} />}
+            />
+            <SettingsButton
+              onPress={() => Linking.openURL("https://www.rixel.dev/#contact")}
+              title={t("feedback")}
+              icon={<QuestionIcon color={Theme.semantic.text.secondary} size={18} />}
+            />
+          </Card>
+        </View>
 
-        <SettingsButton
-          onPress={() => sheetRef.current?.expand()}
-          title={t("language")}
-          description={languageSelected === "es" ? t("es") : t("en")}
-          icon={<LanguageIcon color={Theme.colors.gray} />}
-        />
+        <View style={{ gap: Theme.spacing.sm }}>
+          <SectionHeader title={t("account")} />
+          <Card padded={false} style={{ paddingHorizontal: Theme.spacing.md }}>
+            <SettingsButton
+              onPress={() => setDeleteAccountModalVisible(true)}
+              title={t("delete_account")}
+              description={t("delete_account_hint")}
+              icon={<LogoutIcon color={Theme.semantic.state.danger} size={18} />}
+              color={Theme.semantic.state.danger}
+            />
+            {auth && (
+              <SettingsButton
+                onPress={handleSignOut}
+                title={t("sign_out")}
+                icon={<LogoutIcon color={Theme.semantic.state.danger} size={18} />}
+                color={Theme.semantic.state.danger}
+              />
+            )}
+          </Card>
+        </View>
 
-        <SettingsButton
-          onPress={handleShareApp}
-          title={t("invite_friends")}
-          description={t("invite_friends_desc")}
-          icon={<ShareIcon color={Theme.colors.gray} />}
-        />
-
-        <SettingsButton
-          onPress={() =>
-            Linking.openURL(
-              "https://play.google.com/store/apps/details?id=com.rilisentertainment.dressbook",
-            )
-          }
-          title={t("rate_app")}
-          description={t("rate_app_desc")}
-          icon={<StarIcon color={Theme.colors.gray} />}
-        />
-
-        <SettingsButton
-          onPress={() => Linking.openURL("https://rixel.dev")}
-          title={t("site")}
-          description={t("site_desc")}
-          icon={<WebIcon color={Theme.colors.gray} />}
-        />
-
-        <Divider />
-
-        <SettingsButton
-          onPress={() => Linking.openURL("https://rixel.dev/privacy")}
-          title={t("privacy_policy")}
-          icon={<PrivacyIcon color={Theme.colors.gray} />}
-        />
-
-        <SettingsButton
-          onPress={() => Linking.openURL("https://rixel.dev/terms")}
-          title={t("terms_conditions")}
-          icon={<ListIcon color={Theme.colors.gray} />}
-        />
-
-        <SettingsButton
-          onPress={() => Linking.openURL("https://github.com/rixeldev/dress-book")}
-          title="GitHub"
-          icon={<GithubIcon color={Theme.colors.gray} />}
-        />
-
-        <SettingsButton
-          onPress={() => Linking.openURL("https://www.rixel.dev/#contact")}
-          title={t("feedback")}
-          icon={<QuestionIcon color={Theme.colors.gray} />}
-        />
-
-        <Divider />
-
-        <SettingsButton
-          onPress={() => setDeleteAccountModalVisible(true)}
-          title={t("delete_account")}
-          description={t("delete_account_hint")}
-          icon={<LogoutIcon color={Theme.colors.red} />}
-          color={Theme.colors.red}
-        />
-
-        {auth && (
-          <SettingsButton
-            onPress={handleSignOut}
-            title={t("sign_out")}
-            icon={<LogoutIcon color={Theme.colors.red} />}
-            color={Theme.colors.red}
-          />
-        )}
-
-        <View
-          style={{
-            flexDirection: "column",
-            marginVertical: 8,
-            marginBottom: insets.bottom + 16,
-          }}
-        >
+        <View style={[styles.footer, { marginTop: Theme.spacing.xxl, marginBottom: 24 }]}>
+          <BrandMark size={34} />
           <Text
             style={{
-              textAlign: "center",
-              width: "100%",
-              color: Theme.colors.darkGray,
+              color: Theme.semantic.text.primary,
               fontFamily: Theme.fonts.display,
-              fontSize: Theme.fontSizes.h1,
-              lineHeight: Theme.lineHeights.h1,
+              fontSize: Theme.fontSizes.h2,
+              letterSpacing: -0.4,
             }}
           >
             Dress Book
           </Text>
-
           <Text
             style={{
-              textAlign: "center",
-              width: "100%",
-              color: Theme.colors.darkGray,
+              color: Theme.semantic.text.tertiary,
               fontFamily: Theme.fonts.onest,
-              fontSize: Theme.sizes.h6,
+              fontSize: Theme.fontSizes.caption,
+              letterSpacing: 1.2,
             }}
           >
             {appVersion}
@@ -627,20 +589,27 @@ export default function Settings() {
                   style={[
                     styles.outerCircle,
                     {
-                      borderColor: isSelected ? Theme.colors.primary : Theme.colors.gray,
+                      borderColor: isSelected
+                        ? Theme.semantic.accent.primary
+                        : Theme.semantic.border.strong,
                     },
                   ]}
                 >
                   {isSelected && (
-                    <View style={[styles.innerDot, { backgroundColor: Theme.colors.primary }]} />
+                    <View
+                      style={[
+                        styles.innerDot,
+                        { backgroundColor: Theme.semantic.accent.primary },
+                      ]}
+                    />
                   )}
                 </View>
 
                 <View>
-                  <Text style={[styles.optionText, { color: Theme.colors.text }]}>
+                  <Text style={[styles.optionText, { color: Theme.semantic.text.primary }]}>
                     {option === "es" ? "Spanish" : "English"}
                   </Text>
-                  <Text style={[styles.optionSubText, { color: Theme.colors.gray }]}>
+                  <Text style={[styles.optionSubText, { color: Theme.semantic.text.secondary }]}>
                     {option === "es" ? "Español" : "Inglés"}
                   </Text>
                 </View>
@@ -664,7 +633,9 @@ export default function Settings() {
                   style={[
                     styles.outerCircle,
                     {
-                      borderColor: isSelected ? Theme.colors.primary : Theme.colors.gray,
+                      borderColor: isSelected
+                        ? Theme.semantic.accent.primary
+                        : Theme.semantic.border.strong,
                     },
                   ]}
                 >
@@ -672,18 +643,26 @@ export default function Settings() {
                 </View>
 
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-                  {option === "light" && <SunIcon size={20} color={Theme.colors.text} />}
-                  {option === "dark" && <MoonIcon size={20} color={Theme.colors.text} />}
-                  {option === "automatic" && <AutoThemeIcon size={20} color={Theme.colors.text} />}
+                  {option === "light" && (
+                    <SunIcon size={20} color={Theme.semantic.text.primary} />
+                  )}
+                  {option === "dark" && (
+                    <MoonIcon size={20} color={Theme.semantic.text.primary} />
+                  )}
+                  {option === "automatic" && (
+                    <AutoThemeIcon size={20} color={Theme.semantic.text.primary} />
+                  )}
                   <View>
-                    <Text style={[styles.optionText, { color: Theme.colors.text }]}>
+                    <Text style={[styles.optionText, { color: Theme.semantic.text.primary }]}>
                       {option === "light"
                         ? t("light")
                         : option === "dark"
                           ? t("dark")
                           : t("automatic")}
                     </Text>
-                    <Text style={[styles.optionSubText, { color: Theme.colors.gray }]}>
+                    <Text
+                      style={[styles.optionSubText, { color: Theme.semantic.text.secondary }]}
+                    >
                       {option === "automatic"
                         ? t("follow_system")
                         : option === "light"
@@ -702,6 +681,59 @@ export default function Settings() {
 }
 
 const styles = StyleSheet.create({
+  profileCard: {
+    alignItems: "center",
+    gap: 6,
+    paddingVertical: 22,
+  },
+  avatarWrap: {
+    marginBottom: 6,
+  },
+  avatar: {
+    width: 92,
+    height: 92,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+    borderWidth: 2,
+    borderRadius: 999,
+  },
+  avatarImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  editBubble: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
+    padding: 6,
+    borderWidth: 2,
+    borderRadius: 999,
+  },
+  idRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginTop: 4,
+  },
+  row: {
+    paddingHorizontal: 16,
+  },
+  icon: {
+    width: 34,
+    height: 34,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderRadius: 12,
+  },
+  footer: {
+    alignItems: "center",
+    gap: 4,
+  },
   optionContainer: {
     flexDirection: "row",
     alignItems: "center",

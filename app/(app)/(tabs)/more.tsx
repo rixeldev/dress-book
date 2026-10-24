@@ -1,26 +1,43 @@
-import { Screen } from "@/components/ui/Screen"
-import { CustomModal } from "@/components/ui/CustomModal"
 import { REG_ADDED_EVENT, REG_DELETED_EVENT } from "@/components/ui/TabBar"
 import Fire from "@/db/Fire"
 import { auth } from "@/db/firebaseConfig"
 import { useStorage } from "@/hooks/useStorage"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { Regs } from "@/interfaces/Regs"
-import { useEffect, useState, useMemo } from "react"
+import { useEffect, useState } from "react"
 import {
-  ActivityIndicator,
   Alert,
   DeviceEventEmitter,
-  Pressable,
   ScrollView,
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
-  Image,
 } from "react-native"
+import { router } from "expo-router"
 import { useTranslation } from "react-i18next"
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  CustomModal,
+  IconButton,
+  ListRow,
+  Screen,
+  ScreenHeader,
+  SectionHeader,
+  Skeleton,
+  StatCard,
+} from "@/components/ui"
+import {
+  CalendarIcon,
+  ChevronRightIcon,
+  CogIcon,
+  ImageIcon,
+  TrashIcon,
+} from "@/icons/Icons"
 
-export default function User() {
+export default function StudioScreen() {
   const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState(true)
   const [regs, setRegs] = useState<Regs[]>([])
@@ -29,7 +46,6 @@ export default function User() {
   const [isDeleting, setIsDeleting] = useState(false)
   const { getItem, setItem } = useStorage()
   const { Theme } = useAppTheme()
-  const styles = useMemo(() => createStyles(Theme), [Theme])
 
   const user = auth.currentUser
 
@@ -69,7 +85,6 @@ export default function User() {
     try {
       const userId = user?.uid
 
-      // Delete from Firebase
       if (userId) {
         for (const reg of regs) {
           try {
@@ -80,7 +95,6 @@ export default function User() {
         }
       }
 
-      // Clear local storage
       await setItem("regs", JSON.stringify([]))
       setRegs([])
       DeviceEventEmitter.emit(REG_DELETED_EVENT)
@@ -95,7 +109,6 @@ export default function User() {
     }
   }
 
-  // Calculate stats
   const totalRecords = regs.length
   const recordsByType = regs.reduce(
     (acc, reg) => {
@@ -108,7 +121,6 @@ export default function User() {
   const unsyncedRecords = regs.filter((r) => r.synced === false).length
 
   const parseTimestamp = (timestamp: string): Date => {
-    // Parse "11/27/2025 09:15 AM" format
     const [datePart, timePart, period] = timestamp.split(" ")
     const [month, day, year] = datePart.split("/").map(Number)
     let [hours, minutes] = timePart.split(":").map(Number)
@@ -133,126 +145,223 @@ export default function User() {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Theme.colors.accent} />
-      </View>
+      <Screen>
+        <View style={{ gap: Theme.spacing.md }}>
+          <Skeleton width="42%" height={38} />
+          <Skeleton height={110} radius={20} />
+          <Skeleton height={86} radius={20} />
+        </View>
+      </Screen>
     )
   }
 
+  const displayName = user?.displayName || t("user")
+
   return (
-    <Screen>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* User Info Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t("account")}</Text>
-          <View style={styles.card}>
-            <View style={styles.userInfo}>
-              <View style={styles.avatarContainer}>
-                {user?.photoURL ? (
-                  <Image source={{ uri: user.photoURL }} style={styles.avatar} />
-                ) : (
-                  <Text style={styles.avatarText}>
-                    {user?.email?.charAt(0).toUpperCase() || "?"}
-                  </Text>
-                )}
-              </View>
+    <Screen padding={0}>
+      <ScrollView
+        contentContainerStyle={{
+          padding: Theme.spacing.gutter,
+          paddingBottom: 140,
+          gap: Theme.spacing.section,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <ScreenHeader
+          overline={t("manage_studio")}
+          title={t("studio")}
+          right={
+            <IconButton
+              icon={<CogIcon size={20} color={Theme.semantic.text.primary} />}
+              accessibilityLabel={t("settings")}
+              onPress={() => router.push("/settings")}
+              variant="surface"
+            />
+          }
+        />
 
-              <Text style={styles.userName}>{user?.displayName || t("user")}</Text>
-              <Text style={styles.userEmail}>{user?.email || t("not_signed_in")}</Text>
-              {user?.emailVerified && (
-                <View style={styles.verifiedBadge}>
-                  <Text style={styles.verifiedText}>{t("verified")}</Text>
-                </View>
-              )}
+        <Card onPress={() => router.push("/settings")} style={styles.profile}>
+          <View style={styles.profileRow}>
+            <Avatar name={displayName} imageUrl={user?.photoURL} size="xl" />
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text
+                numberOfLines={1}
+                style={{
+                  color: Theme.semantic.text.primary,
+                  fontFamily: Theme.fonts.display,
+                  fontSize: Theme.fontSizes.h2,
+                }}
+              >
+                {displayName}
+              </Text>
+              <Text
+                numberOfLines={1}
+                style={{
+                  color: Theme.semantic.text.secondary,
+                  fontFamily: Theme.fonts.onest,
+                  fontSize: Theme.fontSizes.label,
+                }}
+              >
+                {user?.email || t("not_signed_in")}
+              </Text>
             </View>
+            {user?.emailVerified && <Badge label={t("verified")} tone="success" dot />}
+            <ChevronRightIcon size={18} color={Theme.semantic.text.tertiary} />
           </View>
+        </Card>
+
+        <View style={styles.statsRow}>
+          <StatCard label={t("total_records")} value={totalRecords} style={styles.stat} />
+          <StatCard
+            label={t("synced")}
+            value={syncedRecords}
+            tone="sunken"
+            style={styles.stat}
+          />
+          <StatCard
+            label={t("pending_sync")}
+            value={unsyncedRecords}
+            tone="sunken"
+            style={styles.stat}
+          />
         </View>
 
-        {/* Stats Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t("statistics")}</Text>
-          <View style={styles.statsGrid}>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>{totalRecords}</Text>
-              <Text style={styles.statLabel}>{t("total_records")}</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>{syncedRecords}</Text>
-              <Text style={styles.statLabel}>{t("synced")}</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>{unsyncedRecords}</Text>
-              <Text style={styles.statLabel}>{t("pending_sync")}</Text>
-            </View>
-          </View>
+        <View style={{ gap: Theme.spacing.sm }}>
+          <SectionHeader title={t("quick_actions")} />
+          <Card padded={false} style={{ paddingHorizontal: Theme.spacing.md }}>
+            <ListRow
+              title={t("designs")}
+              description={t("designs_empty_desc")}
+              onPress={() => router.push("/designs")}
+              chevron
+              leading={<ImageIcon size={20} color={Theme.semantic.accent.primary} />}
+            />
+            <ListRow
+              title={t("calendar")}
+              description={t("calendar_empty_desc")}
+              onPress={() => router.push("/calendar")}
+              chevron
+              leading={<CalendarIcon size={20} color={Theme.semantic.accent.primary} />}
+            />
+            <ListRow
+              title={t("settings")}
+              description={t("preferences")}
+              onPress={() => router.push("/settings")}
+              chevron
+              leading={<CogIcon size={20} color={Theme.semantic.accent.primary} />}
+            />
+          </Card>
         </View>
 
-        {/* Records by Type */}
         {Object.keys(recordsByType).length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t("records_by_type")}</Text>
-            <View style={styles.card}>
-              {Object.entries(recordsByType).map(([type, count]) => (
-                <View key={type} style={styles.typeRow}>
-                  <Text style={styles.typeLabel}>{type}</Text>
-                  <Text style={styles.typeCount}>{count}</Text>
-                </View>
+          <View style={{ gap: Theme.spacing.sm }}>
+            <SectionHeader
+              title={t("records_by_type")}
+              description={t("legacy_records_desc")}
+            />
+            <Card padded={false} style={{ paddingHorizontal: Theme.spacing.md }}>
+              {Object.entries(recordsByType).map(([type, count], index, list) => (
+                <ListRow
+                  key={type}
+                  title={type}
+                  divider={index < list.length - 1}
+                  leading={
+                    <View
+                      style={[
+                        styles.typeDot,
+                        { backgroundColor: Theme.semantic.accent.brass },
+                      ]}
+                    />
+                  }
+                  trailing={
+                    <Text
+                      style={{
+                        color: Theme.semantic.accent.primary,
+                        fontFamily: Theme.fonts.display,
+                        fontSize: Theme.fontSizes.h3,
+                      }}
+                    >
+                      {count}
+                    </Text>
+                  }
+                />
               ))}
-            </View>
+            </Card>
           </View>
         )}
 
-        {/* Timeline Info */}
         {regs.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t("timeline")}</Text>
-            <View style={styles.card}>
+          <View style={{ gap: Theme.spacing.sm }}>
+            <SectionHeader title={t("timeline")} />
+            <Card style={{ gap: Theme.spacing.sm }}>
               {oldestRecord && (
                 <View style={styles.timelineRow}>
-                  <Text style={styles.timelineLabel}>{t("first_record")}</Text>
-                  <Text style={styles.timelineValue}>{oldestRecord.timestamp.split(" ")[0]}</Text>
+                  <Text style={[styles.timelineLabel, { color: Theme.semantic.text.secondary }]}>
+                    {t("first_record")}
+                  </Text>
+                  <Text style={[styles.timelineValue, { color: Theme.semantic.text.primary }]}>
+                    {oldestRecord.timestamp.split(" ")[0]}
+                  </Text>
                 </View>
               )}
               {newestRecord && (
                 <View style={styles.timelineRow}>
-                  <Text style={styles.timelineLabel}>{t("latest_record")}</Text>
-                  <Text style={styles.timelineValue}>{newestRecord.timestamp.split(" ")[0]}</Text>
+                  <Text style={[styles.timelineLabel, { color: Theme.semantic.text.secondary }]}>
+                    {t("latest_record")}
+                  </Text>
+                  <Text style={[styles.timelineValue, { color: Theme.semantic.text.primary }]}>
+                    {newestRecord.timestamp.split(" ")[0]}
+                  </Text>
                 </View>
               )}
-            </View>
+            </Card>
           </View>
         )}
 
-        {/* Danger Zone */}
         {regs.length > 0 && (
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: Theme.colors.red }]}>
-              {t("danger_zone")}
-            </Text>
-            <View style={[styles.card, styles.dangerCard]}>
-              <Text style={styles.dangerDescription}>{t("danger_zone_desc")}</Text>
-              <Pressable
+          <View style={{ gap: Theme.spacing.sm }}>
+            <SectionHeader
+              title={t("danger_zone")}
+              description={t("danger_zone_desc")}
+            />
+            <Card
+              style={{
+                gap: Theme.spacing.md,
+                borderColor: `${Theme.semantic.state.danger}55`,
+              }}
+            >
+              <View style={styles.dangerRow}>
+                <TrashIcon size={20} color={Theme.semantic.state.danger} />
+                <Text
+                  style={{
+                    flex: 1,
+                    color: Theme.semantic.text.secondary,
+                    fontFamily: Theme.fonts.onest,
+                    fontSize: Theme.fontSizes.label,
+                    lineHeight: Theme.lineHeights.label,
+                  }}
+                >
+                  {t("danger_zone_desc")}
+                </Text>
+              </View>
+              <Button
+                label={t("delete_all_records")}
                 onPress={handleDeleteAllPress}
-                disabled={isDeleting}
-                style={({ pressed }) => [
-                  styles.deleteButton,
-                  { opacity: pressed || isDeleting ? 0.6 : 1 },
-                ]}
-              >
-                {isDeleting ? (
-                  <ActivityIndicator size="small" color="#fff" />
-                ) : (
-                  <Text style={styles.deleteButtonText}>{t("delete_all_records")}</Text>
-                )}
-              </Pressable>
-            </View>
+                variant="danger"
+                loading={isDeleting}
+                fullWidth
+              />
+            </Card>
           </View>
         )}
 
-        <View style={{ height: 120 }} />
+        <Button
+          label={t("settings")}
+          onPress={() => router.push("/settings")}
+          variant="ghost"
+        />
       </ScrollView>
 
-      {/* First Confirmation Modal */}
       <CustomModal
         title={t("delete_all_title")}
         description={t("delete_all_desc")}
@@ -261,163 +370,62 @@ export default function User() {
         onAccept={handleFirstConfirm}
       />
 
-      {/* Second Confirmation Modal */}
       <CustomModal
-        title={`⚠️ ${t("final_confirmation")}`}
+        title={t("final_confirmation")}
         description={t("final_confirmation_desc", { count: totalRecords })}
         modalVisible={confirmDeleteModalVisible}
         onRequestClose={() => setConfirmDeleteModalVisible(false)}
         onAccept={handleDeleteAll}
+        acceptLabel={t("delete")}
+        destructive
       />
     </Screen>
   )
 }
 
-const createStyles = (Theme: any) =>
-  StyleSheet.create({
-    loadingContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: Theme.colors.background,
-    },
-    section: {
-      marginBottom: 24,
-    },
-    sectionTitle: {
-      fontFamily: Theme.fonts.onestBold,
-      fontSize: Theme.sizes.h4,
-      color: Theme.colors.text,
-      marginBottom: 12,
-    },
-    card: {
-      backgroundColor: Theme.colors.background2,
-      borderRadius: 16,
-      padding: 16,
-    },
-    avatarContainer: {
-      width: 60,
-      height: 60,
-      borderRadius: 30,
-      backgroundColor: Theme.colors.accent,
-      justifyContent: "center",
-      alignItems: "center",
-      marginBottom: 12,
-    },
-    avatarText: {
-      fontFamily: Theme.fonts.onestBold,
-      fontSize: 24,
-      color: Theme.colors.background,
-    },
-    avatar: {
-      width: 60,
-      height: 60,
-      borderRadius: 30,
-      resizeMode: "contain",
-    },
-    userInfo: {
-      gap: 4,
-    },
-    userName: {
-      fontFamily: Theme.fonts.onestBold,
-      fontSize: Theme.sizes.h3,
-      color: Theme.colors.text,
-    },
-    userEmail: {
-      fontFamily: Theme.fonts.onest,
-      fontSize: Theme.sizes.h5,
-      color: Theme.colors.lightGray,
-    },
-    verifiedBadge: {
-      backgroundColor: Theme.colors.green + "30",
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 8,
-      alignSelf: "flex-start",
-      marginTop: 8,
-    },
-    verifiedText: {
-      fontFamily: Theme.fonts.onest,
-      fontSize: Theme.sizes.h6,
-      color: Theme.colors.green,
-    },
-    statsGrid: {
-      flexDirection: "row",
-      gap: 12,
-    },
-    statCard: {
-      flex: 1,
-      backgroundColor: Theme.colors.background2,
-      borderRadius: 16,
-      padding: 16,
-      alignItems: "center",
-    },
-    statNumber: {
-      fontFamily: Theme.fonts.onestBold,
-      fontSize: Theme.sizes.h1,
-      color: Theme.colors.accent,
-    },
-    statLabel: {
-      fontFamily: Theme.fonts.onest,
-      fontSize: Theme.sizes.h6,
-      color: Theme.colors.lightGray,
-      marginTop: 4,
-      textAlign: "center",
-    },
-    typeRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      paddingVertical: 8,
-      borderBottomWidth: 1,
-      borderBottomColor: Theme.colors.ultraLightGray,
-    },
-    typeLabel: {
-      fontFamily: Theme.fonts.onest,
-      fontSize: Theme.sizes.h5,
-      color: Theme.colors.text,
-    },
-    typeCount: {
-      fontFamily: Theme.fonts.onestBold,
-      fontSize: Theme.sizes.h5,
-      color: Theme.colors.accent,
-    },
-    timelineRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      paddingVertical: 8,
-    },
-    timelineLabel: {
-      fontFamily: Theme.fonts.onest,
-      fontSize: Theme.sizes.h5,
-      color: Theme.colors.lightGray,
-    },
-    timelineValue: {
-      fontFamily: Theme.fonts.onestBold,
-      fontSize: Theme.sizes.h5,
-      color: Theme.colors.text,
-    },
-    dangerCard: {
-      borderWidth: 1,
-      borderColor: Theme.colors.red + "50",
-    },
-    dangerDescription: {
-      fontFamily: Theme.fonts.onest,
-      fontSize: Theme.sizes.h5,
-      color: Theme.colors.lightGray,
-      marginBottom: 16,
-    },
-    deleteButton: {
-      backgroundColor: Theme.colors.red,
-      paddingVertical: 14,
-      paddingHorizontal: 24,
-      borderRadius: 12,
-      alignItems: "center",
-    },
-    deleteButtonText: {
-      fontFamily: Theme.fonts.onestBold,
-      fontSize: Theme.sizes.h5,
-      color: "#fff",
-    },
-  })
+const styles = StyleSheet.create({
+  profile: {
+    padding: 16,
+  },
+  profileRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  avatarImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 999,
+  },
+  statsRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  stat: {
+    flex: 1,
+    padding: 14,
+  },
+  typeDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  timelineRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  timelineLabel: {
+    fontFamily: "Onest",
+    fontSize: 13,
+  },
+  timelineValue: {
+    fontFamily: "OnestBold",
+    fontSize: 13,
+  },
+  dangerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+})

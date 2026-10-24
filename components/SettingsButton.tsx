@@ -1,12 +1,13 @@
-import { ReactElement } from "react"
-import { StyleSheet } from "react-native"
+import { ReactNode } from "react"
+import { StyleSheet, View } from "react-native"
 import { ListRow } from "@/components/ui/ListRow"
+import { useAppTheme } from "@/hooks/useAppTheme"
 
 interface SettingsButtonProps {
   onPress: () => void
   title: string
   description?: string
-  icon: ReactElement
+  icon: ReactNode
   color?: string
 }
 
@@ -17,14 +18,29 @@ export const SettingsButton = ({
   icon,
   color,
 }: SettingsButtonProps) => {
+  const { Theme } = useAppTheme()
+
   return (
     <ListRow
       title={title}
       description={description}
-      leading={icon}
       onPress={onPress}
       titleColor={color}
+      chevron
       style={styles.row}
+      leading={
+        <View
+          style={[
+            styles.icon,
+            {
+              backgroundColor: Theme.semantic.bg.sunken,
+              borderColor: Theme.semantic.border.subtle,
+            },
+          ]}
+        >
+          {icon}
+        </View>
+      }
     />
   )
 }
@@ -32,7 +48,13 @@ export const SettingsButton = ({
 const styles = StyleSheet.create({
   row: {
     paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderBottomWidth: 0,
+  },
+  icon: {
+    width: 34,
+    height: 34,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderRadius: 12,
   },
 })
