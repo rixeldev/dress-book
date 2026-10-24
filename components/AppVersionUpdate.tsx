@@ -18,7 +18,7 @@ export const AppVersionUpdate = () => {
 
   return (
     <View style={styles.container}>
-      <UpdateIcon color={Theme.colors.accent} size={132} />
+      <UpdateIcon color={Theme.semantic.accent.primary} size={132} />
       <Text style={styles.title}>{t("update_game")}</Text>
       <Text style={styles.subtitle}>
         {t("update_game_desc_1")}
@@ -49,7 +49,7 @@ const createStyles = (Theme: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: Theme.colors.background,
+      backgroundColor: Theme.semantic.bg.canvas,
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: 24,
@@ -58,24 +58,24 @@ const createStyles = (Theme: any) =>
     title: {
       fontSize: Theme.sizes.h1,
       fontFamily: Theme.fonts.onestBold,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
       marginBottom: 12,
     },
     subtitle: {
       fontSize: Theme.sizes.h4,
       fontFamily: Theme.fonts.onest,
-      color: Theme.colors.gray,
+      color: Theme.semantic.text.secondary,
       textAlign: "center",
       lineHeight: 22,
       marginBottom: 32,
     },
     hint: {
       fontSize: Theme.sizes.h5,
-      color: Theme.colors.gray,
+      color: Theme.semantic.text.secondary,
       fontFamily: Theme.fonts.onest,
     },
     submit: {
-      backgroundColor: Theme.colors.primary,
+      backgroundColor: Theme.semantic.accent.primary,
       padding: 14,
       borderRadius: 14,
       alignItems: "center",

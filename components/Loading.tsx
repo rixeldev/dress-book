@@ -7,7 +7,7 @@ export const Loading = () => {
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <ActivityIndicator
         size="large"
-        color={Theme.colors.accent}
+        color={Theme.semantic.accent.primary}
         style={{ width: 38, height: 38, alignSelf: "center" }}
       />
     </View>

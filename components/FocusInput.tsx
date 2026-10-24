@@ -38,7 +38,7 @@ export const FocusInput = ({
 
   const borderColor = borderAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ["transparent", Theme.colors.accent],
+    outputRange: ["transparent", Theme.semantic.accent.primary],
   })
 
   const borderWidth = borderAnim.interpolate({
@@ -58,16 +58,16 @@ export const FocusInput = ({
     >
       <TextInput
         placeholder={placeholder}
-        placeholderTextColor={Theme.colors.gray}
+        placeholderTextColor={Theme.semantic.text.secondary}
         keyboardType={type}
-        cursorColor={Theme.colors.accent}
+        cursorColor={Theme.semantic.accent.primary}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         onChangeText={onChange}
         autoCapitalize={capitalize}
         value={value}
         editable={editable}
-        style={[styles.input, !editable && { color: Theme.colors.gray }]}
+        style={[styles.input, !editable && { color: Theme.semantic.text.secondary }]}
         onSubmitEditing={onSubmitEditing}
         {...props}
       />
@@ -79,12 +79,12 @@ const createStyles = (Theme: any) =>
   StyleSheet.create({
     inputContainer: {
       borderRadius: 12,
-      backgroundColor: Theme.colors.background2,
+      backgroundColor: Theme.semantic.bg.sunken,
     },
     input: {
       paddingHorizontal: 12,
       paddingVertical: 14,
-      color: Theme.colors.text,
+      color: Theme.semantic.text.primary,
       fontFamily: Theme.fonts.onest,
       fontSize: Theme.sizes.h4,
     },
