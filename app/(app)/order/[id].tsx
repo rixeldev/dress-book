@@ -345,6 +345,14 @@ export default function OrderDetailScreen() {
 
         <View style={{ gap: Theme.spacing.sm }}>
           <Button
+            label={t("take_measurements")}
+            onPress={() =>
+              router.push(`/measurement/new?clientId=${order.clientId}&type=${order.type}`)
+            }
+            variant="secondary"
+            fullWidth
+          />
+          <Button
             label={t("duplicate_order")}
             onPress={handleDuplicate}
             variant="secondary"

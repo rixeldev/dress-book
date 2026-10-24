@@ -18,8 +18,10 @@ export default function MeasurementStudioScreen() {
   const { t } = useTranslation()
   const { Theme } = useAppTheme()
   const { user } = useAuth()
-  const params = useLocalSearchParams<{ clientId: string }>()
+  const params = useLocalSearchParams<{ clientId: string; type?: string }>()
   const clientId = params.clientId
+  const initialType: RegType =
+    params.type === "Curtains" || params.type === "Others" ? params.type : "Clothes"
 
   useEffect(() => {
     if (!user || !clientId) return
@@ -30,7 +32,7 @@ export default function MeasurementStudioScreen() {
       .catch(() => setPrevious(null))
   }, [user, clientId])
 
-  const [type, setType] = useState<RegType>("Clothes")
+  const [type, setType] = useState<RegType>(initialType)
   const [unit, setUnit] = useState<"cm" | "in" | "yd">("cm")
   const [values, setValues] = useState<FullBodyMeasurements>(() => getEmptyMeasurements("Clothes"))
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
