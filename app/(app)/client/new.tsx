@@ -7,7 +7,7 @@ import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { createClient } from "@/features/clients/repository"
 import { clientSchema } from "@/libs/schemas"
-import { Button, Card, Screen, TextField } from "@/components/ui"
+import { Button, Card, IconButton, Screen, TextField } from "@/components/ui"
 
 export default function NewClientScreen() {
   const { t } = useTranslation()
@@ -63,7 +63,14 @@ export default function NewClientScreen() {
         options={{
           headerShown: true,
           headerTitle: t("new_client"),
-          headerLeft: () => <BackIcon color={Theme.colors.text} size={24} onPress={() => router.back()} />,
+          headerLeft: () => (
+            <IconButton
+              icon={<BackIcon color={Theme.semantic.text.primary} size={24} />}
+              onPress={() => router.back()}
+              accessibilityLabel={t("back")}
+            />
+          ),
+          headerRight: () => null,
         }}
       />
       <KeyboardAvoidingView

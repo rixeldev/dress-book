@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native"
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native"
 import { router, Stack, useLocalSearchParams } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { BackIcon } from "@/icons/Icons"
@@ -7,7 +7,16 @@ import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { getClient, updateClient } from "@/features/clients/repository"
 import { clientSchema } from "@/libs/schemas"
-import { Button, Card, Screen, TextField } from "@/components/ui"
+import {
+  Button,
+  Card,
+  IconButton,
+  Screen,
+  ScreenHeader,
+  SectionHeader,
+  Skeleton,
+  TextField,
+} from "@/components/ui"
 
 export default function EditClientScreen() {
   const { t } = useTranslation()
@@ -81,9 +90,11 @@ export default function EditClientScreen() {
   if (loading) {
     return (
       <Screen>
+        <Stack.Screen options={{ headerTitle: t("edit_client") }} />
         <View style={{ gap: Theme.spacing.md }}>
-          <View style={{ height: 48, borderRadius: 8, backgroundColor: Theme.colors.background2 }} />
-          <View style={{ height: 48, borderRadius: 8, backgroundColor: Theme.colors.background2 }} />
+          <Skeleton width="50%" height={38} />
+          <Skeleton height={64} radius={18} />
+          <Skeleton height={64} radius={18} />
         </View>
       </Screen>
     )
@@ -93,29 +104,109 @@ export default function EditClientScreen() {
     <Screen padding={0}>
       <Stack.Screen
         options={{
-          headerShown: true,
           headerTitle: t("edit_client"),
-          headerLeft: () => <BackIcon color={Theme.colors.text} size={24} onPress={() => router.back()} />,
+          headerLeft: () => (
+            <IconButton
+              icon={<BackIcon color={Theme.semantic.text.primary} size={24} />}
+              onPress={() => router.back()}
+              accessibilityLabel={t("back")}
+            />
+          ),
+          headerRight: () => null,
         }}
       />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={{ flex: 1, backgroundColor: Theme.semantic.bg.canvas }}
+        style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={{ padding: Theme.spacing.lg, gap: Theme.spacing.lg }} keyboardShouldPersistTaps="handled">
-          <Card>
-            <View style={{ gap: Theme.spacing.md }}>
-              <TextField label={t("client_name")} value={name} onChangeText={setName} error={errors.name} />
-              <TextField label={t("phone")} value={phone} onChangeText={setPhone} keyboardType="phone-pad" error={errors.phone} />
-              <TextField label={t("email")} value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" error={errors.email} />
-              <TextField label={t("tags")} value={tags} onChangeText={setTags} placeholder={t("tags_placeholder")} hint={t("tags_hint")} />
-              <View style={{ gap: Theme.spacing.xs }}>
-                <Text style={{ color: Theme.semantic.text.primary, fontFamily: Theme.fonts.onestBold, fontSize: Theme.fontSizes.label }}>
-                  {t("custom_fields")}
-                </Text>
+        <ScrollView
+          contentContainerStyle={{
+            padding: Theme.spacing.gutter,
+            paddingBottom: 40,
+            gap: Theme.spacing.lg,
+          }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <ScreenHeader overline={t("clients")} title={t("edit_client")} />
+
+          <View style={{ gap: Theme.spacing.sm }}>
+            <SectionHeader title={t("details_section")} />
+            <Card>
+              <View style={{ gap: Theme.spacing.md }}>
+                <TextField
+                  label={t("client_name")}
+                  value={name}
+                  onChangeText={setName}
+                  error={errors.name}
+                />
+                <TextField
+                  label={t("phone")}
+                  value={phone}
+                  onChangeText={setPhone}
+                  keyboardType="phone-pad"
+                  error={errors.phone}
+                />
+                <TextField
+                  label={t("email")}
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  error={errors.email}
+                />
+                <TextField
+                  label={t("tags")}
+                  value={tags}
+                  onChangeText={setTags}
+                  placeholder={t("tags_placeholder")}
+                  hint={t("tags_hint")}
+                />
+                <TextField
+                  label={t("notes")}
+                  value={notes}
+                  onChangeText={setNotes}
+                  multiline
+                  numberOfLines={4}
+                  error={errors.notes}
+                />
+              </View>
+            </Card>
+          </View>
+
+          <View style={{ gap: Theme.spacing.sm }}>
+            <SectionHeader title={t("custom_fields")} />
+            <Card>
+              <View style={{ gap: Theme.spacing.md }}>
                 {Object.entries(customFields).map(([key, value]) => (
-                  <View key={key} style={{ flexDirection: "row", gap: Theme.spacing.sm, alignItems: "center" }}>
-                    <Text style={{ flex: 1, color: Theme.semantic.text.primary, fontFamily: Theme.fonts.onest }}>{key}: {value}</Text>
+                  <View
+                    key={key}
+                    style={[
+                      styles.fieldRow,
+                      { borderBottomColor: Theme.semantic.border.subtle },
+                    ]}
+                  >
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <Text
+                        style={{
+                          color: Theme.semantic.text.secondary,
+                          fontFamily: Theme.fonts.onestBold,
+                          fontSize: Theme.fontSizes.caption,
+                          letterSpacing: 0.6,
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        {key}
+                      </Text>
+                      <Text
+                        style={{
+                          color: Theme.semantic.text.primary,
+                          fontFamily: Theme.fonts.onest,
+                          fontSize: Theme.fontSizes.body,
+                        }}
+                      >
+                        {value}
+                      </Text>
+                    </View>
                     <Button
                       label={t("remove")}
                       onPress={() => {
@@ -130,32 +221,74 @@ export default function EditClientScreen() {
                     />
                   </View>
                 ))}
-                <View style={{ flexDirection: "row", gap: Theme.spacing.sm }}>
+                <View style={styles.pair}>
                   <View style={{ flex: 1 }}>
-                    <TextField label={t("field_name")} value={newFieldKey} onChangeText={setNewFieldKey} />
+                    <TextField
+                      label={t("field_name")}
+                      value={newFieldKey}
+                      onChangeText={setNewFieldKey}
+                    />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <TextField label={t("field_value")} value={newFieldValue} onChangeText={setNewFieldValue} />
+                    <TextField
+                      label={t("field_value")}
+                      value={newFieldValue}
+                      onChangeText={setNewFieldValue}
+                    />
                   </View>
                 </View>
                 <Button
                   label={t("add_field")}
                   onPress={() => {
                     if (!newFieldKey.trim()) return
-                    setCustomFields((prev) => ({ ...prev, [newFieldKey.trim()]: newFieldValue }))
+                    setCustomFields((prev) => ({
+                      ...prev,
+                      [newFieldKey.trim()]: newFieldValue,
+                    }))
                     setNewFieldKey("")
                     setNewFieldValue("")
                   }}
                   variant="secondary"
                 />
               </View>
-              <TextField label={t("notes")} value={notes} onChangeText={setNotes} multiline numberOfLines={4} error={errors.notes} />
-              {errors.form && <Text style={{ color: Theme.semantic.state.danger, fontFamily: Theme.fonts.onest }}>{errors.form}</Text>}
-            </View>
-          </Card>
-          <Button label={t("save_client")} onPress={handleSave} loading={saving} fullWidth size="lg" />
+            </Card>
+          </View>
+
+          {errors.form && (
+            <Text
+              style={{
+                color: Theme.semantic.state.danger,
+                fontFamily: Theme.fonts.onest,
+                fontSize: Theme.fontSizes.label,
+              }}
+            >
+              {errors.form}
+            </Text>
+          )}
+
+          <Button
+            label={t("save_client")}
+            onPress={handleSave}
+            loading={saving}
+            fullWidth
+            size="lg"
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>
   )
 }
+
+const styles = StyleSheet.create({
+  pair: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  fieldRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 6,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+})
