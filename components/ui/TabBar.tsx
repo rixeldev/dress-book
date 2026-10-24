@@ -38,7 +38,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   )
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom + 8 }]}>
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <View
         style={[
           styles.bar,
@@ -127,6 +127,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   adVisible: {
-    marginTop: 6,
+    marginTop: 0,
   },
 })
