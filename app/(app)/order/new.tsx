@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native"
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
 import { router, Stack } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { BackIcon, UsersIcon } from "@/icons/Icons"
+import DateTimePicker from "@react-native-community/datetimepicker"
 import { useAppTheme } from "@/hooks/useAppTheme"
 import { useAuth } from "@/contexts/AuthContext"
 import { useCurrency } from "@/contexts/CurrencyContext"
@@ -16,12 +17,10 @@ import {
   Button,
   Card,
   Chip,
-  DateField,
   EmptyState,
   Flag,
   IconButton,
   Screen,
-  ScreenHeader,
   SectionHeader,
   TextField,
 } from "@/components/ui"
@@ -40,6 +39,7 @@ export default function NewOrderScreen() {
     "consultation" | "measurements" | "cutting" | "sewing" | "fitting" | "delivered" | "cancelled"
   >("consultation")
   const [dueDate, setDueDate] = useState("")
+  const [showDatePicker, setShowDatePicker] = useState(false)
   const [price, setPrice] = useState("")
   const [deposit, setDeposit] = useState("")
   const [priority, setPriority] = useState<"low" | "normal" | "high">("normal")
@@ -142,7 +142,6 @@ export default function NewOrderScreen() {
       <Screen padding={0}>
         {header}
         <View style={{ paddingHorizontal: Theme.spacing.gutter, paddingTop: Theme.spacing.lg }}>
-          <ScreenHeader overline={t("studio")} title={t("new_order")} />
         </View>
         <EmptyState
           icon={<UsersIcon color={Theme.semantic.accent.primary} size={30} />}
@@ -171,12 +170,6 @@ export default function NewOrderScreen() {
           }}
           keyboardShouldPersistTaps="handled"
         >
-          <ScreenHeader
-            overline={t("studio")}
-            title={t("new_order")}
-            description={t("new_order_hint")}
-          />
-
           <View style={{ gap: Theme.spacing.sm }}>
             <SectionHeader title={t("client")} />
             <Card>
@@ -324,13 +317,79 @@ export default function NewOrderScreen() {
             <SectionHeader title={t("timeline")} />
             <Card>
               <View style={{ gap: Theme.spacing.md }}>
-                <DateField
-                  label={t("due_date")}
-                  value={dueDate}
-                  onChangeText={setDueDate}
-                  hint={t("due_date_hint")}
-                  error={errors.dueDate}
-                />
+                <View style={{ gap: 6 }}>
+                  <Text
+                    style={{
+                      color: Theme.semantic.text.secondary,
+                      fontFamily: Theme.fonts.onestBold,
+                      fontSize: Theme.fontSizes.caption,
+                      letterSpacing: 1,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {t("due_date")}
+                  </Text>
+                  <Pressable
+                    onPress={() => setShowDatePicker(true)}
+                    style={[
+                      styles.dateRow,
+                      {
+                        backgroundColor: Theme.semantic.bg.sunken,
+                        borderColor: errors.dueDate
+                          ? Theme.semantic.state.danger
+                          : Theme.semantic.border.subtle,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={{
+                        flex: 1,
+                        color: dueDate
+                          ? Theme.semantic.text.primary
+                          : Theme.semantic.text.tertiary,
+                        fontFamily: Theme.fonts.onest,
+                        fontSize: Theme.fontSizes.body,
+                      }}
+                    >
+                      {dueDate ? formatDisplayDate(dueDate) : t("select_date")}
+                    </Text>
+                    <Text style={{ color: Theme.semantic.accent.primary, fontSize: 18 }}>📅</Text>
+                  </Pressable>
+                  {errors.dueDate && (
+                    <Text
+                      style={{
+                        color: Theme.semantic.state.danger,
+                        fontFamily: Theme.fonts.onest,
+                        fontSize: Theme.fontSizes.caption,
+                      }}
+                    >
+                      {errors.dueDate}
+                    </Text>
+                  )}
+                  <Text
+                    style={{
+                      color: Theme.semantic.text.tertiary,
+                      fontFamily: Theme.fonts.onest,
+                      fontSize: Theme.fontSizes.caption,
+                    }}
+                  >
+                    {t("due_date_hint")}
+                  </Text>
+                </View>
+
+                {showDatePicker && (
+                  <DateTimePicker
+                    value={dueDate ? new Date(dueDate) : new Date()}
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                      setShowDatePicker(false)
+                      if (selectedDate) {
+                        setDueDate(selectedDate.toISOString())
+                      }
+                    }}
+                  />
+                )}
                 <TextField
                   label={t("notes")}
                   value={notes}
@@ -421,4 +480,20 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 12,
   },
+  dateRow: {
+    minHeight: 52,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1.5,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+  },
 })
+
+function formatDisplayDate(iso: string) {
+  const d = new Date(iso)
+  const dd = String(d.getDate()).padStart(2, "0")
+  const mm = String(d.getMonth() + 1).padStart(2, "0")
+  const yyyy = d.getFullYear()
+  return `${dd}-${mm}-${yyyy}`
+}
