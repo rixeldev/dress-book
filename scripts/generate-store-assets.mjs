@@ -1,13 +1,10 @@
-// Generates Google Play store assets for Dress Book:
+// Generates Google Play store assets for Dress Book from real screenshots:
 //   docs/images/store/feature-graphic-1024x500.png
-//   docs/images/store/screenshot-1..5-<name>-1080x1920.png
-//
-// Uses the app's own branding: the Maker's Mark icon, the Onest + Fraunces
-// fonts from node_modules, and the warm-atelier palette tokens.
+//   docs/images/store/screenshot-1..4-*.png (1080x1920)
 //
 // Usage: node scripts/generate-store-assets.mjs [es|en]
 import { createCanvas, GlobalFonts, loadImage } from "@napi-rs/canvas"
-import { existsSync, mkdirSync, writeFileSync } from "node:fs"
+import { existsSync, mkdirSync, statSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -17,25 +14,23 @@ const STORE = {
   es: {
     dir: join(root, "docs", "images", "store"),
     tagline: "Tu estudio de moda, en orden.",
-    footer: "Clientes · Medidas · Pedidos · Telas · Sin conexión",
+    footer: "Clientes · Medidas · Pedidos · Telas",
     captions: [
-      { title: "Tu estudio, al día", subtitle: "Pedidos pendientes, entregas y accesos rápidos" },
-      { title: "Tus clientes, organizados", subtitle: "Medidas, historial y contacto en un solo lugar" },
-      { title: "Pedidos en producción", subtitle: "Estado, fecha de entrega, precio y depósito" },
-      { title: "Biblioteca de telas", subtitle: "Stock, proveedor, color y composición" },
-      { title: "Medidas precisas", subtitle: "Estudio guiado por tipo de prenda" },
+      { source: "today", title: "Hoy en tu estudio", subtitle: "Entregas, atrasos y accesos rápidos" },
+      { source: "orders", title: "Pedidos bajo control", subtitle: "Estado, fecha y prioridad de un vistazo" },
+      { source: "studio", title: "Tu estudio, organizado", subtitle: "Clientes, medidas y estadísticas" },
+      { source: "new", title: "Añade en segundos", subtitle: "Nuevo cliente, pedido o medida" },
     ],
   },
   en: {
     dir: join(root, "docs", "images", "store", "en"),
     tagline: "Your fashion studio, in order.",
-    footer: "Clients · Measurements · Orders · Fabrics · Offline",
+    footer: "Clients · Measurements · Orders · Fabrics",
     captions: [
-      { title: "Your studio, at a glance", subtitle: "Pending orders, due dates and quick actions" },
-      { title: "Clients, organized", subtitle: "Measurements, history and contact in one place" },
-      { title: "Orders in production", subtitle: "Status, due date, price and deposit" },
-      { title: "Fabric library", subtitle: "Stock, supplier, color and composition" },
-      { title: "Precise measurements", subtitle: "Guided studio by garment type" },
+      { source: "today", title: "Today in your studio", subtitle: "Due dates, overdue and quick actions" },
+      { source: "orders", title: "Orders under control", subtitle: "Status, due date and priority at a glance" },
+      { source: "studio", title: "Your studio, organized", subtitle: "Clients, measurements and stats" },
+      { source: "new", title: "Add in seconds", subtitle: "New client, order or measurement" },
     ],
   },
 }
@@ -45,22 +40,18 @@ const store = STORE[lang]
 const outDir = store.dir
 mkdirSync(outDir, { recursive: true })
 
-// Fonts
 const font = (name, path) => {
   if (existsSync(path)) GlobalFonts.registerFromPath(path, name)
   return name
 }
-const ONEST = font("DBOnest", join(root, "node_modules/@expo-google-fonts/onest/400Regular/Onest_400Regular.ttf"))
-const ONEST_BOLD = font("DBOnestBold", join(root, "node_modules/@expo-google-fonts/onest/700Bold/Onest_700Bold.ttf"))
-const DISPLAY = font("DBDisplay", join(root, "node_modules/@expo-google-fonts/fraunces/600SemiBold/Fraunces_600SemiBold.ttf"))
+const FRAUNCES = font("DressFraunces", join(root, "node_modules/@expo-google-fonts/fraunces/600SemiBold/Fraunces_600SemiBold.ttf"))
+const SANS = "sans-serif"
 
-// Palette (warm atelier)
-const BG = "#F7F2EA"
-const BG2 = "#EDE5D8"
-const INK = "#1E1719"
-const ACCENT = "#6E2A38"
+const IVORY = "#F7F2EA"
+const OXBLOOD = "#6E2A38"
 const BRASS = "#B98A4B"
-const MUTED = "#6E625C"
+const DARK = "#0E0C0B"
+const MUTED = "#7B6B60"
 
 const roundRect = (ctx, x, y, w, h, r) => {
   ctx.beginPath()
@@ -72,120 +63,228 @@ const roundRect = (ctx, x, y, w, h, r) => {
   ctx.closePath()
 }
 
-const icon = await loadImage(join(root, "assets", "brand", "icon-1024.png"))
+const drawCover = (ctx, img, x, y, w, h, r) => {
+  const scale = Math.max(w / img.width, h / img.height)
+  const sw = w / scale
+  const sh = h / scale
+  const sx = (img.width - sw) / 2
+  const sy = (img.height - sh) / 2
+  ctx.save()
+  roundRect(ctx, x, y, w, h, r)
+  ctx.clip()
+  ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h)
+  ctx.restore()
+}
 
-/* ------------------------------ feature graphic 1024x500 --------------------- */
-{
-  const W = 1024, H = 500
+const radial = (ctx, x, y, r, color, alpha) => {
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r)
+  g.addColorStop(0, colorWithAlpha(color, alpha))
+  g.addColorStop(1, colorWithAlpha(color, 0))
+  ctx.fillStyle = g
+  ctx.fillRect(x - r, y - r, r * 2, r * 2)
+}
+
+const colorWithAlpha = (hex, alpha) => {
+  const value = parseInt(hex.replace("#", ""), 16)
+  return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`
+}
+
+const wrap = (ctx, text, maxWidth) => {
+  const words = text.split(" ")
+  const lines = []
+  let line = ""
+  for (const word of words) {
+    const candidate = line.length === 0 ? word : `${line} ${word}`
+    if (ctx.measureText(candidate).width <= maxWidth || line.length === 0) {
+      line = candidate
+    } else {
+      lines.push(line)
+      line = word
+    }
+  }
+  if (line.length > 0) lines.push(line)
+  return lines
+}
+
+const fitFont = (ctx, family, weight, size, text, maxWidth) => {
+  let current = size
+  while (current > 18) {
+    ctx.font = `${weight} ${current}px ${family}`
+    if (ctx.measureText(text).width <= maxWidth) return current
+    current -= 2
+  }
+  return current
+}
+
+const images = {
+  icon: await loadImage(join(root, "assets", "brand", "icon-1024.png")),
+  today: await loadImage(join(root, "docs", "images", "today.jpg")),
+  orders: await loadImage(join(root, "docs", "images", "orders.jpg")),
+  studio: await loadImage(join(root, "docs", "images", "studio.jpg")),
+  new: await loadImage(join(root, "docs", "images", "new.jpg")),
+}
+
+/* --------------------------------------------------------- feature graphic */
+const feature = () => {
+  const W = 1024
+  const H = 500
   const canvas = createCanvas(W, H)
   const ctx = canvas.getContext("2d")
 
   const bg = ctx.createLinearGradient(0, 0, W, H)
-  bg.addColorStop(0, BG)
-  bg.addColorStop(1, BG2)
+  bg.addColorStop(0, "#7B3040")
+  bg.addColorStop(1, "#5A1F2C")
   ctx.fillStyle = bg
   ctx.fillRect(0, 0, W, H)
 
-  // Accent wash
-  const wash = ctx.createRadialGradient(W * 0.75, H * 0.4, 0, W * 0.75, H * 0.4, 420)
-  wash.addColorStop(0, "rgba(110,42,56,0.18)")
-  wash.addColorStop(1, "rgba(110,42,56,0)")
-  ctx.fillStyle = wash
-  ctx.fillRect(0, 0, W, H)
+  radial(ctx, 260, 480, 520, BRASS, 0.22)
+  radial(ctx, 900, 60, 380, IVORY, 0.08)
 
-  // Icon
-  const iconSize = 260
-  ctx.drawImage(icon, W - iconSize - 60, (H - iconSize) / 2, iconSize, iconSize)
+  // Icon tile
+  const tile = 96
+  const tileX = 64
+  const tileY = 110
+  ctx.save()
+  ctx.shadowColor = colorWithAlpha(BRASS, 0.45)
+  ctx.shadowBlur = 28
+  roundRect(ctx, tileX, tileY, tile, tile, 24)
+  ctx.fillStyle = IVORY
+  ctx.fill()
+  ctx.shadowBlur = 0
+  ctx.save()
+  roundRect(ctx, tileX, tileY, tile, tile, 24)
+  ctx.clip()
+  ctx.drawImage(images.icon, tileX, tileY, tile, tile)
+  ctx.restore()
+  ctx.restore()
 
-  // Wordmark
-  ctx.fillStyle = INK
-  ctx.font = `600 74px ${DISPLAY}`
   ctx.textAlign = "left"
   ctx.textBaseline = "middle"
-  ctx.fillText("Dress Book", 70, H / 2 - 60)
+  const titleSize = fitFont(ctx, FRAUNCES, 600, 62, "Dress Book", W - tileX - tile - 120)
+  ctx.font = `600 ${titleSize}px ${FRAUNCES}`
+  ctx.fillStyle = IVORY
+  ctx.fillText("Dress Book", tileX + tile + 24, tileY + 30)
 
-  // Tagline
-  ctx.fillStyle = ACCENT
-  ctx.font = `700 30px ${ONEST_BOLD}`
-  ctx.fillText(store.tagline, 70, H / 2 + 10)
+  ctx.font = `400 26px ${SANS}`
+  ctx.fillStyle = colorWithAlpha(IVORY, 0.85)
+  ctx.fillText(store.tagline, tileX + tile + 24, tileY + 78)
+
+  // Phone mockup
+  const phoneW = 260
+  const phoneH = 500
+  const px = 700
+  const py = 0
+  ctx.save()
+  ctx.shadowColor = colorWithAlpha("#000", 0.4)
+  ctx.shadowBlur = 40
+  roundRect(ctx, px, py, phoneW, phoneH, 32)
+  ctx.fillStyle = "#000"
+  ctx.fill()
+  ctx.shadowBlur = 0
+  ctx.save()
+  roundRect(ctx, px, py, phoneW, phoneH, 32)
+  ctx.clip()
+  drawCover(ctx, images.today, px, py, phoneW, phoneH, 0)
+  ctx.restore()
+  roundRect(ctx, px, py, phoneW, phoneH, 32)
+  ctx.lineWidth = 2
+  ctx.strokeStyle = colorWithAlpha(IVORY, 0.2)
+  ctx.stroke()
+  ctx.restore()
 
   // Footer
-  ctx.fillStyle = MUTED
-  ctx.font = `400 20px ${ONEST}`
-  ctx.fillText(store.footer, 70, H - 50)
-
-  // Brass rule
-  ctx.fillStyle = BRASS
-  ctx.fillRect(70, H / 2 - 100, 120, 4)
+  ctx.textAlign = "left"
+  ctx.font = `400 20px ${SANS}`
+  ctx.fillStyle = colorWithAlpha(IVORY, 0.7)
+  ctx.fillText(store.footer, tileX, H - 36)
 
   writeFileSync(join(outDir, "feature-graphic-1024x500.png"), canvas.toBuffer("image/png"))
-  console.log("wrote feature-graphic-1024x500.png")
 }
 
-/* ------------------------------ screenshots 1080x1920 ----------------------- */
-const phoneW = 920
-const phoneH = 1840
-const phoneX = (1080 - phoneW) / 2
-const phoneY = 120
-
-for (let i = 0; i < store.captions.length; i++) {
-  const cap = store.captions[i]
-  const W = 1080, H = 1920
+/* ------------------------------------------------------------- screenshots */
+const screenshot = (index, { source, title, subtitle }) => {
+  const W = 1080
+  const H = 1920
   const canvas = createCanvas(W, H)
   const ctx = canvas.getContext("2d")
 
-  // Background
   const bg = ctx.createLinearGradient(0, 0, 0, H)
-  bg.addColorStop(0, BG)
-  bg.addColorStop(1, BG2)
+  bg.addColorStop(0, "#7B3040")
+  bg.addColorStop(1, "#5A1F2C")
   ctx.fillStyle = bg
   ctx.fillRect(0, 0, W, H)
+  radial(ctx, W / 2, 800, 900, BRASS, 0.18)
+  radial(ctx, 120, 1700, 600, IVORY, 0.06)
 
-  // Phone frame
-  const r = 60
-  roundRect(ctx, phoneX, phoneY, phoneW, phoneH, r)
-  ctx.fillStyle = "#FFFFFF"
-  ctx.fill()
-  ctx.lineWidth = 6
-  ctx.strokeStyle = "rgba(30,23,25,0.12)"
-  ctx.stroke()
+  // Top accent line
+  const bar = ctx.createLinearGradient(0, 0, W, 0)
+  bar.addColorStop(0, colorWithAlpha(BRASS, 0))
+  bar.addColorStop(0.5, colorWithAlpha(BRASS, 0.9))
+  bar.addColorStop(1, colorWithAlpha(IVORY, 0))
+  ctx.fillStyle = bar
+  ctx.fillRect(0, 0, W, 6)
 
-  // Icon inside phone
-  const iconSize = 180
-  ctx.drawImage(icon, phoneX + (phoneW - iconSize) / 2, phoneY + 120, iconSize, iconSize)
-
-  // Caption title
-  ctx.fillStyle = INK
-  ctx.font = `600 64px ${DISPLAY}`
+  // Caption
   ctx.textAlign = "center"
   ctx.textBaseline = "middle"
-  ctx.fillText(cap.title, W / 2, phoneY + phoneH / 2 - 40)
+  const titleSize = fitFont(ctx, FRAUNCES, 600, 74, title, W - 200)
+  ctx.font = `600 ${titleSize}px ${FRAUNCES}`
+  ctx.shadowColor = colorWithAlpha(BRASS, 0.4)
+  ctx.shadowBlur = 20
+  ctx.fillStyle = IVORY
+  ctx.fillText(title, W / 2, 170)
+  ctx.shadowBlur = 0
+  ctx.font = `400 34px ${SANS}`
+  ctx.fillStyle = colorWithAlpha(IVORY, 0.8)
+  ctx.fillText(subtitle, W / 2, 246)
 
-  // Caption subtitle
-  ctx.fillStyle = MUTED
-  ctx.font = `400 34px ${ONEST}`
-  const subLines = cap.subtitle.split(" ").reduce((acc, w) => {
-    const last = acc[acc.length - 1]
-    if (last && (last + " " + w).length < 34) acc[acc.length - 1] = last + " " + w
-    else acc.push(w)
-    return acc
-  }, [])
-  subLines.forEach((line, idx) => {
-    ctx.fillText(line, W / 2, phoneY + phoneH / 2 + 20 + idx * 42)
-  })
+  // Phone
+  const phoneW = 720
+  const phoneH = 1480
+  const px = (W - phoneW) / 2
+  const py = 340
+  ctx.save()
+  ctx.shadowColor = colorWithAlpha("#000", 0.45)
+  ctx.shadowBlur = 60
+  roundRect(ctx, px, py, phoneW, phoneH, 48)
+  ctx.fillStyle = "#000"
+  ctx.fill()
+  ctx.shadowBlur = 0
+  ctx.save()
+  roundRect(ctx, px, py, phoneW, phoneH, 48)
+  ctx.clip()
+  drawCover(ctx, images[source], px, py, phoneW, phoneH, 0)
+  ctx.restore()
+  roundRect(ctx, px, py, phoneW, phoneH, 48)
+  ctx.lineWidth = 3
+  ctx.strokeStyle = colorWithAlpha(IVORY, 0.18)
+  ctx.stroke()
+  ctx.restore()
 
-  // Footer
-  ctx.fillStyle = ACCENT
-  ctx.font = `700 26px ${ONEST_BOLD}`
-  ctx.fillText(store.footer, W / 2, H - 60)
+  // Brand footer
+  const mark = 48
+  const markX = W / 2 - 100
+  const markY = 1850
+  ctx.save()
+  roundRect(ctx, markX, markY - mark / 2, mark, mark, 14)
+  ctx.clip()
+  ctx.drawImage(images.icon, markX, markY - mark / 2, mark, mark)
+  ctx.restore()
+  ctx.textAlign = "left"
+  ctx.font = `600 32px ${FRAUNCES}`
+  ctx.fillStyle = colorWithAlpha(IVORY, 0.9)
+  ctx.fillText("Dress Book", markX + mark + 16, markY + 2)
 
-  // Brass rule
-  ctx.fillStyle = BRASS
-  ctx.fillRect(W / 2 - 60, H - 90, 120, 3)
-
-  const name = cap.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
-  writeFileSync(join(outDir, `screenshot-${i + 1}-${name}-1080x1920.png`), canvas.toBuffer("image/png"))
-  console.log(`wrote screenshot-${i + 1}-${name}-1080x1920.png`)
+  const file = `screenshot-${index + 1}-${source}-1080x1920.png`
+  writeFileSync(join(outDir, file), canvas.toBuffer("image/png"))
 }
 
-console.log("Store assets generated in", outDir)
+/* -------------------------------------------------------------------- run */
+feature()
+store.captions.forEach((caption, index) => screenshot(index, caption))
+
+for (const file of ["feature-graphic-1024x500.png", ...store.captions.map((c, i) => `screenshot-${i + 1}-${c.source}-1080x1920.png`)]) {
+  const size = statSync(join(outDir, file)).size
+  console.log(file, (size / 1024 / 1024).toFixed(2) + " MB")
+}
+console.log("done →", outDir)
