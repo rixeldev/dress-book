@@ -133,8 +133,8 @@ export default function Layout() {
   return (
     <ThemeProvider>
       <CurrencyProvider>
-        <OrganizationProvider>
-          <AuthProvider>
+        <AuthProvider>
+          <OrganizationProvider>
           <OnboardingProvider>
             <SyncProvider>
               <ErrorBoundary>
@@ -142,8 +142,8 @@ export default function Layout() {
               </ErrorBoundary>
             </SyncProvider>
           </OnboardingProvider>
-        </AuthProvider>
         </OrganizationProvider>
+        </AuthProvider>
       </CurrencyProvider>
     </ThemeProvider>
   )
