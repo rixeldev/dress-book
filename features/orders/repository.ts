@@ -2,6 +2,7 @@ import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, limit, order
 import type { Order, OrderStatus } from "@/interfaces/Order"
 import { createId } from "@/libs/ids"
 import { orderSchema } from "@/libs/schemas"
+import { readCache, writeCache, clearCache } from "@/libs/cache"
 
 const db = getFirestore()
 
@@ -34,11 +35,16 @@ export async function createOrder(
   }
 
   await setDoc(doc(db, "users", userId, "orders", order.id), order)
+  await clearCache(`cache:orders:${userId}`)
   return order
 }
 
 export async function getOrders(userId: string): Promise<Order[]> {
+  const cacheKey = `cache:orders:${userId}`
+  const cached = await readCache<Order[]>(cacheKey)
+  if (cached) return cached
   const page = await getOrdersPage(userId, 200)
+  await writeCache(cacheKey, page.items)
   return page.items
 }
 
@@ -71,10 +77,12 @@ export async function getOrder(userId: string, orderId: string): Promise<Order |
 
 export async function updateOrder(userId: string, orderId: string, input: Partial<Order>): Promise<void> {
   await setDoc(doc(db, "users", userId, "orders", orderId), { ...input, updatedAt: new Date().toISOString() }, { merge: true })
+  await clearCache(`cache:orders:${userId}`)
 }
 
 export async function deleteOrder(userId: string, orderId: string): Promise<void> {
   await deleteDoc(doc(db, "users", userId, "orders", orderId))
+  await clearCache(`cache:orders:${userId}`)
 }
 
 export async function duplicateOrder(userId: string, order: Order): Promise<Order> {
@@ -91,6 +99,7 @@ export async function duplicateOrder(userId: string, order: Order): Promise<Orde
     title: `${order.title} (copy)`,
   }
   await setDoc(doc(db, "users", userId, "orders", newOrder.id), newOrder)
+  await clearCache(`cache:orders:${userId}`)
   return newOrder
 }
 
@@ -105,4 +114,5 @@ export async function updateOrderStatus(
     { status, updatedAt: now, deliveredAt: status === "delivered" ? now : null },
     { merge: true },
   )
+  await clearCache(`cache:orders:${userId}`)
 }

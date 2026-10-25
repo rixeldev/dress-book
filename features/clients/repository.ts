@@ -1,4 +1,5 @@
 import { collection, doc, getDoc, getDocs, getFirestore, limit, orderBy, query, setDoc, startAfter } from "@react-native-firebase/firestore"
+import { readCache, writeCache, clearCache } from "@/libs/cache"
 import type { Client, NewClient } from "@/interfaces/Client"
 
 const db = getFirestore()
@@ -23,6 +24,7 @@ export async function createClient(userId: string, input: NewClient): Promise<Cl
   }
 
   await setDoc(doc(db, "users", userId, "clients", client.id), client)
+  await clearCache(`cache:clients:${userId}`)
   return client
 }
 
@@ -42,6 +44,7 @@ export async function updateClient(
     { ...input, updatedAt: new Date().toISOString() },
     { merge: true },
   )
+  await clearCache(`cache:clients:${userId}`)
 }
 
 export async function archiveClient(userId: string, clientId: string): Promise<void> {
@@ -50,10 +53,15 @@ export async function archiveClient(userId: string, clientId: string): Promise<v
     { archived: true, updatedAt: new Date().toISOString() },
     { merge: true },
   )
+  await clearCache(`cache:clients:${userId}`)
 }
 
 export async function getClients(userId: string): Promise<Client[]> {
+  const cacheKey = `cache:clients:${userId}`
+  const cached = await readCache<Client[]>(cacheKey)
+  if (cached) return cached
   const page = await getClientsPage(userId, 200)
+  await writeCache(cacheKey, page.items)
   return page.items
 }
 

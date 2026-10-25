@@ -3,6 +3,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "@rea
 import type { Design } from "@/interfaces/Design"
 import { createId } from "@/libs/ids"
 import { designSchema } from "@/libs/schemas"
+import { readCache, writeCache, clearCache } from "@/libs/cache"
 
 const db = getFirestore()
 const storage = getStorage()
@@ -40,14 +41,20 @@ export async function createDesign(
   }
 
   await setDoc(doc(db, "users", userId, "designs", design.id), design)
+  await clearCache(`cache:designs:${userId}`)
   return design
 }
 
 export async function getDesigns(userId: string): Promise<Design[]> {
+  const cacheKey = `cache:designs:${userId}`
+  const cached = await readCache<Design[]>(cacheKey)
+  if (cached) return cached
   const snapshot = await getDocs(collection(db, "users", userId, "designs"))
-  return snapshot.docs
+  const items = snapshot.docs
     .map((snapshotDoc: { id: string; data: () => unknown }) => ({ ...(snapshotDoc.data() as Design), id: snapshotDoc.id }))
     .sort((left: Design, right: Design) => right.createdAt.localeCompare(left.createdAt))
+  await writeCache(cacheKey, items)
+  return items
 }
 
 export async function deleteDesign(userId: string, design: Design): Promise<void> {
@@ -61,4 +68,5 @@ export async function deleteDesign(userId: string, design: Design): Promise<void
     }),
   )
   await deleteDoc(doc(db, "users", userId, "designs", design.id))
+  await clearCache(`cache:designs:${userId}`)
 }
